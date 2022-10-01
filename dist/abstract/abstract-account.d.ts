@@ -29,7 +29,7 @@ export declare abstract class AbstractAccount {
     get folder(): string;
     initialize(): Promise<void>;
     abstract loadStrategies(): Promise<Strategy[]>;
-    abstract createController(account: AbstractAccount, strategy: Strategy, executor: AbstractExchange): AbstractController;
+    protected abstract createController(account: AbstractAccount, strategy: Strategy, executor: AbstractExchange): AbstractController;
     startStrategy(strategy: Strategy): {
         controller: AbstractController;
         exchange: AbstractExchange;

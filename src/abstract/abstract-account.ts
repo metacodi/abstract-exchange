@@ -44,7 +44,7 @@ export abstract class AbstractAccount {
 
   abstract loadStrategies(): Promise<Strategy[]>;
 
-  abstract createController(account: AbstractAccount, strategy: Strategy, executor: AbstractExchange, ): AbstractController;
+  protected abstract createController(account: AbstractAccount, strategy: Strategy, executor: AbstractExchange): AbstractController;
 
   /** Arranca l'estratègia creant les instàncies corresponents. */
   startStrategy(strategy: Strategy) {
