@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "lib": ["es2018", "DOM"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "baseUrl": "./",
+    "outDir": "./dist/",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": false,
+    "strictNullChecks": false,
+    "removeComments": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    // "paths": {
+    //   "isomorphic-ws": ["node_modules/@types/ws/index.d.ts"],
+    //   "events": ["node_modules/@types/node/events.d.ts"],
+    //   "ws": ["node_modules/@types/ws/index.d.ts"],
+    //   "rxjs": [
+    //     "node_modules/rxjs/index.d.ts",
+    //     "node_modules/rxjs/internal/Subject.d.ts",
+    //     "node_modules/rxjs/internal/Subscription.d.ts",
+    //   ],
+    //   "axios": ["node_modules/axios/index.d.ts"],
+    //   "crypto": ["node_modules/@types/node/crypto.d.ts"],
+    //   "moment": [
+    //     "node_modules/moment/ts3.1-typings/moment.d.ts",
+    //   ],
+    // },
+    "strict": true,
+  },
+  "exclude": [
+    "dist",
+    "test",
+    "precode",
+    "node_modules"
+  ]
+}
