@@ -31,7 +31,8 @@ if (Prompt.verbose) { console.log('Arguments: ', Prompt.opts()); }
     Resource.removeSync(`dist`);
   }
 
-  Terminal.log(chalk.bold(`Instal·lant dependències de @metacodi`));
+  Terminal.log(`Instal·lant dependències de ${chalk.bold(`@metacodi`)}`);
+  Terminal.logInline(`npm i --save-peer @metacodi/node-utils...`)
   await Terminal.run(`npm i --save-peer @metacodi/node-utils`);
 
   Terminal.log(chalk.bold(`Compilant projecte typescript`));
