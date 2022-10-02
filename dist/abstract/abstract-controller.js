@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractController = void 0;
-const moment_1 = __importDefault(require("moment"));
+const node_utils_1 = require("@metacodi/node-utils");
 const shared_1 = require("./shared");
 class AbstractController {
     constructor(account, strategy, exchange) {
@@ -93,8 +90,8 @@ class AbstractController {
     createInstance() {
         const instance = {
             id: ++this.lastInstanceId,
-            created: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
-            updated: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
+            created: (0, node_utils_1.timestamp)(),
+            updated: (0, node_utils_1.timestamp)(),
             lastOrderId: 0,
             orders: [],
             balances: this.createBalances(),
@@ -236,7 +233,7 @@ class AbstractController {
             baseQuantity,
             price,
             isOco: false,
-            created: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
+            created: (0, node_utils_1.timestamp)(),
         };
         if (idOrderBuyed !== undefined) {
             order.idOrderBuyed = idOrderBuyed;

@@ -1,4 +1,5 @@
-import moment from "moment";
+
+import { timestamp } from "@metacodi/node-utils";
 
 import { AbstractAccount } from "./abstract-account";
 import { AbstractExchange } from "./abstract-exchange";
@@ -208,8 +209,8 @@ export abstract class AbstractController {
   protected createInstance(): InstanceController {
     const instance: InstanceController = {
       id: ++this.lastInstanceId,
-      created: moment().format('YYYY-MM-DD HH:mm:ss'),
-      updated: moment().format('YYYY-MM-DD HH:mm:ss'),
+      created: timestamp(),
+      updated: timestamp(),
       lastOrderId: 0,
       orders: [],
       balances: this.createBalances(),
@@ -375,7 +376,7 @@ export abstract class AbstractController {
       baseQuantity,
       price,
       isOco: false,
-      created: moment().format('YYYY-MM-DD HH:mm:ss'),
+      created: timestamp(),
     }
 
     if (idOrderBuyed !== undefined) { order.idOrderBuyed = idOrderBuyed; }
