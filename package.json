@@ -34,7 +34,7 @@
   "homepage": "https://github.com/metacodi/abstract-exchange#readme",
   "license": "ISC",
   "peerDependencies": {
-    "@metacodi/node-utils": "^1.0.14",
+    "@metacodi/node-utils": "^1.0.15",
     "moment": "^2.29.4",
     "rxjs": "~6.6.0"
   },

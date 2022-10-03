@@ -39,8 +39,8 @@
   "exclude": [
     "dist",
     "test",
-    "publish",
     "precode",
-    "node_modules"
+    "publish",
+    "node_modules",
   ]
 }

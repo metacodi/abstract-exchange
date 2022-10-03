@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import Prompt from 'commander';
 
-import { incrementPackageVersion, Resource, Terminal, Git } from '@metacodi/node-utils';
+import { incrementPackageVersion, Resource, Terminal, Git, upgradeDependency } from '@metacodi/node-utils';
 
 /**
  * **Usage**
@@ -31,9 +31,8 @@ if (Prompt.verbose) { console.log('Arguments: ', Prompt.opts()); }
     Resource.removeSync(`dist`);
   }
 
-  Terminal.log(`Instal·lant dependències de ${chalk.bold(`@metacodi`)}`);
-  Terminal.logInline(`npm i --save-peer @metacodi/node-utils...`)
-  await Terminal.run(`npm i --save-peer @metacodi/node-utils`);
+  Terminal.log(`Actualitzant dependències de ${chalk.bold(`@metacodi`)}`);  
+  await upgradeDependency(`@metacodi/node-utils`, '--save-peer');
 
   Terminal.log(chalk.bold(`Compilant projecte typescript`));
   await Terminal.run(`tsc`);
