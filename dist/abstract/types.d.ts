@@ -1,12 +1,7 @@
 import { Subscription } from 'rxjs';
 import { OrdersExecutor } from './orders-executor';
-import { AbstractAccount } from './abstract-account';
+import { ExchangeAccount } from './exchange-account';
 export declare type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-export interface ApiCredentials {
-    apiKey: string;
-    apiSecret: string;
-    apiPassphrase?: string;
-}
 export declare type ExchangeType = 'simulator' | 'binance' | 'kucoin' | 'okx' | 'bitget' | 'gate-io' | 'xt-com';
 export declare type MarketType = 'spot' | 'futures' | 'margin';
 export declare type OrderSide = 'buy' | 'sell';
@@ -15,6 +10,8 @@ export declare type PreviousOrderStatus = 'post' | 'cancel';
 export declare type ResultOrderStatus = 'new' | 'filled' | 'canceled' | 'partial' | 'unsatisfied' | 'expired' | 'rejected';
 export declare type OrderStatus = PreviousOrderStatus | ResultOrderStatus;
 export declare type KlineIntervalType = '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M';
+export declare type MarginMode = 'cross' | 'isolated';
+export declare type PositionSide = 'both' | 'long' | 'short';
 export declare type AvailableOrderTypes = 'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco';
 export declare type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco', AvailableOrderTypes>;
 export declare type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
@@ -32,7 +29,7 @@ export interface Task {
 export interface OrderTask extends Task {
     type: TaskType;
     data: {
-        account: AbstractAccount;
+        account: ExchangeAccount;
         controllerId: string;
         order: Order;
     };
@@ -103,7 +100,7 @@ export interface Strategy {
     params: BaseStrategyParams;
     differential?: number;
 }
-export interface AccountInfo {
+export interface UserAccount {
     idreg: number;
     nombre: string;
     apellidos: string;

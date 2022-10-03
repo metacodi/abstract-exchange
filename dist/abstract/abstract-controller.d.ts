@@ -1,11 +1,11 @@
-import { AbstractAccount } from "./abstract-account";
-import { AbstractExchange } from "./abstract-exchange";
+import { ExchangeAccount } from "./exchange-account";
+import { Exchange } from "./exchange";
 import { AccountEvent, AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderEvent, OrderSide, OrderStatus, OrderType, SimulationData, Strategy, SymbolType } from "./types";
 export declare type ControllerStatus = 'on' | 'paused' | 'off';
 export declare abstract class AbstractController {
-    account: AbstractAccount;
+    account: ExchangeAccount;
     strategy: Strategy;
-    exchange: AbstractExchange;
+    exchange: Exchange;
     protected config: {
         [key: string]: any;
     };
@@ -21,7 +21,7 @@ export declare abstract class AbstractController {
     status: ControllerStatus;
     lastInstanceId: number;
     simulation: SimulationData[];
-    constructor(account: AbstractAccount, strategy: Strategy, exchange: AbstractExchange);
+    constructor(account: ExchangeAccount, strategy: Strategy, exchange: Exchange);
     protected abstract loadAppSettings(): {
         [key: string]: any;
     };
@@ -51,7 +51,7 @@ export declare abstract class AbstractController {
     fixQuote(quote: number): number;
     floorQuantity(quantity: number): number;
     get simulated(): boolean;
-    get simulator(): AbstractExchange;
+    get simulator(): Exchange;
     set simulate(data: SimulationData);
     protected createInstance(): InstanceController;
     protected createBalances(): {

@@ -1,8 +1,8 @@
 
 import { timestamp } from "@metacodi/node-utils";
 
-import { AbstractAccount } from "./abstract-account";
-import { AbstractExchange } from "./abstract-exchange";
+import { ExchangeAccount } from "./exchange-account";
+import { Exchange } from "./exchange";
 import { splitOrderId } from "./shared";
 import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderEvent, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy, SymbolType } from "./types";
 
@@ -38,9 +38,9 @@ export abstract class AbstractController {
 
 
   constructor(
-    public account: AbstractAccount,
+    public account: ExchangeAccount,
     public strategy: Strategy,
-    public exchange: AbstractExchange,
+    public exchange: Exchange,
   ) {
     // Carreguem l'arxiu de configuració per saber si estem en mode isolated.
     this.config = this.loadAppSettings();
@@ -193,7 +193,7 @@ export abstract class AbstractController {
 
   get simulated(): boolean { return this.strategy?.exchange === 'simulator'; }
 
-  get simulator(): AbstractExchange { return this.exchange as AbstractExchange; }
+  get simulator(): Exchange { return this.exchange as Exchange; }
 
   set simulate(data: SimulationData) { if (this.simulated) { this.simulation.push(data); }; }
 

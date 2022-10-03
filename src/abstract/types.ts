@@ -2,12 +2,10 @@ import moment from 'moment';
 import { Subscription } from 'rxjs';
 
 import { OrdersExecutor } from './orders-executor';
-import { AbstractAccount } from './abstract-account';
+import { ExchangeAccount } from './exchange-account';
 
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-export interface ApiCredentials { apiKey: string, apiSecret: string, apiPassphrase?: string };
 
 export type ExchangeType = 'simulator' | 'binance' | 'kucoin' | 'okx' | 'bitget' | 'gate-io' | 'xt-com';
 
@@ -23,6 +21,10 @@ export type ResultOrderStatus = 'new' | 'filled' | 'canceled' | 'partial' | 'uns
 export type OrderStatus = PreviousOrderStatus | ResultOrderStatus;
 
 export type KlineIntervalType = '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M';
+
+export type MarginMode = 'cross' | 'isolated';
+
+export type PositionSide = 'both' | 'long' | 'short';
 
 /**
  * Order types
@@ -48,7 +50,7 @@ export interface Task {
 
 export interface OrderTask extends Task {
   type: TaskType;
-  data: { account: AbstractAccount; controllerId: string; order: Order; };
+  data: { account: ExchangeAccount; controllerId: string; order: Order; };
 }
 
 export interface MarketSymbol {
@@ -129,7 +131,7 @@ export interface Strategy {
 }
 
 
-export interface AccountInfo {
+export interface UserAccount {
   idreg: number;
   nombre: string;
   apellidos: string;
@@ -215,7 +217,6 @@ export interface Order {
   quoteQuantity?: number;  // quantitat satifeta quoteAsset
   price?: number;
   stopPrice?: number;      // preu per les ordres de tipus stop-limit.
-  // stopMarket?: number;      // preu per les ordres de tipus stop-limit.
   isOco?: boolean;
   created?: string;
   posted?: string;

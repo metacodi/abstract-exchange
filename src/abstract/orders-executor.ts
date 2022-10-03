@@ -1,9 +1,9 @@
 import { BehaviorSubject } from "rxjs";
 
 import { Order, Strategy, Task, CoinType, OrderTask } from './types';
-import { AbstractAccount } from "./abstract-account";
+import { ExchangeAccount } from "./exchange-account";
 import { Limit, TaskExecutor, TaskExecutorOptions } from "./task-executor";
-import { AbstractExchange } from "./abstract-exchange";
+import { Exchange } from "./exchange";
 
 
 export class OrdersExecutor extends TaskExecutor {
@@ -13,9 +13,9 @@ export class OrdersExecutor extends TaskExecutor {
   ordersLimitsChanged = new BehaviorSubject<Limit>(undefined);
 
   constructor(
-    public account: AbstractAccount,
+    public account: ExchangeAccount,
     public strategy: Strategy,
-    public exchange: AbstractExchange,
+    public exchange: Exchange,
     public options?: TaskExecutorOptions,
   ) {
     super(options); // spot orders limit ratio => 5/s

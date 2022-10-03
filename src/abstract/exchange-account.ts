@@ -1,10 +1,10 @@
 import { AbstractController } from "./abstract-controller";
-import { AbstractExchange } from "./abstract-exchange";
+import { Exchange } from "./exchange";
 import { OrdersExecutor } from "./orders-executor";
-import { AccountInfo, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
+import { UserAccount, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
 
 
-export abstract class AbstractAccount {
+export abstract class ExchangeAccount {
   // Exchange utilitzats 
   exchanges: { [ExchangeType: string]: { apiKey: string; apiSecret: string; apiPassphrase?: string; }; } = {};
   // Estratègies del compte.
@@ -17,9 +17,9 @@ export abstract class AbstractAccount {
   fondosWallet?: { [CoinType: string]: FundingWallet; } = {};
 
   constructor(
-    public info: AccountInfo,
+    public info: UserAccount,
     public config: { [key: string]: any },
-    public exchangeProvider: (account: AbstractAccount, strategy: Strategy) => AbstractExchange,
+    public exchangeProvider: (account: ExchangeAccount, strategy: Strategy) => Exchange,
   ) {
     if (!this.config.initializeManually) { this.initialize(); }
   }
@@ -44,7 +44,7 @@ export abstract class AbstractAccount {
 
   abstract loadStrategies(): Promise<Strategy[]>;
 
-  protected abstract createController(account: AbstractAccount, strategy: Strategy, executor: AbstractExchange): AbstractController;
+  protected abstract createController(account: ExchangeAccount, strategy: Strategy, executor: Exchange): AbstractController;
 
   /** Arranca l'estratègia creant les instàncies corresponents. */
   startStrategy(strategy: Strategy) {
