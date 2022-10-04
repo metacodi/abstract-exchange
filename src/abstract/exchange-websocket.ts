@@ -1,8 +1,8 @@
 import { Subject, Subscription } from "rxjs";
 
-import { KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent, SymbolType } from "./types";
+import { CoinType, KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent, SymbolType } from "./types";
 import { ExchangeApi } from "./exchange-api";
-import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate, WsBalanceUpdate } from "./exchange-websocket-types";
+import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate, WsBalancePositionUpdate } from "./exchange-websocket-types";
 
 
 export interface ExchangeWebsocket {
@@ -28,9 +28,6 @@ export interface ExchangeWebsocket {
 
   get market(): MarketType;
   
-  /** Ex: `FUTURES-2310` | `COIN-USDM` | `COIN-M` */
-  get marketName(): string;
-
   get streamType(): WsStreamType;
 
   // get apiKey(): string;
@@ -74,13 +71,13 @@ export interface ExchangeWebsocket {
   //  Account STREAMS
   // ---------------------------------------------------------------------------------------------------
 
-  accountUpdate(): Subject<WsAccountUpdate>;
+  accountUpdate(asset?: CoinType): Subject<WsAccountUpdate>;
   
-  balanceUpdate(): Subject<WsBalanceUpdate>;
+  balancePositionUpdate(): Subject<WsBalancePositionUpdate>;
   
   // accountConfigUpdate(): Subject<WsAccountConfigUpdate>;
   
-  orderUpdate(): Subject<OrderEvent>;
+  orderUpdate(symbol?: SymbolType): Subject<OrderEvent>;
   
   // marginCall(): Subject<WsMarginCall>;
 

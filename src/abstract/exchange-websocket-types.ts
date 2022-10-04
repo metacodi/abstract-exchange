@@ -1,12 +1,12 @@
 import { AssetInfo, Position } from "./exchange-api-types";
-import { MarketType, OrderSide, OrderStatus, OrderType, PreviousOrderStatus, ResultOrderStatus, SymbolType } from "./types";
+import { CoinType, MarginMode, MarketType, OrderSide, OrderStatus, OrderType, PositionSide, PreviousOrderStatus, ResultOrderStatus, SymbolType } from "./types";
 
 
 export type WsConnectionState = 'initial' | 'connecting' | 'login' | 'connected' | 'reconnecting' | 'closing';
 
 export type WsStreamType = 'user' | 'market';
 
-export type WsUserStreamEmitterType = 'accountUpdate' | 'balanceUpdate' | 'marginCall' | 'accountConfigUpdate' | 'orderUpdate';
+export type WsUserStreamEmitterType = 'accountUpdate' | 'balancePositionUpdate' | 'marginCall' | 'accountConfigUpdate' | 'orderUpdate';
 
 export type WsMarketStreamEmitterType = 'priceTicker' | 'klineTicker';
 
@@ -40,13 +40,35 @@ export interface WsAccountUpdate {
   positions?: Position[];
 }
 
-export interface WsBalanceUpdate {
-  eventType: 'balanceUpdate';
+export interface WsBalancePositionUpdate {
+  eventType: 'balancePositionUpdate';
   eventTime: string;
-  asset: string;
-  balanceDelta: number;
-  clearTime: number;
+  balance?: {
+    asset: CoinType;
+    balanceAmount: number;
+    updateTime: string;
+  };
+  position?: {
+    symbol: SymbolType;
+    positionAmount: number;
+    entryPrice: number;
+    positionSide: PositionSide;
+    marginType: MarginMode;
+    updateTime: string;
+  };
 }
+
+// export interface Position {
+//   symbol: SymbolType;
+//   marginAsset?: CoinType; // (margin only)
+//   positionAmount: number;
+//   entryPrice: number;
+//   accumulatedRealisedPreFee: number;
+//   unrealisedPnl: number;
+//   marginType: MarginMode;
+//   isolatedWalletAmount: number;
+//   positionSide: PositionSide;
+// }
 
 // export interface WsOrderUpdate {
 //   eventType: 'orderUpdate';
