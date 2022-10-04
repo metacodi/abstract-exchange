@@ -1,4 +1,6 @@
-import { Order, OrderId } from "./types";
+import moment, { unitOfTime } from 'moment';
+
+import { Order, OrderId, KlineIntervalType } from './types';
 
 
 export const splitOrderId = (id: string): OrderId => {
@@ -16,3 +18,9 @@ export const findOtherOco = (orders: Order[], id: string): Order => {
   return orders.find(o => o.id !== id);
 }
 
+export const calculateCloseTime = (openTime: string | moment.MomentInput, interval: KlineIntervalType): string => {
+  const unit = interval.charAt(interval.length - 1) as unitOfTime.DurationConstructor;
+  const duration = +interval.slice(0, -1);
+  const closeTime = moment(openTime).add(duration, unit).format('YYYY-MM-DD HH:mm:ss.SSS');
+  return closeTime;
+}

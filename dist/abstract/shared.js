@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findOtherOco = exports.normalizeId = exports.splitOrderId = void 0;
+exports.calculateCloseTime = exports.findOtherOco = exports.normalizeId = exports.splitOrderId = void 0;
+const moment_1 = __importDefault(require("moment"));
 const splitOrderId = (id) => {
     const ids = id.split('-');
     return { accountId: +ids[0], strategyId: +ids[1], instanceId: +ids[2], orderId: +ids[3], ocoId: ids.length > 4 ? ids[4] : undefined };
@@ -15,4 +19,11 @@ const findOtherOco = (orders, id) => {
     return orders.find(o => o.id !== id);
 };
 exports.findOtherOco = findOtherOco;
+const calculateCloseTime = (openTime, interval) => {
+    const unit = interval.charAt(interval.length - 1);
+    const duration = +interval.slice(0, -1);
+    const closeTime = (0, moment_1.default)(openTime).add(duration, unit).format('YYYY-MM-DD HH:mm:ss.SSS');
+    return closeTime;
+};
+exports.calculateCloseTime = calculateCloseTime;
 //# sourceMappingURL=shared.js.map

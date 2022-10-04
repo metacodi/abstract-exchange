@@ -15,6 +15,6 @@ export interface ExchangeWebsocket {
     balanceUpdate(): Subject<WsBalanceUpdate>;
     orderUpdate(): Subject<OrderEvent>;
     priceTicker(symbol: SymbolType): Subject<MarketPrice>;
-    kline(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
+    klineTicker(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
 }
 //# sourceMappingURL=exchange-websocket.d.ts.map
