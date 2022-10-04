@@ -8,7 +8,7 @@ export interface ApiCredentials {
 export interface ApiOptions extends ApiCredentials {
     isTest?: boolean;
 }
-export interface ApiResquestOptions {
+export interface ApiRequestOptions {
     params?: any;
     headers?: {
         [key: string]: string | number;
