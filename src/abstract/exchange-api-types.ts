@@ -9,6 +9,8 @@ export interface ApiCredentials {
 };
 
 export interface ApiOptions extends ApiCredentials {
+  /** Indica el tipus de mercat. */
+  market: MarketType;
   /** Indica si l'api està en mode test o en real. */
   isTest?: boolean,
 }

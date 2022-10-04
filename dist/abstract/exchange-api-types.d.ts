@@ -6,6 +6,7 @@ export interface ApiCredentials {
     apiPassphrase?: string;
 }
 export interface ApiOptions extends ApiCredentials {
+    market: MarketType;
     isTest?: boolean;
 }
 export interface ApiRequestOptions {
