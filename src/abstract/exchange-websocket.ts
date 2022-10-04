@@ -91,7 +91,7 @@ export interface ExchangeWebsocket {
 
   priceTicker(symbol: SymbolType): Subject<MarketPrice>;
   
-  kline(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
+  klineTicker(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
 
   // bookTicker(symbol: string): Subject<BookTicker>;
 
