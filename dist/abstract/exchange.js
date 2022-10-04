@@ -38,6 +38,8 @@ class Exchange extends task_executor_1.TaskExecutor {
                     break;
                 case 'kucoin':
                     break;
+                case 'okx':
+                    break;
             }
         }
         if (!!account) {
@@ -94,6 +96,8 @@ class Exchange extends task_executor_1.TaskExecutor {
             case 'binance':
                 break;
             case 'kucoin':
+                break;
+            case 'okx':
                 break;
         }
         return this.marketWs;

@@ -1,6 +1,6 @@
 import { Subject, Subscription } from "rxjs";
 
-import { KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent } from "./types";
+import { KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent, SymbolType } from "./types";
 import { ExchangeApi } from "./exchange-api";
 import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate, WsBalanceUpdate } from "./exchange-websocket-types";
 
@@ -86,9 +86,9 @@ export interface ExchangeWebsocket {
   //  Market STREAM
   // ---------------------------------------------------------------------------------------------------
 
-  priceTicker(symbol: string): Subject<MarketPrice>;
+  priceTicker(symbol: SymbolType): Subject<MarketPrice>;
   
-  kline(symbol: string, interval: KlineIntervalType): Subject<MarketKline>;
+  kline(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
 
   // bookTicker(symbol: string): Subject<BookTicker>;
 

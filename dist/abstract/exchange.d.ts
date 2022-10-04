@@ -14,9 +14,9 @@ export declare class Exchange extends TaskExecutor {
     accountsWs: {
         [accounId: string]: ExchangeWebsocket;
     };
+    symbols: MarketSymbol[];
     limitRequest: Limit;
     limitOrders: Limit;
-    symbols: MarketSymbol[];
     symbolsInitialized: BehaviorSubject<("BNB_USDT" | "BTC_USDT" | "ETC_USDT")[]>;
     ordersLimitsChanged: BehaviorSubject<Limit>;
     marketSymbolStatusChanged: BehaviorSubject<MarketSymbol>;

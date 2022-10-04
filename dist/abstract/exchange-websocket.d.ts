@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent } from "./types";
+import { KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent, SymbolType } from "./types";
 import { WsConnectionState, WsStreamType, WsAccountUpdate, WsBalanceUpdate } from "./exchange-websocket-types";
 export interface ExchangeWebsocket {
     status: WsConnectionState;
@@ -13,7 +13,7 @@ export interface ExchangeWebsocket {
     accountUpdate(): Subject<WsAccountUpdate>;
     balanceUpdate(): Subject<WsBalanceUpdate>;
     orderUpdate(): Subject<OrderEvent>;
-    priceTicker(symbol: string): Subject<MarketPrice>;
-    kline(symbol: string, interval: KlineIntervalType): Subject<MarketKline>;
+    priceTicker(symbol: SymbolType): Subject<MarketPrice>;
+    kline(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
 }
 //# sourceMappingURL=exchange-websocket.d.ts.map
