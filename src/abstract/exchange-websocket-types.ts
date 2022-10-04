@@ -2,7 +2,7 @@ import { AssetInfo, Position } from "./exchange-api-types";
 import { MarketType, OrderSide, OrderStatus, OrderType, PreviousOrderStatus, ResultOrderStatus, SymbolType } from "./types";
 
 
-export type WsConnectionState = 'initial' | 'connecting' | 'connected' | 'reconnecting' | 'closing';
+export type WsConnectionState = 'initial' | 'connecting' | 'login' | 'connected' | 'reconnecting' | 'closing';
 
 export type WsStreamType = 'user' | 'market';
 

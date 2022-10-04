@@ -4,6 +4,7 @@ import { WsConnectionState, WsStreamType, WsAccountUpdate, WsBalanceUpdate } fro
 export interface ExchangeWebsocket {
     status: WsConnectionState;
     get market(): MarketType;
+    get marketName(): string;
     get streamType(): WsStreamType;
     get isTest(): boolean;
     connect(): void;

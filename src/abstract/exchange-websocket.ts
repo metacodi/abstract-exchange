@@ -27,6 +27,9 @@ export interface ExchangeWebsocket {
   // ---------------------------------------------------------------------------------------------------
 
   get market(): MarketType;
+  
+  /** Ex: `FUTURES-2310` | `COIN-USDM` | `COIN-M` */
+  get marketName(): string;
 
   get streamType(): WsStreamType;
 
