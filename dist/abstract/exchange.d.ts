@@ -2,7 +2,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { Limit, TaskExecutor } from "./task-executor";
 import { ExchangeAccount } from "./exchange-account";
 import { AccountEvent, Balance, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType, SymbolType } from "./types";
-import { Order, OrderEvent, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
+import { Order, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
 import { ExchangeWebsocket } from "./exchange-websocket";
 import { ExchangeApi } from "./exchange-api";
 import { WsAccountUpdate } from "./exchange-websocket-types";
@@ -30,7 +30,7 @@ export declare class Exchange extends TaskExecutor {
         [accountId: string]: Subject<AccountEvent>;
     };
     ordersEventsSubjects: {
-        [controllerId: string]: Subject<OrderEvent>;
+        [controllerId: string]: Subject<Order>;
     };
     partialPeriod: number;
     partials: {
@@ -61,8 +61,8 @@ export declare class Exchange extends TaskExecutor {
     protected getOrderTask(task: OrderTask): Promise<void>;
     protected postOrderTask(task: OrderTask): Promise<Order>;
     protected cancelOrderTask(task: OrderTask): Promise<Order>;
-    getOrdersEventsSubject(account: ExchangeAccount, controllerId: string): Subject<OrderEvent>;
-    protected onOrderUpdate(account: ExchangeAccount, event: OrderEvent): void;
+    getOrdersEventsSubject(account: ExchangeAccount, controllerId: string): Subject<Order>;
+    protected onOrderUpdate(account: ExchangeAccount, eventOrder: Order): void;
     protected processPartialFilled(account: ExchangeAccount, order: Order): void;
     protected completePartialFilled(account: ExchangeAccount, order: Order): void;
     protected notifyUnsatisfiedPartialOrder(account: ExchangeAccount, partial: PartialOrder): void;

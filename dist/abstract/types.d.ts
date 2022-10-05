@@ -179,12 +179,8 @@ export interface Order {
     syncronized?: boolean;
     idOrderBuyed?: string;
     profit?: number;
-}
-export interface OrderEvent {
-    order: Order;
-    data: {
-        [key: string]: any;
-    };
+    commission?: number;
+    commissionAsset?: CoinType;
 }
 export interface PartialOrder {
     subscription?: Subscription;

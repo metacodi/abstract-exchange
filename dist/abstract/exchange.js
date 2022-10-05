@@ -136,7 +136,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         const ws = this.getMarketWebsocket(symbol);
         const subject = new rxjs_1.Subject();
         this.marketKlineSubjects[`${symbol}_${interval}`] = subject;
-        ws.kline(symbol, interval).subscribe(data => subject.next(data));
+        ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
         return subject;
     }
     getAccountWebsocket(account, symbol) {
@@ -260,7 +260,7 @@ class Exchange extends task_executor_1.TaskExecutor {
                 const { accountId, strategyId } = (0, shared_1.splitOrderId)(order.id);
                 const controllerId = `${accountId}-${strategyId}`;
                 account.markets[this.market].orders.push(order);
-                this.ordersEventsSubjects[controllerId].next({ order, data: {} });
+                this.ordersEventsSubjects[controllerId].next(order);
             });
         });
     }
@@ -305,30 +305,30 @@ class Exchange extends task_executor_1.TaskExecutor {
             return subject;
         }
     }
-    onOrderUpdate(account, event) {
+    onOrderUpdate(account, eventOrder) {
         const { name, market } = this;
-        switch (event.order.status) {
+        switch (eventOrder.status) {
             case 'new':
             case 'filled':
             case 'partial':
             case 'canceled':
             case 'expired':
             case 'rejected':
-                const { accountId, strategyId } = (0, shared_1.splitOrderId)(event.order.id);
+                const { accountId, strategyId } = (0, shared_1.splitOrderId)(eventOrder.id);
                 const controllerId = `${accountId}-${strategyId}`;
-                const order = account.markets[this.market].orders.find(o => o.id === event.order.id);
+                const order = account.markets[this.market].orders.find(o => o.id === eventOrder.id);
                 if (!order) {
                     return;
                 }
-                Object.assign(order, event.order);
-                if (event.order.status === 'partial') {
+                Object.assign(order, eventOrder);
+                if (eventOrder.status === 'partial') {
                     this.processPartialFilled(account, order);
                 }
                 else {
-                    if (event.order.status === 'filled') {
+                    if (eventOrder.status === 'filled') {
                         this.completePartialFilled(account, order);
                     }
-                    this.ordersEventsSubjects[controllerId].next({ order, data: event.data });
+                    this.ordersEventsSubjects[controllerId].next(order);
                 }
                 break;
             default:
@@ -367,7 +367,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         order.status = 'unsatisfied';
         order.baseQuantity = partial.accumulated;
         delete this.partials[order.id];
-        this.ordersEventsSubjects[controllerId].next({ order, data: {} });
+        this.ordersEventsSubjects[controllerId].next(order);
     }
     isExecutedStatus(status) { return status === 'new' || status === 'expired'; }
     fixBase(base, symbol) {

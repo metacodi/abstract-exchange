@@ -1,6 +1,6 @@
 import { Subject, Subscription } from "rxjs";
 
-import { CoinType, KlineIntervalType, MarketKline, MarketPrice, MarketType, OrderEvent, SymbolType } from "./types";
+import { CoinType, KlineIntervalType, MarketKline, MarketPrice, MarketType, Order, SymbolType } from "./types";
 import { ExchangeApi } from "./exchange-api";
 import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate, WsBalancePositionUpdate } from "./exchange-websocket-types";
 
@@ -88,7 +88,7 @@ export interface ExchangeWebsocket {
   
   // accountConfigUpdate(): Subject<WsAccountConfigUpdate>;
   
-  orderUpdate(symbol?: SymbolType): Subject<OrderEvent>;
+  orderUpdate(symbol?: SymbolType): Subject<Order>;
   
   // marginCall(): Subject<WsMarginCall>;
 

@@ -218,21 +218,15 @@ export interface Order {
   price?: number;
   stopPrice?: number;      // preu per les ordres de tipus stop-limit.
   isOco?: boolean;
-  created?: string;
-  posted?: string;
-  executed?: string;
+  created?: string;       // timestamp: moment de creació per part de la nostra app.
+  posted?: string;        // timestamp: moment de creació a l'exchange (Binance, Kucoin, ...)
+  executed?: string;      // timestamp: moment en que s'ha filled o canceled.
   syncronized?: boolean;
   idOrderBuyed?: string;
   profit?: number;        // Futures only
+  commission?: number;
+  commissionAsset?: CoinType;
 }
-
-export interface OrderEvent {
-  // order: Omit<Required<Order>, 'side' |'type' | 'symbol' | 'stopMarket' | 'isOco' | 'created' | 'syncronized'>;
-  // order: Partial<Order>;
-  order: Order;
-  data: { [key: string]: any };
-}
-
 
 export interface PartialOrder {
   subscription?: Subscription,

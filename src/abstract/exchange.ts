@@ -3,7 +3,7 @@ import { BehaviorSubject, Subject, timer } from "rxjs";
 import { Limit, TaskExecutor } from "./task-executor";
 import { ExchangeAccount } from "./exchange-account";
 import { acceptedCoins, AccountEvent, AccountReadyStatus, Balance, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType, SymbolType } from "./types";
-import { Order, OrderBookPrice, OrderEvent, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
+import { Order, OrderBookPrice, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
 import { splitOrderId } from "./shared";
 import { ExchangeWebsocket } from "./exchange-websocket";
 import { ExchangeApi } from "./exchange-api";
@@ -34,7 +34,7 @@ export class Exchange extends TaskExecutor {
   marketKlineSubjects: { [SymbolType: string]: Subject<MarketKline> } = {};
   marketPriceSubjects: { [SymbolType: string]: Subject<MarketPrice> } = {};
   accountEventsSubjects: { [accountId: string]: Subject<AccountEvent> } = {};
-  ordersEventsSubjects: { [controllerId: string]: Subject<OrderEvent> } = {};
+  ordersEventsSubjects: { [controllerId: string]: Subject<Order> } = {};
 
   partialPeriod = 1000 * 10; // 10 s
   /** Colecciona els timers per controlar les ordres parcialment satisfetes. */
@@ -185,7 +185,7 @@ export class Exchange extends TaskExecutor {
     const ws = this.getMarketWebsocket(symbol);
     const subject = new Subject<MarketKline>();
     this.marketKlineSubjects[`${symbol}_${interval}`] = subject;
-    ws.kline(symbol, interval).subscribe(data => subject.next(data));
+    ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
     return subject;
   }
 
@@ -338,7 +338,7 @@ export class Exchange extends TaskExecutor {
       // Guardem l'ordre sol·licitada al mercat de l'exchange.
       account.markets[this.market].orders.push(order);
       // Notifiquem l'ordre obtinguda al controlador pq comprovi si pot iniciar l'activitat.
-      this.ordersEventsSubjects[controllerId].next({ order, data: {} });
+      this.ordersEventsSubjects[controllerId].next(order);
     });
   }
 
@@ -379,35 +379,35 @@ export class Exchange extends TaskExecutor {
   //  orders events
   // ---------------------------------------------------------------------------------------------------
 
-  getOrdersEventsSubject(account: ExchangeAccount, controllerId: string): Subject<OrderEvent> {
+  getOrdersEventsSubject(account: ExchangeAccount, controllerId: string): Subject<Order> {
     if (this.ordersEventsSubjects[controllerId]) {
       return this.ordersEventsSubjects[controllerId];
     } else {
-      const subject = new Subject<OrderEvent>();
+      const subject = new Subject<Order>();
       this.ordersEventsSubjects[controllerId] = subject;
       return subject;
     }
   }
 
-  protected onOrderUpdate(account: ExchangeAccount, event: OrderEvent) {
+  protected onOrderUpdate(account: ExchangeAccount, eventOrder: Order) {
     const { name, market } = this;
-    switch (event.order.status) {
+    switch (eventOrder.status) {
       case 'new': case 'filled': case 'partial': case 'canceled': case 'expired': case 'rejected':
-        const { accountId, strategyId } = splitOrderId(event.order.id);
+        const { accountId, strategyId } = splitOrderId(eventOrder.id);
         const controllerId = `${accountId}-${strategyId}`;
-        const order = account.markets[this.market].orders.find(o => o.id === event.order.id);
+        const order = account.markets[this.market].orders.find(o => o.id === eventOrder.id);
         // Ignorem les ordres que no estiguin registrades al market.
         if (!order) { return; }
         // Actualitzem l'ordre respectant la mateixa instància que pot estar referènciada des de PartialOrder.
-        Object.assign(order, event.order);
-        if (event.order.status === 'partial') {
+        Object.assign(order, eventOrder);
+        if (eventOrder.status === 'partial') {
           // Si es tracta d'una 'PARTIALLY_FILLED', comprovar si s'ha d'engegar un timer o, si ja existeix, seguir acumulant i reiniciant el timer.
           this.processPartialFilled(account, order);
     
         } else {
-          if (event.order.status === 'filled') { this.completePartialFilled(account, order); }
+          if (eventOrder.status === 'filled') { this.completePartialFilled(account, order); }
           // TODO: eliminar les ordres executades del account market.
-          this.ordersEventsSubjects[controllerId].next({ order, data: event.data });
+          this.ordersEventsSubjects[controllerId].next(order);
         }
         break;
       // case 'cancelling': case 'pending_cancel': // case 'trade':
@@ -452,7 +452,7 @@ export class Exchange extends TaskExecutor {
     // Eliminem la info de PartialOrder.
     delete this.partials[order.id];
     // Notifiquem el resultat.
-    this.ordersEventsSubjects[controllerId].next({ order, data: {} });
+    this.ordersEventsSubjects[controllerId].next(order);
   }
 
 
