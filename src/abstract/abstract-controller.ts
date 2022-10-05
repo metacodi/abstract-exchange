@@ -4,7 +4,7 @@ import { timestamp } from "@metacodi/node-utils";
 import { ExchangeAccount } from "./exchange-account";
 import { Exchange } from "./exchange";
 import { splitOrderId } from "./shared";
-import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderEvent, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy, SymbolType } from "./types";
+import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy, SymbolType } from "./types";
 
 
 export type ControllerStatus = 'on' | 'paused' | 'off';
@@ -462,36 +462,36 @@ export abstract class AbstractController {
     }
   }
 
-  protected processOrdersEvents(event: OrderEvent): boolean {
+  protected processOrdersEvents(eventOrder: Order): boolean {
     if (!event) { return false; }
-    const result = event.order;
+    const result = eventOrder;
     // console.log('Result', order);
     if (!this.ordersReady || !this.on) { console.log('processOrdersEvents', { ordersReady: this.ordersReady, status: this.status }); }
     // Si no estava en marxa, el posem en marxa ara.
     if (!this.ordersReady && !this.on) { this.resume(); return false; }
     // Actualitzem el balance de la instància afectada.
-    this.processBalanceOrderUpdate(event);
+    this.processBalanceOrderUpdate(eventOrder);
     // Actualitzem l'ordre.
-    const instance = this.getInstanceByOrderId(event.order.id);
-    const order = instance.orders.find(o => o.id === event.order.id);
-    if (order === undefined || event.order === undefined) { console.log('UNDEFINED!!!!!!!!', order, event.order); }
-    Object.assign(order, event.order);
+    const instance = this.getInstanceByOrderId(eventOrder.id);
+    const order = instance.orders.find(o => o.id === eventOrder.id);
+    if (order === undefined || eventOrder === undefined) { console.log('UNDEFINED!!!!!!!!', order, eventOrder); }
+    Object.assign(order, eventOrder);
     // Indiquem a la classe heredada que pot procedir.
     return true;
   }
 
-  protected processBalanceOrderUpdate(event: OrderEvent) {
-    const instance = this.getInstanceByOrderId(event.order.id);
-    const { id } = event.order;
+  protected processBalanceOrderUpdate(eventOrder: Order) {
+    const instance = this.getInstanceByOrderId(eventOrder.id);
+    const { id } = eventOrder;
     // Obtenim l'ordre original, pq el preu ha variat.
     const oldOrder = instance.orders.find(o => o.id === id);
-    this.updateBalances(event, oldOrder, instance.balances[this.baseAsset], instance.balances[this.quoteAsset]);
-    this.updateBalances(event, oldOrder, this.balances[this.baseAsset], this.balances[this.quoteAsset]);
+    this.updateBalances(eventOrder, oldOrder, instance.balances[this.baseAsset], instance.balances[this.quoteAsset]);
+    this.updateBalances(eventOrder, oldOrder, this.balances[this.baseAsset], this.balances[this.quoteAsset]);
   }
 
-  protected updateBalances(event: OrderEvent, oldOrder: Order, base: Balance, quote: Balance) {
-    const { id, side, status, type, baseQuantity, quoteQuantity, price, profit } = event.order;
-    const { commission, commissionAsset } = event.data;
+  protected updateBalances(eventOrder: Order, oldOrder: Order, base: Balance, quote: Balance) {
+    const { id, side, status, type, baseQuantity, quoteQuantity, price, profit } = eventOrder;
+    const { commission, commissionAsset } = eventOrder;
     const { quoteAsset, baseAsset, leverage } = this;
     switch (status) {
       case 'new':

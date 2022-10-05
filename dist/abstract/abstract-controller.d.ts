@@ -1,6 +1,6 @@
 import { ExchangeAccount } from "./exchange-account";
 import { Exchange } from "./exchange";
-import { AccountEvent, AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderEvent, OrderSide, OrderStatus, OrderType, SimulationData, Strategy, SymbolType } from "./types";
+import { AccountEvent, AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderType, SimulationData, Strategy, SymbolType } from "./types";
 export declare type ControllerStatus = 'on' | 'paused' | 'off';
 export declare abstract class AbstractController {
     account: ExchangeAccount;
@@ -91,9 +91,9 @@ export declare abstract class AbstractController {
     protected checkSymbol(symbols: SymbolType[]): void;
     protected updateMarketStatus(status: MarketSymbol): void;
     protected processAccountEvents(event: AccountEvent): void;
-    protected processOrdersEvents(event: OrderEvent): boolean;
-    protected processBalanceOrderUpdate(event: OrderEvent): void;
-    protected updateBalances(event: OrderEvent, oldOrder: Order, base: Balance, quote: Balance): void;
+    protected processOrdersEvents(eventOrder: Order): boolean;
+    protected processBalanceOrderUpdate(eventOrder: Order): void;
+    protected updateBalances(eventOrder: Order, oldOrder: Order, base: Balance, quote: Balance): void;
     latenteAndMargin(price: number): number;
     protected generateOrderId(instance: InstanceController): string;
     get availbleBalanceAsset(): Number;

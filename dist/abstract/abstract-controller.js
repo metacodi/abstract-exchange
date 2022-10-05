@@ -317,11 +317,11 @@ class AbstractController {
                 break;
         }
     }
-    processOrdersEvents(event) {
+    processOrdersEvents(eventOrder) {
         if (!event) {
             return false;
         }
-        const result = event.order;
+        const result = eventOrder;
         if (!this.ordersReady || !this.on) {
             console.log('processOrdersEvents', { ordersReady: this.ordersReady, status: this.status });
         }
@@ -329,25 +329,25 @@ class AbstractController {
             this.resume();
             return false;
         }
-        this.processBalanceOrderUpdate(event);
-        const instance = this.getInstanceByOrderId(event.order.id);
-        const order = instance.orders.find(o => o.id === event.order.id);
-        if (order === undefined || event.order === undefined) {
-            console.log('UNDEFINED!!!!!!!!', order, event.order);
+        this.processBalanceOrderUpdate(eventOrder);
+        const instance = this.getInstanceByOrderId(eventOrder.id);
+        const order = instance.orders.find(o => o.id === eventOrder.id);
+        if (order === undefined || eventOrder === undefined) {
+            console.log('UNDEFINED!!!!!!!!', order, eventOrder);
         }
-        Object.assign(order, event.order);
+        Object.assign(order, eventOrder);
         return true;
     }
-    processBalanceOrderUpdate(event) {
-        const instance = this.getInstanceByOrderId(event.order.id);
-        const { id } = event.order;
+    processBalanceOrderUpdate(eventOrder) {
+        const instance = this.getInstanceByOrderId(eventOrder.id);
+        const { id } = eventOrder;
         const oldOrder = instance.orders.find(o => o.id === id);
-        this.updateBalances(event, oldOrder, instance.balances[this.baseAsset], instance.balances[this.quoteAsset]);
-        this.updateBalances(event, oldOrder, this.balances[this.baseAsset], this.balances[this.quoteAsset]);
+        this.updateBalances(eventOrder, oldOrder, instance.balances[this.baseAsset], instance.balances[this.quoteAsset]);
+        this.updateBalances(eventOrder, oldOrder, this.balances[this.baseAsset], this.balances[this.quoteAsset]);
     }
-    updateBalances(event, oldOrder, base, quote) {
-        const { id, side, status, type, baseQuantity, quoteQuantity, price, profit } = event.order;
-        const { commission, commissionAsset } = event.data;
+    updateBalances(eventOrder, oldOrder, base, quote) {
+        const { id, side, status, type, baseQuantity, quoteQuantity, price, profit } = eventOrder;
+        const { commission, commissionAsset } = eventOrder;
         const { quoteAsset, baseAsset, leverage } = this;
         switch (status) {
             case 'new':
