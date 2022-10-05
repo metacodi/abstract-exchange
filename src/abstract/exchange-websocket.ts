@@ -6,14 +6,14 @@ import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate, WsB
 
 
 export interface ExchangeWebsocket {
+  /** Estat de la connexió. */
+  status: WsConnectionState;
   // /** Opcions de configuració. */
   // options: WebsocketOptions;
   // /** Referència a la instància del websocket subjacent. */
   // ws: WebSocket
   // /** Referència a la instància del client API. */
   // api: ExchangeApi;
-  /** Estat de la connexió. */
-  status: WsConnectionState;
   // /** Subscripció al interval que envia un ping al servidor per mantenir viva la connexió.  */
   // pingTimer?: Subscription;
   // /** Subscriptor al timer que controla la resposta del servidor. */
@@ -65,6 +65,17 @@ export interface ExchangeWebsocket {
   // // ---------------------------------------------------------------------------------------------------
 
   // ping(): void;
+
+
+  // ---------------------------------------------------------------------------------------------------
+  //  Market STREAM
+  // ---------------------------------------------------------------------------------------------------
+
+  priceTicker(symbol: SymbolType): Subject<MarketPrice>;
+  
+  klineTicker(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
+
+  // bookTicker(symbol: string): Subject<BookTicker>;
   
 
   // ---------------------------------------------------------------------------------------------------
@@ -80,17 +91,6 @@ export interface ExchangeWebsocket {
   orderUpdate(symbol?: SymbolType): Subject<OrderEvent>;
   
   // marginCall(): Subject<WsMarginCall>;
-
-
-  // ---------------------------------------------------------------------------------------------------
-  //  Market STREAM
-  // ---------------------------------------------------------------------------------------------------
-
-  priceTicker(symbol: SymbolType): Subject<MarketPrice>;
-  
-  klineTicker(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
-
-  // bookTicker(symbol: string): Subject<BookTicker>;
 
 
 }
