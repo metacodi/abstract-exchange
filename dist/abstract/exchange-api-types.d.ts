@@ -22,6 +22,7 @@ export interface ExchangeInfo {
 }
 export interface KlinesRequest {
     symbol: SymbolType;
+    interval: KlineIntervalType;
     start?: string;
     end?: string;
     limit?: number;
