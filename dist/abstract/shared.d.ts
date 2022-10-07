@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Subject } from 'rxjs';
 import { Order, OrderId, KlineIntervalType } from './types';
 export declare const splitOrderId: (id: string) => OrderId;
 export declare const normalizeId: (id: string) => string;
@@ -12,4 +13,5 @@ export declare const matchChannelKey: (arg1: {
 }, arg2: {
     [key: string]: any;
 }) => boolean;
+export declare const isSubjectUnobserved: (emitter: Subject<any>) => boolean;
 //# sourceMappingURL=shared.d.ts.map

@@ -1,4 +1,5 @@
 import moment, { unitOfTime } from 'moment';
+import { Subject } from 'rxjs';
 
 import { Order, OrderId, KlineIntervalType } from './types';
 
@@ -41,3 +42,6 @@ export const matchChannelKey = (arg1: { [key: string]: any }, arg2: { [key: stri
   // Han de tenir el mateix nombre de propietats i que tots els seus valors coincideixen.
   return Object.keys(arg1).length === Object.keys(arg2).length && Object.keys(arg1).every(key => arg1[key] === arg2[key]);
 }
+
+/** Comprova si un canal té subscriptors. */
+export const isSubjectUnobserved = (emitter: Subject<any>): boolean => !emitter || emitter.closed || !emitter.observers?.length;
