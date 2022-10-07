@@ -418,8 +418,9 @@ export abstract class AbstractController {
 
   protected checkSymbol(symbols: SymbolType[]): void {
     if (!symbols) { return; }
-    const { market, exchange } = this.strategy;
-    const symbol = symbols.find(symbol => symbol.baseAsset === this.symbol.baseAsset && symbol.quoteAsset === this.symbol.quoteAsset);
+    const { exchange } = this.strategy;
+    const { market, quoteAsset, baseAsset } = this;
+    const symbol = symbols.find(symbol => symbol.baseAsset === baseAsset && symbol.quoteAsset === quoteAsset);
     if (symbol) {
       console.log('BaseController.checkSymbol()', [symbol]);
     } else {
