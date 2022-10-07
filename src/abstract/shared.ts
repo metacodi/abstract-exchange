@@ -24,3 +24,20 @@ export const calculateCloseTime = (openTime: string | moment.MomentInput, interv
   const closeTime = moment(openTime).add(duration, unit).format('YYYY-MM-DD HH:mm:ss.SSS');
   return closeTime;
 }
+
+
+/** Construïm una clau inequívoca pel canal amb els valors dels arguments que el descriuen.
+ *
+ * ```typescript
+ * const args = { channel: 'tickers', instId: 'USDT' };
+ * // channelKey => 'tickers#USDT'
+ * const channelKey = buildChannelKey(args);
+ * ```
+ */
+export const buildChannelKey = (arg: { [key: string]: any }): string => Object.keys(arg).map(key => arg[key]).join('#');
+
+/** Com que els arguments poden venir en un ordre diferent de quan la channelKey es va crear, necessitem comparar un a un tots els valors de l'objecte. */
+export const matchChannelKey = (arg1: { [key: string]: any }, arg2: { [key: string]: any }): boolean => {
+  // Han de tenir el mateix nombre de propietats i que tots els seus valors coincideixen.
+  return Object.keys(arg1).length === Object.keys(arg2).length && Object.keys(arg1).every(key => arg1[key] === arg2[key]);
+}
