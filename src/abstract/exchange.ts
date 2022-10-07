@@ -2,7 +2,7 @@ import { BehaviorSubject, Subject, timer } from "rxjs";
 
 import { Limit, TaskExecutor } from "./task-executor";
 import { ExchangeAccount } from "./exchange-account";
-import { acceptedCoins, AccountEvent, AccountReadyStatus, Balance, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType, SymbolType } from "./types";
+import { AccountEvent, AccountReadyStatus, Balance, SymbolType, CoinType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from "./types";
 import { Order, OrderBookPrice, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
 import { splitOrderId } from "./shared";
 import { ExchangeWebsocket } from "./exchange-websocket";
@@ -31,8 +31,8 @@ export class Exchange extends TaskExecutor {
   ordersLimitsChanged = new BehaviorSubject<Limit>(undefined);
   marketSymbolStatusChanged = new BehaviorSubject<MarketSymbol>(undefined);
   
-  marketKlineSubjects: { [SymbolType: string]: Subject<MarketKline> } = {};
-  marketPriceSubjects: { [SymbolType: string]: Subject<MarketPrice> } = {};
+  marketKlineSubjects: { [symbolKey_Interval: string]: Subject<MarketKline> } = {};
+  marketPriceSubjects: { [symbolKey: string]: Subject<MarketPrice> } = {};
   accountEventsSubjects: { [accountId: string]: Subject<AccountEvent> } = {};
   ordersEventsSubjects: { [controllerId: string]: Subject<Order> } = {};
 
@@ -93,7 +93,7 @@ export class Exchange extends TaskExecutor {
     for (const marketSymbol of exchangeSymbols) {
       const symbol = marketSymbol.symbol;
       if (symbol) {
-        const found = this.symbols.find(s => s.symbol === symbol);
+        const found = this.findMarketSymbol(symbol);
         if (found) {
           const changed = found.ready !== marketSymbol.ready;
           found.ready = marketSymbol.ready;
@@ -152,8 +152,9 @@ export class Exchange extends TaskExecutor {
   }
 
   getMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice> {
-    if (this.marketPriceSubjects[symbol]) {
-      return this.marketPriceSubjects[symbol];
+    const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+    if (this.marketPriceSubjects[symbolKey]) {
+      return this.marketPriceSubjects[symbolKey];
     } else {
       return this.createMarketPriceSubject(symbol);
     }
@@ -162,7 +163,8 @@ export class Exchange extends TaskExecutor {
   protected createMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice> {
     const ws = this.getMarketWebsocket(symbol);
     const subject = new Subject<MarketPrice>();
-    this.marketPriceSubjects[symbol] = subject;
+    const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+    this.marketPriceSubjects[symbolKey] = subject;
     ws.priceTicker(symbol).subscribe(data => subject.next(data));
     return subject;
   }
@@ -174,8 +176,9 @@ export class Exchange extends TaskExecutor {
   }
 
   getMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline> {
-    if (this.marketKlineSubjects[`${symbol}_${interval}`]) {
-      return this.marketKlineSubjects[`${symbol}_${interval}`];
+    const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+    if (this.marketKlineSubjects[`${symbolKey}_${interval}`]) {
+      return this.marketKlineSubjects[`${symbolKey}_${interval}`];
     } else {
       return this.createMarketKlineSubject(symbol, interval);
     }
@@ -184,7 +187,8 @@ export class Exchange extends TaskExecutor {
   protected createMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline> {
     const ws = this.getMarketWebsocket(symbol);
     const subject = new Subject<MarketKline>();
-    this.marketKlineSubjects[`${symbol}_${interval}`] = subject;
+    const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+    this.marketKlineSubjects[`${symbolKey}_${interval}`] = subject;
     ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
     return subject;
   }
@@ -194,7 +198,7 @@ export class Exchange extends TaskExecutor {
   //  account
   // ---------------------------------------------------------------------------------------------------
 
-  protected getAccountWebsocket(account: ExchangeAccount, symbol?: SymbolType): ExchangeWebsocket {
+  protected getAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket {
     const accountId = `${account.idreg}`;
     const stored = this.accountsWs[accountId];
     if (stored) { return stored; }
@@ -232,7 +236,7 @@ export class Exchange extends TaskExecutor {
   }
 
   protected createAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent> {
-    const ws = this.getAccountWebsocket(account, symbol);
+    const ws = this.getAccountWebsocket(account);
     const subject = new Subject<AccountEvent>();
     const accountId = `${account.idreg}`;
     this.accountEventsSubjects[accountId] = subject;
@@ -263,13 +267,10 @@ export class Exchange extends TaskExecutor {
 
   protected processInitialBalances(account: ExchangeAccount, coins: Balance[]): void {
     coins.forEach(balance => {
-      // Comprovem que és una moneda acceptada.
-      const coin = acceptedCoins.find(c => c === balance.asset);
-      if (coin) {
-        const balances = account.markets[this.market].balances;
-        // NOTA: Podria haver-se establert un preu més recent des del websocket (el respectem).
-        if (!balances[coin]) { balances[coin] = balance; };
-      }
+      const coin = balance.asset;
+      const balances = account.markets[this.market].balances;
+      // NOTA: Podria haver-se establert un preu més recent des del websocket (el respectem).
+      if (!balances[coin]) { balances[coin] = balance; };
     });
   }
 
@@ -289,7 +290,8 @@ export class Exchange extends TaskExecutor {
     } else {
       // Actualitzem el preu promig de cada posició/symbol.
       update.positions?.map(position => {
-        accountMarket.averagePrices[position.symbol] = position.entryPrice;
+        const symbolKey = `${position.symbol.baseAsset}_${position.symbol.quoteAsset}`;
+        accountMarket.averagePrices[symbolKey] = position.entryPrice;
       });
       // Actualitzem els balanços de cada asset.
       update.balances?.map(balance => {
@@ -462,13 +464,17 @@ export class Exchange extends TaskExecutor {
 
   protected isExecutedStatus(status: ResultOrderStatus): boolean { return status === 'new' || status === 'expired'; }
 
+  findMarketSymbol(symbol: SymbolType): any {
+    return this.symbols.find(s => s.symbol.baseAsset === symbol.baseAsset && s.symbol.quoteAsset === symbol.quoteAsset);
+  }
+
   fixBase(base: number, symbol: SymbolType) {
-    const found = this.symbols.find(s => s.symbol === symbol);
+    const found = this.findMarketSymbol(symbol);
     return +base.toFixed(found.basePrecision);
   }
 
   fixQuote(quote: number, symbol: SymbolType) {
-    const found = this.symbols.find(s => s.symbol === symbol);
+    const found = this.findMarketSymbol(symbol);
     return +quote.toFixed(found.quotePrecision);
   }
 

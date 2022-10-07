@@ -36,12 +36,17 @@ export type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' 
 
 export type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
 
-export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'EUR';
-export type CoinBaseType = Extract<CoinType, 'BNB' | 'BTC' | 'ETC'>;
-export const acceptedCoins: CoinType[] = ['BNB', 'BTC', 'ETC', 'USDT', 'EUR'];
+export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'EUR' | 'USD';
+// export type CoinBaseType = Extract<CoinType, 'BNB' | 'BTC' | 'ETC'>;
+// export const acceptedCoins: CoinType[] = ['BNB', 'BTC', 'ETC', 'USDT', 'EUR'];
 
-export type SymbolType = `${CoinBaseType}_${'USDT'}`;
-export const acceptedSymbols: SymbolType[] = ['BNB_USDT', 'BTC_USDT', 'ETC_USDT'];
+// export type SymbolType = `${CoinBaseType}_${'USDT'}`;
+// export const acceptedSymbols: SymbolType[] = ['BNB_USDT', 'BTC_USDT', 'ETC_USDT'];
+
+export interface SymbolType {
+  baseAsset: CoinType;
+  quoteAsset: CoinType;
+}
 
 export interface Task {
   type: TaskType;
@@ -83,7 +88,7 @@ export interface OrderBookPrice {
 export type SimulatorMode = 'interval' | 'tickPrice';
 
 export interface MarketKline {
-  symbol?: SymbolType;
+  symbol?: SymbolType;  
   interval?: KlineIntervalType;
   open: number;
   close: number;
@@ -123,8 +128,6 @@ export interface Strategy {
   };
   market: MarketType;
   symbol: SymbolType;
-  baseAsset: CoinType;
-  quoteAsset: CoinType;
   autoStart: boolean;
   params: BaseStrategyParams;
   differential?: number;
@@ -147,7 +150,7 @@ export interface AccountMarket {
   orders: Order[];
   executor: OrdersExecutor;
   /** Futures: preu promig de totes les compres de base asset. */
-  averagePrices: { [SymbolType: string]: number };
+  averagePrices: { [ symbolKey: string]: number };
 }
 
 export type AccountEventType = 'accountReady' | 'accountUpdate';
@@ -212,7 +215,7 @@ export interface Order {
   side: OrderSide;
   type: OrderType;
   status: OrderStatus;
-  symbol: SymbolType;
+  symbol?: SymbolType;
   baseQuantity?: number;   // quantitat satifeta baseAsset
   quoteQuantity?: number;  // quantitat satifeta quoteAsset
   price?: number;

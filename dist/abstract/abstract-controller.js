@@ -27,15 +27,15 @@ class AbstractController {
     }
     subscribeToExchangeEvents() {
         console.log('BaseController.subscribeToExchangeEvents()');
-        const { account, strategy, exchange, controllerId, accountMarket } = this;
+        const { account, exchange, controllerId, accountMarket, symbol } = this;
         accountMarket.executor.ordersLimitsChanged.subscribe(limit => this.start());
         exchange.symbolsInitialized.subscribe(info => this.checkSymbol(info));
         exchange.marketSymbolStatusChanged.subscribe(status => this.updateMarketStatus(status));
-        exchange.getAccountEventsSubject(account, strategy.symbol).subscribe(data => this.processAccountEvents(data));
+        exchange.getAccountEventsSubject(account, symbol).subscribe(data => this.processAccountEvents(data));
         exchange.getOrdersEventsSubject(account, controllerId).subscribe(data => this.processOrdersEvents(data));
     }
     initSimulation() {
-        const { quoteAsset, baseAsset } = this.strategy;
+        const { quoteAsset, baseAsset } = this;
         const data = this.strategy.simulatorDataSource;
         if (!data) {
             throw ({ message: `No s'han inicialitzat les dades del simulador a l'estratègia ('simulatorDataSource').` });
@@ -65,15 +65,15 @@ class AbstractController {
     get readyToStart() { return this.marketReady && this.limitsReady && this.accountReady && this.instancesReady; }
     get market() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.market; }
     get symbol() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol; }
-    get quoteAsset() { return this.strategy.quoteAsset; }
-    get baseAsset() { return this.strategy.baseAsset; }
-    get leverage() { return this.strategy.params.leverage; }
+    get quoteAsset() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol.quoteAsset; }
+    get baseAsset() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol.baseAsset; }
+    get leverage() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.params.leverage; }
     get accountId() { var _a; return `${(_a = this.account) === null || _a === void 0 ? void 0 : _a.idreg}`; }
     get strategyId() { var _a; return `${(_a = this.strategy) === null || _a === void 0 ? void 0 : _a.idreg}`; }
     get controllerId() { return `${this.account.idreg}-${this.strategy.idreg}`; }
     get accountMarket() { return this.account.markets[this.market]; }
     get limitsReady() { return this.accountMarket.executor.limitsReady; }
-    get marketSymbol() { return this.exchange.symbols.find(s => s.symbol === this.symbol); }
+    get marketSymbol() { return this.exchange.symbols.find(s => s.symbol.baseAsset === this.symbol.baseAsset && s.symbol.quoteAsset === this.symbol.quoteAsset); }
     fixPrice(price) { return +price.toFixed(this.marketSymbol.pricePrecision || 3); }
     fixQuantity(quantity) { return +quantity.toFixed(this.marketSymbol.quantityPrecision || 2); }
     fixBase(base) { return +base.toFixed(this.marketSymbol.basePrecision); }
@@ -134,7 +134,7 @@ class AbstractController {
         this.status = 'paused';
     }
     resume() {
-        const { symbol, market, exchange, params } = this.strategy;
+        const { market, exchange, params } = this.strategy;
         if (!this.checkOrders()) {
             return false;
         }
@@ -213,6 +213,7 @@ class AbstractController {
         this.do({ type: 'cancelOrder', data: { account, controllerId, order } });
     }
     createOrder(instance, side, type, baseQuantity, options) {
+        const { symbol } = this;
         let { price, status, idOrderBuyed } = options;
         if (status === undefined) {
             status = 'post';
@@ -226,7 +227,7 @@ class AbstractController {
         const order = {
             id: this.generateOrderId(instance),
             exchangeId: undefined,
-            symbol: this.strategy.symbol,
+            symbol,
             side,
             type,
             status,
@@ -264,14 +265,14 @@ class AbstractController {
         if (!symbols) {
             return;
         }
-        const marketSymbol = symbols.find(symbol => symbol === this.strategy.symbol);
-        if (marketSymbol) {
-            console.log('BaseController.checkSymbol()', [marketSymbol]);
+        const { market, exchange } = this.strategy;
+        const symbol = symbols.find(symbol => symbol.baseAsset === this.symbol.baseAsset && symbol.quoteAsset === this.symbol.quoteAsset);
+        if (symbol) {
+            console.log('BaseController.checkSymbol()', [symbol]);
         }
         else {
-            const { symbol, market, exchange } = this.strategy;
             this.abort();
-            throw ({ message: `No se ha encontrado el símbolo '${symbol}' para el market '${market}' en el exchange '${exchange}'` });
+            throw ({ message: `No se ha encontrado el símbolo '${this.symbol}' para el market '${market}' en el exchange '${exchange}'` });
         }
     }
     updateMarketStatus(status) {
@@ -418,7 +419,8 @@ class AbstractController {
     latenteAndMargin(price) {
         return this.fixQuote(this.instances.reduce((total, instance) => {
             const base = instance.balances[this.baseAsset];
-            const averagePrice = this.accountMarket.averagePrices[this.symbol];
+            const symbolKey = `${this.symbol.baseAsset}_${this.symbol.quoteAsset}`;
+            const averagePrice = this.accountMarket.averagePrices[symbolKey];
             const latente = (price - averagePrice) * base.balance;
             const margin = -(price * base.balance / this.leverage);
             total += latente + margin;

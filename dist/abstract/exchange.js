@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Exchange = void 0;
 const rxjs_1 = require("rxjs");
 const task_executor_1 = require("./task-executor");
-const types_1 = require("./types");
 const shared_1 = require("./shared");
 class Exchange extends task_executor_1.TaskExecutor {
     constructor(market) {
@@ -68,7 +67,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         for (const marketSymbol of exchangeSymbols) {
             const symbol = marketSymbol.symbol;
             if (symbol) {
-                const found = this.symbols.find(s => s.symbol === symbol);
+                const found = this.findMarketSymbol(symbol);
                 if (found) {
                     const changed = found.ready !== marketSymbol.ready;
                     found.ready = marketSymbol.ready;
@@ -103,8 +102,9 @@ class Exchange extends task_executor_1.TaskExecutor {
         return this.marketWs;
     }
     getMarketPriceSubject(symbol) {
-        if (this.marketPriceSubjects[symbol]) {
-            return this.marketPriceSubjects[symbol];
+        const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+        if (this.marketPriceSubjects[symbolKey]) {
+            return this.marketPriceSubjects[symbolKey];
         }
         else {
             return this.createMarketPriceSubject(symbol);
@@ -113,7 +113,8 @@ class Exchange extends task_executor_1.TaskExecutor {
     createMarketPriceSubject(symbol) {
         const ws = this.getMarketWebsocket(symbol);
         const subject = new rxjs_1.Subject();
-        this.marketPriceSubjects[symbol] = subject;
+        const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+        this.marketPriceSubjects[symbolKey] = subject;
         ws.priceTicker(symbol).subscribe(data => subject.next(data));
         return subject;
     }
@@ -125,8 +126,9 @@ class Exchange extends task_executor_1.TaskExecutor {
         });
     }
     getMarketKlineSubject(symbol, interval) {
-        if (this.marketKlineSubjects[`${symbol}_${interval}`]) {
-            return this.marketKlineSubjects[`${symbol}_${interval}`];
+        const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+        if (this.marketKlineSubjects[`${symbolKey}_${interval}`]) {
+            return this.marketKlineSubjects[`${symbolKey}_${interval}`];
         }
         else {
             return this.createMarketKlineSubject(symbol, interval);
@@ -135,11 +137,12 @@ class Exchange extends task_executor_1.TaskExecutor {
     createMarketKlineSubject(symbol, interval) {
         const ws = this.getMarketWebsocket(symbol);
         const subject = new rxjs_1.Subject();
-        this.marketKlineSubjects[`${symbol}_${interval}`] = subject;
+        const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
+        this.marketKlineSubjects[`${symbolKey}_${interval}`] = subject;
         ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
         return subject;
     }
-    getAccountWebsocket(account, symbol) {
+    getAccountWebsocket(account) {
         const accountId = `${account.idreg}`;
         const stored = this.accountsWs[accountId];
         if (stored) {
@@ -166,7 +169,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         }
     }
     createAccountEventsSubject(account, symbol) {
-        const ws = this.getAccountWebsocket(account, symbol);
+        const ws = this.getAccountWebsocket(account);
         const subject = new rxjs_1.Subject();
         const accountId = `${account.idreg}`;
         this.accountEventsSubjects[accountId] = subject;
@@ -196,14 +199,12 @@ class Exchange extends task_executor_1.TaskExecutor {
     }
     processInitialBalances(account, coins) {
         coins.forEach(balance => {
-            const coin = types_1.acceptedCoins.find(c => c === balance.asset);
-            if (coin) {
-                const balances = account.markets[this.market].balances;
-                if (!balances[coin]) {
-                    balances[coin] = balance;
-                }
-                ;
+            const coin = balance.asset;
+            const balances = account.markets[this.market].balances;
+            if (!balances[coin]) {
+                balances[coin] = balance;
             }
+            ;
         });
     }
     onAccountUpdate(account, update) {
@@ -222,7 +223,8 @@ class Exchange extends task_executor_1.TaskExecutor {
         }
         else {
             (_b = update.positions) === null || _b === void 0 ? void 0 : _b.map(position => {
-                accountMarket.averagePrices[position.symbol] = position.entryPrice;
+                const symbolKey = `${position.symbol.baseAsset}_${position.symbol.quoteAsset}`;
+                accountMarket.averagePrices[symbolKey] = position.entryPrice;
             });
             (_c = update.balances) === null || _c === void 0 ? void 0 : _c.map(balance => {
                 accountMarket.balances[balance.asset].balance = balance.free;
@@ -370,12 +372,15 @@ class Exchange extends task_executor_1.TaskExecutor {
         this.ordersEventsSubjects[controllerId].next(order);
     }
     isExecutedStatus(status) { return status === 'new' || status === 'expired'; }
+    findMarketSymbol(symbol) {
+        return this.symbols.find(s => s.symbol.baseAsset === symbol.baseAsset && s.symbol.quoteAsset === symbol.quoteAsset);
+    }
     fixBase(base, symbol) {
-        const found = this.symbols.find(s => s.symbol === symbol);
+        const found = this.findMarketSymbol(symbol);
         return +base.toFixed(found.basePrecision);
     }
     fixQuote(quote, symbol) {
-        const found = this.symbols.find(s => s.symbol === symbol);
+        const found = this.findMarketSymbol(symbol);
         return +quote.toFixed(found.quotePrecision);
     }
 }

@@ -1,7 +1,7 @@
 import { BehaviorSubject, Subject } from "rxjs";
 import { Limit, TaskExecutor } from "./task-executor";
 import { ExchangeAccount } from "./exchange-account";
-import { AccountEvent, Balance, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType, SymbolType } from "./types";
+import { AccountEvent, Balance, SymbolType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from "./types";
 import { Order, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
 import { ExchangeWebsocket } from "./exchange-websocket";
 import { ExchangeApi } from "./exchange-api";
@@ -17,14 +17,14 @@ export declare class Exchange extends TaskExecutor {
     symbols: MarketSymbol[];
     limitRequest: Limit;
     limitOrders: Limit;
-    symbolsInitialized: BehaviorSubject<("BNB_USDT" | "BTC_USDT" | "ETC_USDT")[]>;
+    symbolsInitialized: BehaviorSubject<SymbolType[]>;
     ordersLimitsChanged: BehaviorSubject<Limit>;
     marketSymbolStatusChanged: BehaviorSubject<MarketSymbol>;
     marketKlineSubjects: {
-        [SymbolType: string]: Subject<MarketKline>;
+        [symbolKey_Interval: string]: Subject<MarketKline>;
     };
     marketPriceSubjects: {
-        [SymbolType: string]: Subject<MarketPrice>;
+        [symbolKey: string]: Subject<MarketPrice>;
     };
     accountEventsSubjects: {
         [accountId: string]: Subject<AccountEvent>;
@@ -47,7 +47,7 @@ export declare class Exchange extends TaskExecutor {
     getMarketPrice(symbol: SymbolType): Promise<MarketPrice>;
     getMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
     protected createMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
-    protected getAccountWebsocket(account: ExchangeAccount, symbol?: SymbolType): ExchangeWebsocket;
+    protected getAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket;
     getAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent>;
     protected createAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent>;
     retrieveAcountInfo(account: ExchangeAccount): Promise<boolean>;
@@ -67,6 +67,7 @@ export declare class Exchange extends TaskExecutor {
     protected completePartialFilled(account: ExchangeAccount, order: Order): void;
     protected notifyUnsatisfiedPartialOrder(account: ExchangeAccount, partial: PartialOrder): void;
     protected isExecutedStatus(status: ResultOrderStatus): boolean;
+    findMarketSymbol(symbol: SymbolType): any;
     fixBase(base: number, symbol: SymbolType): number;
     fixQuote(quote: number, symbol: SymbolType): number;
 }

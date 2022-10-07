@@ -76,7 +76,7 @@ export abstract class ExchangeAccount {
   }
   
   profitAndLoss(quoteAsset: CoinType, price: number): number { 
-    return this.controllers.filter(c => c.strategy.quoteAsset === quoteAsset).reduce((total, controller) => {
+    return this.controllers.filter(c => c.strategy.symbol.quoteAsset === quoteAsset).reduce((total, controller) => {
       total += controller.latenteAndMargin(price);
       return total;
     }, 0.0);

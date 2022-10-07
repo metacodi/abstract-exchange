@@ -4,7 +4,7 @@ import { timestamp } from "@metacodi/node-utils";
 import { ExchangeAccount } from "./exchange-account";
 import { Exchange } from "./exchange";
 import { splitOrderId } from "./shared";
-import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy, SymbolType } from "./types";
+import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, SymbolType, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy } from "./types";
 
 
 export type ControllerStatus = 'on' | 'paused' | 'off';
@@ -65,14 +65,14 @@ export abstract class AbstractController {
 
   protected subscribeToExchangeEvents(): void {
     console.log('BaseController.subscribeToExchangeEvents()');
-    const { account, strategy, exchange, controllerId, accountMarket } = this;
+    const { account, exchange, controllerId, accountMarket, symbol } = this;
     // Obtenim la info dels límits per account/market.
     accountMarket.executor.ordersLimitsChanged.subscribe(limit => this.start());
     // Obtenim la info de l'exchange per comprovar que existeix el símbol de l'estratègia i està operatiu.
     exchange.symbolsInitialized.subscribe(info => this.checkSymbol(info));
     exchange.marketSymbolStatusChanged.subscribe(status => this.updateMarketStatus(status));
     // Solicitem un canal de comunicació per la info que ens arribi del compte de l'usuari.
-    exchange.getAccountEventsSubject(account, strategy.symbol).subscribe(data => this.processAccountEvents(data));
+    exchange.getAccountEventsSubject(account, symbol).subscribe(data => this.processAccountEvents(data));
     // Solicitem un canal de comunicació exclusiu pel controlador per rebre la info d'execució de les ordres.
     exchange.getOrdersEventsSubject(account, controllerId).subscribe(data => this.processOrdersEvents(data));
   }
@@ -94,7 +94,7 @@ export abstract class AbstractController {
   // ---------------------------------------------------------------------------------------------------
 
   protected initSimulation() {
-    const { quoteAsset, baseAsset } = this.strategy;
+    const { quoteAsset, baseAsset } = this;
     const data = this.strategy.simulatorDataSource;
     if (!data) { throw ({ message: `No s'han inicialitzat les dades del simulador a l'estratègia ('simulatorDataSource').` }); }
     // Inicialitzem els balances.
@@ -140,11 +140,11 @@ export abstract class AbstractController {
 
   get symbol(): SymbolType { return this.strategy?.symbol; }
 
-  get quoteAsset(): CoinType { return this.strategy.quoteAsset; }
+  get quoteAsset(): CoinType { return this.strategy?.symbol.quoteAsset; }
 
-  get baseAsset(): CoinType { return this.strategy.baseAsset; }
+  get baseAsset(): CoinType { return this.strategy?.symbol.baseAsset; }
   
-  get leverage(): number { return this.strategy.params.leverage; }
+  get leverage(): number { return this.strategy?.params.leverage; }
 
 
   // ---------------------------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ export abstract class AbstractController {
   //  exchange
   // ---------------------------------------------------------------------------------------------------
 
-  get marketSymbol(): MarketSymbol { return this.exchange.symbols.find(s => s.symbol === this.symbol); }
+  get marketSymbol(): MarketSymbol { return this.exchange.symbols.find(s => s.symbol.baseAsset === this.symbol.baseAsset && s.symbol.quoteAsset === this.symbol.quoteAsset); }
 
   fixPrice(price: number) { return +price.toFixed(this.marketSymbol.pricePrecision || 3); }
 
@@ -262,7 +262,7 @@ export abstract class AbstractController {
   }
 
   resume(): boolean {
-    const { symbol, market, exchange, params } = this.strategy;
+    const { market, exchange, params } = this.strategy;
     // instancies <-> ordres
     if (!this.checkOrders()) { return false; }
     // Actualitzem l'estat del controlador.
@@ -362,6 +362,7 @@ export abstract class AbstractController {
   }
 
   protected createOrder(instance: InstanceController, side: OrderSide, type: OrderType, baseQuantity: number, options: { price?: number; stopPrice?: number; status?: OrderStatus, idOrderBuyed?: string }) {
+    const { symbol } = this;
     let { price, status, idOrderBuyed } = options;
     if (status === undefined) { status = 'post'; }
     if (price) { price = this.fixPrice(price); }
@@ -369,7 +370,7 @@ export abstract class AbstractController {
     const order: Order = {
       id: this.generateOrderId(instance),
       exchangeId: undefined,
-      symbol: this.strategy.symbol,
+      symbol,
       side,
       type,
       status,
@@ -417,13 +418,13 @@ export abstract class AbstractController {
 
   protected checkSymbol(symbols: SymbolType[]): void {
     if (!symbols) { return; }
-    const marketSymbol = symbols.find(symbol => symbol === this.strategy.symbol);
-    if (marketSymbol) {
-      console.log('BaseController.checkSymbol()', [marketSymbol]);
+    const { market, exchange } = this.strategy;
+    const symbol = symbols.find(symbol => symbol.baseAsset === this.symbol.baseAsset && symbol.quoteAsset === this.symbol.quoteAsset);
+    if (symbol) {
+      console.log('BaseController.checkSymbol()', [symbol]);
     } else {
-      const { symbol, market, exchange } = this.strategy;
       this.abort();
-      throw ({ message: `No se ha encontrado el símbolo '${symbol}' para el market '${market}' en el exchange '${exchange}'` });
+      throw ({ message: `No se ha encontrado el símbolo '${this.symbol}' para el market '${market}' en el exchange '${exchange}'` });
     }
   }
 
@@ -572,7 +573,8 @@ export abstract class AbstractController {
   latenteAndMargin(price: number): number {
     return this.fixQuote(this.instances.reduce((total, instance) => {
       const base = instance.balances[this.baseAsset];
-      const averagePrice = this.accountMarket.averagePrices[this.symbol];
+      const symbolKey = `${this.symbol.baseAsset}_${this.symbol.quoteAsset}`;
+      const averagePrice = this.accountMarket.averagePrices[symbolKey];
       const latente = (price - averagePrice) * base.balance;
       const margin = -(price * base.balance / this.leverage);
       total += latente + margin;

@@ -15,11 +15,11 @@ export declare type PositionSide = 'both' | 'long' | 'short';
 export declare type AvailableOrderTypes = 'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco';
 export declare type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco', AvailableOrderTypes>;
 export declare type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
-export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'EUR';
-export declare type CoinBaseType = Extract<CoinType, 'BNB' | 'BTC' | 'ETC'>;
-export declare const acceptedCoins: CoinType[];
-export declare type SymbolType = `${CoinBaseType}_${'USDT'}`;
-export declare const acceptedSymbols: SymbolType[];
+export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'EUR' | 'USD';
+export interface SymbolType {
+    baseAsset: CoinType;
+    quoteAsset: CoinType;
+}
 export interface Task {
     type: TaskType;
     data: {
@@ -94,8 +94,6 @@ export interface Strategy {
     };
     market: MarketType;
     symbol: SymbolType;
-    baseAsset: CoinType;
-    quoteAsset: CoinType;
     autoStart: boolean;
     params: BaseStrategyParams;
     differential?: number;
@@ -117,7 +115,7 @@ export interface AccountMarket {
     orders: Order[];
     executor: OrdersExecutor;
     averagePrices: {
-        [SymbolType: string]: number;
+        [symbolKey: string]: number;
     };
 }
 export declare type AccountEventType = 'accountReady' | 'accountUpdate';
@@ -167,7 +165,7 @@ export interface Order {
     side: OrderSide;
     type: OrderType;
     status: OrderStatus;
-    symbol: SymbolType;
+    symbol?: SymbolType;
     baseQuantity?: number;
     quoteQuantity?: number;
     price?: number;
