@@ -72,6 +72,8 @@ export interface MarketSymbol {
   // baseAssetPrecision?: number;
   makerCommission?: number;
   takerCommission?: number;
+  longLeverage?: number;
+  shortLeverage?: number;
   minLeverage?: number;
   maxLeverage?: number;
 }

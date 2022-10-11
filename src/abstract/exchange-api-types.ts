@@ -42,31 +42,20 @@ export interface OrderBookTickerRequest {
   limit?: number;
 }
 
-
-
-
-// export interface AssetInfo {
-//   asset: CoinType;
-//   available: number;
-//   locked: number;
-//   frozen?: number;
-// }
-
-
 export interface LeverageInfo {
   symbol: SymbolType;
-  leverage: number;
-  mode?: MarginMode;
+  longLeverage?: number;
+  shortLeverage?: number;
+  leverage?: number;
 }
 
 export interface SetLeverage {
   symbol: SymbolType;
-  coin?: CoinType;
-  leverage: number;
-  direction?: TradeDirection;
-  mode?: MarginMode;
+  coin: CoinType;
+  longLeverage: number;
+  shortLeverage: number;
+  mode: MarginMode;
 }
-
 
 export interface GetOrdersRequest {
   symbol: SymbolType;

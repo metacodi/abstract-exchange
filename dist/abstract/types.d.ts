@@ -46,6 +46,8 @@ export interface MarketSymbol {
     maxTradeAmount?: number;
     makerCommission?: number;
     takerCommission?: number;
+    longLeverage?: number;
+    shortLeverage?: number;
     minLeverage?: number;
     maxLeverage?: number;
 }

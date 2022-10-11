@@ -1,5 +1,5 @@
 import { Limit } from "./task-executor";
-import { CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, SymbolType, TradeDirection } from "./types";
+import { CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, SymbolType } from "./types";
 export interface ApiCredentials {
     apiKey: string;
     apiSecret: string;
@@ -35,15 +35,16 @@ export interface OrderBookTickerRequest {
 }
 export interface LeverageInfo {
     symbol: SymbolType;
-    leverage: number;
-    mode?: MarginMode;
+    longLeverage?: number;
+    shortLeverage?: number;
+    leverage?: number;
 }
 export interface SetLeverage {
     symbol: SymbolType;
-    coin?: CoinType;
-    leverage: number;
-    direction?: TradeDirection;
-    mode?: MarginMode;
+    coin: CoinType;
+    longLeverage: number;
+    shortLeverage: number;
+    mode: MarginMode;
 }
 export interface GetOrdersRequest {
     symbol: SymbolType;
