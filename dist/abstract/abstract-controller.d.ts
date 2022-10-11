@@ -13,7 +13,8 @@ export declare abstract class AbstractController {
     balances: {
         [key: string]: Balance;
     };
-    marketReady: boolean;
+    marketSymbol: MarketSymbol;
+    exchangeReady: boolean;
     accountReady: boolean;
     instancesReady: boolean;
     ordersRequested: boolean;
@@ -43,8 +44,6 @@ export declare abstract class AbstractController {
     get strategyId(): string;
     get controllerId(): string;
     get accountMarket(): AccountMarket;
-    get limitsReady(): boolean;
-    get marketSymbol(): MarketSymbol;
     fixPrice(price: number): number;
     fixQuantity(quantity: number): number;
     fixBase(base: number): number;
@@ -88,8 +87,7 @@ export declare abstract class AbstractController {
     }): Order;
     private adjustQuantity;
     protected cancelInstanceOrders(instance: InstanceController): void;
-    protected checkSymbol(symbols: SymbolType[]): void;
-    protected updateMarketStatus(status: MarketSymbol): void;
+    protected initializeExchangeInfo(): Promise<void>;
     protected processAccountEvents(event: AccountEvent): void;
     protected processOrdersEvents(eventOrder: Order): boolean;
     protected processBalanceOrderUpdate(eventOrder: Order): void;

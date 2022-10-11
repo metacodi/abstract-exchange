@@ -1,5 +1,5 @@
 import { Limit } from "./task-executor";
-import { CoinType, KlineIntervalType, MarginMode, MarketSymbol, MarketType, OrderSide, OrderType, PositionSide, SymbolType } from "./types";
+import { Balance, CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, PositionSide, SymbolType, TradeDirection } from "./types";
 
 
 export interface ApiCredentials {
@@ -22,7 +22,7 @@ export interface ApiRequestOptions {
 }
 
 export interface ExchangeInfo {
-  symbols: MarketSymbol[];
+  // symbols: MarketSymbol[];
   limits: Limit[];
 }
 
@@ -43,41 +43,27 @@ export interface OrderBookTickerRequest {
 }
 
 
-export interface AccountInfo {
-  makerCommission: number;
-  takerCommission: number;
-  buyerCommission: number;
-  sellerCommission: number;
-  canTrade: boolean;
-  canWithdraw: boolean;
-  canDeposit: boolean;
-  updateTime: number;
-  accountType: MarketType;
-  balances: AssetInfo[];
-  permissions: MarketType[];
-}
 
-export interface AssetInfo {
-  asset: CoinType;
-  free: number;
-  locked: number;
-}
 
-export interface Position {
-  symbol: SymbolType;
-  marginAsset?: CoinType; // (margin only)
-  positionAmount: number;
-  entryPrice: number;
-  accumulatedRealisedPreFee: number;
-  unrealisedPnl: number;
-  marginType: MarginMode;
-  isolatedWalletAmount: number;
-  positionSide: PositionSide;
-}
+// export interface AssetInfo {
+//   asset: CoinType;
+//   available: number;
+//   locked: number;
+//   frozen?: number;
+// }
+
 
 export interface LeverageInfo {
   symbol: SymbolType;
   leverage: number;
+  mode?: MarginMode;
+}
+
+export interface SetLeverage {
+  symbol: SymbolType;
+  coin?: CoinType;
+  leverage: number;
+  direction?: TradeDirection;
   mode?: MarginMode;
 }
 

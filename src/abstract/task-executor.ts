@@ -6,9 +6,10 @@ const timestamp = (inp?: moment.MomentInput) => moment(inp).format('YYYY-MM-DD H
 
 const logTime = (message?: any, ...optionalParams: any[]): void => console.log(`${timestamp()} -> ${message}`, ...optionalParams);
 
+export type LimitType = 'request' | 'trade';
 
 export interface Limit {
-  type: string;
+  type: LimitType;
   maxQuantity: number;
   period: number;
   unitOfTime?: moment.unitOfTime.DurationAs;

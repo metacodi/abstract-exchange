@@ -6,7 +6,7 @@ import { Order, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
 import { ExchangeWebsocket } from "./exchange-websocket";
 import { ExchangeApi } from "./exchange-api";
 import { WsAccountUpdate } from "./exchange-websocket-types";
-export declare class Exchange extends TaskExecutor {
+export declare abstract class Exchange extends TaskExecutor {
     market: MarketType;
     name: ExchangeType;
     api: ExchangeApi;
@@ -17,9 +17,9 @@ export declare class Exchange extends TaskExecutor {
     symbols: MarketSymbol[];
     limitRequest: Limit;
     limitOrders: Limit;
-    symbolsInitialized: BehaviorSubject<SymbolType[]>;
+    isReady: boolean;
+    exchangeInfoUpdated: Subject<void>;
     ordersLimitsChanged: BehaviorSubject<Limit>;
-    marketSymbolStatusChanged: BehaviorSubject<MarketSymbol>;
     marketKlineSubjects: {
         [symbolKey_Interval: string]: Subject<MarketKline>;
     };
@@ -37,9 +37,8 @@ export declare class Exchange extends TaskExecutor {
         [orderId: string]: PartialOrder;
     };
     constructor(market: MarketType);
-    getApiClient(account?: ExchangeAccount): ExchangeApi;
+    abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
     retrieveExchangeInfo(): Promise<void>;
-    protected processExchangeSymbols(exchangeSymbols: MarketSymbol[]): void;
     protected processExchangeLimits(rateLimits: Limit[]): void;
     protected getMarketWebsocket(symbol?: SymbolType): ExchangeWebsocket;
     getMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice>;
@@ -47,6 +46,7 @@ export declare class Exchange extends TaskExecutor {
     getMarketPrice(symbol: SymbolType): Promise<MarketPrice>;
     getMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
     protected createMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
+    getMarketSymbol(symbol: SymbolType): Promise<MarketSymbol>;
     protected getAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket;
     getAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent>;
     protected createAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent>;

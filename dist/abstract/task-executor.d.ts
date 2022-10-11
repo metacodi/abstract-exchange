@@ -1,7 +1,8 @@
 import moment from 'moment';
 import { Subscription } from 'rxjs';
+export declare type LimitType = 'request' | 'trade';
 export interface Limit {
-    type: string;
+    type: LimitType;
     maxQuantity: number;
     period: number;
     unitOfTime?: moment.unitOfTime.DurationAs;

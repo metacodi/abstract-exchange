@@ -8,9 +8,9 @@ import { Exchange } from "./exchange";
 
 export class OrdersExecutor extends TaskExecutor {
 
-  limitsReady = false;
+  // limitsReady = false;
 
-  ordersLimitsChanged = new BehaviorSubject<Limit>(undefined);
+  // ordersLimitsChanged = new BehaviorSubject<Limit>(undefined);
 
   constructor(
     public account: ExchangeAccount,
@@ -32,8 +32,8 @@ export class OrdersExecutor extends TaskExecutor {
     if (!ordersLimit) { return; }
     console.log('OrdersExecutor.updateOrdersLimit()', ordersLimit);
     this.updateLimit(ordersLimit);
-    this.limitsReady = true;
-    this.ordersLimitsChanged.next(ordersLimit);
+    // this.limitsReady = true;
+    // this.ordersLimitsChanged.next(ordersLimit);
   }
 
 

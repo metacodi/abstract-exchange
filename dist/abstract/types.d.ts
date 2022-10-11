@@ -41,6 +41,13 @@ export interface MarketSymbol {
     basePrecision?: number;
     quantityPrecision?: number;
     pricePrecision?: number;
+    sizeMultiplier?: number;
+    minTradeAmount?: number;
+    maxTradeAmount?: number;
+    makerCommission?: number;
+    takerCommission?: number;
+    minLeverage?: number;
+    maxLeverage?: number;
 }
 export interface MarketPrice {
     symbol?: SymbolType;
@@ -108,9 +115,38 @@ export interface UserAccount {
     folder: string;
     token?: string;
 }
+export interface AccountInfo {
+    canTrade: boolean;
+    canWithdraw: boolean;
+    canDeposit: boolean;
+    balances: Balance[];
+    positions?: Position[];
+}
+export interface Balance {
+    asset: CoinType;
+    balance: number;
+    available?: number;
+    locked?: number;
+    remainder?: number;
+    fee?: number;
+}
+export interface Position {
+    symbol: SymbolType;
+    marginAsset?: CoinType;
+    positionAmount: number;
+    entryPrice: number;
+    accumulatedRealisedPreFee: number;
+    unrealisedPnl: number;
+    marginType: MarginMode;
+    isolatedWalletAmount: number;
+    positionSide: PositionSide;
+}
 export interface AccountMarket {
     balances: {
         [CoinType: string]: Balance;
+    };
+    positions?: {
+        [CoinType: string]: Position;
     };
     orders: Order[];
     executor: OrdersExecutor;
@@ -135,14 +171,6 @@ export interface BalanceUpdateResult {
     market: MarketType;
     timestamp?: string;
     balance: Balance[];
-}
-export interface Balance {
-    asset: CoinType;
-    balance: number;
-    available?: number;
-    locked?: number;
-    remainder?: number;
-    fee?: number;
 }
 export interface FundingWallet {
     asset: string;

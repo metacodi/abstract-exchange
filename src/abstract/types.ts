@@ -65,7 +65,15 @@ export interface MarketSymbol {
   basePrecision?: number;
   quantityPrecision?: number;
   pricePrecision?: number;
+  /** La quantitat ha de ser d'aquest múltiple. */
+  sizeMultiplier?: number;
+  minTradeAmount?: number;
+  maxTradeAmount?: number;
   // baseAssetPrecision?: number;
+  makerCommission?: number;
+  takerCommission?: number;
+  minLeverage?: number;
+  maxLeverage?: number;
 }
 
 export interface MarketPrice {
@@ -88,7 +96,7 @@ export interface OrderBookPrice {
 export type SimulatorMode = 'interval' | 'tickPrice';
 
 export interface MarketKline {
-  symbol?: SymbolType;  
+  symbol?: SymbolType;
   interval?: KlineIntervalType;
   open: number;
   close: number;
@@ -145,8 +153,50 @@ export interface UserAccount {
   token?: string;
 }
 
+export interface AccountInfo {
+  // makerCommission: number;
+  // takerCommission: number;
+  // buyerCommission: number;
+  // sellerCommission: number;
+  canTrade: boolean;
+  canWithdraw: boolean;
+  canDeposit: boolean;
+  // updateTime: number;
+  // accountType: MarketType;
+  balances: Balance[];
+  positions?: Position[];
+  // permissions: MarketType[];
+}
+
+export interface Balance {
+  asset: CoinType;
+  /** Quantitat total = available + locked. */
+  balance: number;
+  /** Quantitat disponible. */
+  available?: number;
+  /** Destinat a les ordres de límit. */
+  locked?: number;
+  /** Quantitat despreciat durant l'arrodoniment basat en la precissió. */
+  remainder?: number;
+  /** Comissions acumulades durant l'operativa del controlador. */
+  fee?: number;
+}
+
+export interface Position {
+  symbol: SymbolType;
+  marginAsset?: CoinType; // (margin only)
+  positionAmount: number;
+  entryPrice: number;
+  accumulatedRealisedPreFee: number;
+  unrealisedPnl: number;
+  marginType: MarginMode;
+  isolatedWalletAmount: number;
+  positionSide: PositionSide;
+}
+
 export interface AccountMarket {
   balances: { [CoinType: string]: Balance; };
+  positions?: { [CoinType: string]: Position; };
   orders: Order[];
   executor: OrdersExecutor;
   /** Futures: preu promig de totes les compres de base asset. */
@@ -177,19 +227,6 @@ export interface BalanceUpdateResult {
   balance: Balance[];
 }
 
-export interface Balance {
-  asset: CoinType;
-  /** Quantitat total = available + locked. */
-  balance: number;
-  /** Spot: Quantitat disponible. */
-  available?: number;
-  /** Spot only: Destinat a les ordres (no disponible). */
-  locked?: number;
-  /** Quantitat despreciat durant l'arrodoniment basat en la precissió. */
-  remainder?: number;
-  /** Comissions acumulades. */
-  fee?: number;
-}
 
 export interface FundingWallet {
   asset: string;

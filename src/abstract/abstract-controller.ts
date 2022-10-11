@@ -17,8 +17,10 @@ export abstract class AbstractController {
   instances: InstanceController[] = [];
   /** Balanços globals del controlador */
   balances: { [key: string]: Balance; };
+  /** Informació del símbol de l'exchange actual. */
+  marketSymbol: MarketSymbol;
   /** Indica si el mercat està disponible. */
-  marketReady = false;
+  exchangeReady = false;
   /** Indica si la info del compte (permisos compte, permisos api, balances, ordres) està disponible. */
   accountReady = false;
   /** Indica que s'han carregat les dades de les instàncies. */
@@ -50,6 +52,8 @@ export abstract class AbstractController {
     this.loadInstances();
     // Ens subscribim a les notificacions de l'exchange.
     this.subscribeToExchangeEvents();
+    // Obtenim la info de l'exchange.
+    this.initializeExchangeInfo();
     // Inicialitzem la simulació.
     if (this.simulated) { this.initSimulation(); }
     // // Instanciem un logger.
@@ -66,11 +70,12 @@ export abstract class AbstractController {
   protected subscribeToExchangeEvents(): void {
     console.log('BaseController.subscribeToExchangeEvents()');
     const { account, exchange, controllerId, accountMarket, symbol } = this;
-    // Obtenim la info dels límits per account/market.
-    accountMarket.executor.ordersLimitsChanged.subscribe(limit => this.start());
-    // Obtenim la info de l'exchange per comprovar que existeix el símbol de l'estratègia i està operatiu.
-    exchange.symbolsInitialized.subscribe(info => this.checkSymbol(info));
-    exchange.marketSymbolStatusChanged.subscribe(status => this.updateMarketStatus(status));
+    // // Obtenim la info dels límits per account/market.
+    // accountMarket.executor.ordersLimitsChanged.subscribe(limit => this.start());
+    // // Obtenim la info de l'exchange per comprovar que existeix el símbol de l'estratègia i està operatiu.
+    // exchange.symbolsInitialized.subscribe(info => this.checkSymbol(info));
+    // exchange.marketSymbolStatusChanged.subscribe(status => this.updateMarketStatus(status));
+    exchange.exchangeInfoUpdated.subscribe(() => this.initializeExchangeInfo());
     // Solicitem un canal de comunicació per la info que ens arribi del compte de l'usuari.
     exchange.getAccountEventsSubject(account, symbol).subscribe(data => this.processAccountEvents(data));
     // Solicitem un canal de comunicació exclusiu pel controlador per rebre la info d'execució de les ordres.
@@ -129,7 +134,7 @@ export abstract class AbstractController {
 
   get paused(): boolean { return this.status === 'paused'; }
 
-  get readyToStart(): boolean { return this.marketReady && this.limitsReady && this.accountReady && this.instancesReady; }
+  get readyToStart(): boolean { return this.exchangeReady && this.accountReady && this.instancesReady; }
 
 
   // ---------------------------------------------------------------------------------------------------
@@ -164,14 +169,14 @@ export abstract class AbstractController {
 
   get accountMarket(): AccountMarket { return this.account.markets[this.market]; }
 
-  get limitsReady(): boolean { return this.accountMarket.executor.limitsReady; }
+  // get limitsReady(): boolean { return this.accountMarket.executor.limitsReady; }
 
 
   // ---------------------------------------------------------------------------------------------------
   //  exchange
   // ---------------------------------------------------------------------------------------------------
 
-  get marketSymbol(): MarketSymbol { return this.exchange.symbols.find(s => s.symbol.baseAsset === this.symbol.baseAsset && s.symbol.quoteAsset === this.symbol.quoteAsset); }
+  // get marketSymbol(): MarketSymbol { return this.exchange.getMarketSymbol(symbol); }
 
   fixPrice(price: number) { return +price.toFixed(this.marketSymbol.pricePrecision || 3); }
 
@@ -416,26 +421,13 @@ export abstract class AbstractController {
   //  Exchange callbacks
   // ---------------------------------------------------------------------------------------------------
 
-  protected checkSymbol(symbols: SymbolType[]): void {
-    if (!symbols) { return; }
-    const { exchange } = this.strategy;
-    const { market, quoteAsset, baseAsset } = this;
-    const symbol = symbols.find(symbol => symbol.baseAsset === baseAsset && symbol.quoteAsset === quoteAsset);
-    if (symbol) {
-      console.log('BaseController.checkSymbol()', [symbol]);
-    } else {
-      this.abort();
-      throw ({ message: `No se ha encontrado el símbolo '${this.symbol}' para el market '${market}' en el exchange '${exchange}'` });
-    }
-  }
-
-  protected updateMarketStatus(status: MarketSymbol): void {
-    if (!status) { return; }
-    const { symbol, ready } = status;
-    if (symbol !== this.symbol) { return; }
-    if (this.marketReady !== ready) {
-      console.log('BaseController.updateMarketStatus()', status);
-      this.marketReady = ready;
+  protected async initializeExchangeInfo(): Promise<void> {
+    const { symbol } = this;
+    if (!this.exchange.isReady) { return; }
+    this.marketSymbol = await this.exchange.getMarketSymbol(symbol);
+    const ready = this.marketSymbol.ready;
+    if (this.exchangeReady !== ready) {
+      this.exchangeReady = ready;
       if (this.off) {
         this.start();
       } else {
@@ -465,7 +457,7 @@ export abstract class AbstractController {
   }
 
   protected processOrdersEvents(eventOrder: Order): boolean {
-    if (!event) { return false; }
+    if (!eventOrder) { return false; }
     const result = eventOrder;
     // console.log('Result', order);
     if (!this.ordersReady || !this.on) { console.log('processOrdersEvents', { ordersReady: this.ordersReady, status: this.status }); }

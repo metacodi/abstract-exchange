@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrdersExecutor = void 0;
-const rxjs_1 = require("rxjs");
 const task_executor_1 = require("./task-executor");
 class OrdersExecutor extends task_executor_1.TaskExecutor {
     constructor(account, strategy, exchange, options) {
@@ -10,8 +9,6 @@ class OrdersExecutor extends task_executor_1.TaskExecutor {
         this.strategy = strategy;
         this.exchange = exchange;
         this.options = options;
-        this.limitsReady = false;
-        this.ordersLimitsChanged = new rxjs_1.BehaviorSubject(undefined);
         exchange.ordersLimitsChanged.subscribe(limit => this.updateOrdersLimit(limit));
     }
     updateOrdersLimit(ordersLimit) {
@@ -20,8 +17,6 @@ class OrdersExecutor extends task_executor_1.TaskExecutor {
         }
         console.log('OrdersExecutor.updateOrdersLimit()', ordersLimit);
         this.updateLimit(ordersLimit);
-        this.limitsReady = true;
-        this.ordersLimitsChanged.next(ordersLimit);
     }
     get accountId() { var _a; return `${(_a = this.account) === null || _a === void 0 ? void 0 : _a.idreg}`; }
     get strategyId() { var _a; return `${(_a = this.strategy) === null || _a === void 0 ? void 0 : _a.idreg}`; }

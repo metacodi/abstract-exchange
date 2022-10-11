@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractController = void 0;
 const node_utils_1 = require("@metacodi/node-utils");
@@ -9,7 +18,7 @@ class AbstractController {
         this.strategy = strategy;
         this.exchange = exchange;
         this.instances = [];
-        this.marketReady = false;
+        this.exchangeReady = false;
         this.accountReady = false;
         this.instancesReady = false;
         this.ordersRequested = false;
@@ -21,6 +30,7 @@ class AbstractController {
         this.balances = this.createBalances();
         this.loadInstances();
         this.subscribeToExchangeEvents();
+        this.initializeExchangeInfo();
         if (this.simulated) {
             this.initSimulation();
         }
@@ -28,9 +38,7 @@ class AbstractController {
     subscribeToExchangeEvents() {
         console.log('BaseController.subscribeToExchangeEvents()');
         const { account, exchange, controllerId, accountMarket, symbol } = this;
-        accountMarket.executor.ordersLimitsChanged.subscribe(limit => this.start());
-        exchange.symbolsInitialized.subscribe(info => this.checkSymbol(info));
-        exchange.marketSymbolStatusChanged.subscribe(status => this.updateMarketStatus(status));
+        exchange.exchangeInfoUpdated.subscribe(() => this.initializeExchangeInfo());
         exchange.getAccountEventsSubject(account, symbol).subscribe(data => this.processAccountEvents(data));
         exchange.getOrdersEventsSubject(account, controllerId).subscribe(data => this.processOrdersEvents(data));
     }
@@ -62,7 +70,7 @@ class AbstractController {
     get on() { return this.status === 'on'; }
     get off() { return this.status === 'off'; }
     get paused() { return this.status === 'paused'; }
-    get readyToStart() { return this.marketReady && this.limitsReady && this.accountReady && this.instancesReady; }
+    get readyToStart() { return this.exchangeReady && this.accountReady && this.instancesReady; }
     get market() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.market; }
     get symbol() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol; }
     get quoteAsset() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol.quoteAsset; }
@@ -72,8 +80,6 @@ class AbstractController {
     get strategyId() { var _a; return `${(_a = this.strategy) === null || _a === void 0 ? void 0 : _a.idreg}`; }
     get controllerId() { return `${this.account.idreg}-${this.strategy.idreg}`; }
     get accountMarket() { return this.account.markets[this.market]; }
-    get limitsReady() { return this.accountMarket.executor.limitsReady; }
-    get marketSymbol() { return this.exchange.symbols.find(s => s.symbol.baseAsset === this.symbol.baseAsset && s.symbol.quoteAsset === this.symbol.quoteAsset); }
     fixPrice(price) { return +price.toFixed(this.marketSymbol.pricePrecision || 3); }
     fixQuantity(quantity) { return +quantity.toFixed(this.marketSymbol.quantityPrecision || 2); }
     fixBase(base) { return +base.toFixed(this.marketSymbol.basePrecision); }
@@ -261,43 +267,29 @@ class AbstractController {
             this.cancelOrder(instance, order);
         });
     }
-    checkSymbol(symbols) {
-        if (!symbols) {
-            return;
-        }
-        const { market, exchange } = this.strategy;
-        const symbol = symbols.find(symbol => symbol.baseAsset === this.symbol.baseAsset && symbol.quoteAsset === this.symbol.quoteAsset);
-        if (symbol) {
-            console.log('BaseController.checkSymbol()', [symbol]);
-        }
-        else {
-            this.abort();
-            throw ({ message: `No se ha encontrado el símbolo '${this.symbol}' para el market '${market}' en el exchange '${exchange}'` });
-        }
-    }
-    updateMarketStatus(status) {
-        if (!status) {
-            return;
-        }
-        const { symbol, ready } = status;
-        if (symbol !== this.symbol) {
-            return;
-        }
-        if (this.marketReady !== ready) {
-            console.log('BaseController.updateMarketStatus()', status);
-            this.marketReady = ready;
-            if (this.off) {
-                this.start();
+    initializeExchangeInfo() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { symbol } = this;
+            if (!this.exchange.isReady) {
+                return;
             }
-            else {
-                if (this.on && !ready) {
-                    this.pause();
+            this.marketSymbol = yield this.exchange.getMarketSymbol(symbol);
+            const ready = this.marketSymbol.ready;
+            if (this.exchangeReady !== ready) {
+                this.exchangeReady = ready;
+                if (this.off) {
+                    this.start();
                 }
-                else if (this.paused && ready) {
-                    this.resume();
+                else {
+                    if (this.on && !ready) {
+                        this.pause();
+                    }
+                    else if (this.paused && ready) {
+                        this.resume();
+                    }
                 }
             }
-        }
+        });
     }
     processAccountEvents(event) {
         if (!event) {
@@ -319,7 +311,7 @@ class AbstractController {
         }
     }
     processOrdersEvents(eventOrder) {
-        if (!event) {
+        if (!eventOrder) {
             return false;
         }
         const result = eventOrder;

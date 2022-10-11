@@ -8,84 +8,62 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Exchange = void 0;
 const rxjs_1 = require("rxjs");
 const task_executor_1 = require("./task-executor");
 const shared_1 = require("./shared");
+const moment_1 = __importDefault(require("moment"));
 class Exchange extends task_executor_1.TaskExecutor {
     constructor(market) {
         super({ run: 'async', maxQuantity: 5, period: 1 });
         this.market = market;
         this.accountsWs = {};
         this.symbols = [];
-        this.symbolsInitialized = new rxjs_1.BehaviorSubject(undefined);
+        this.isReady = false;
+        this.exchangeInfoUpdated = new rxjs_1.Subject();
         this.ordersLimitsChanged = new rxjs_1.BehaviorSubject(undefined);
-        this.marketSymbolStatusChanged = new rxjs_1.BehaviorSubject(undefined);
         this.marketKlineSubjects = {};
         this.marketPriceSubjects = {};
         this.accountEventsSubjects = {};
         this.ordersEventsSubjects = {};
         this.partialPeriod = 1000 * 10;
         this.partials = {};
-        setTimeout(() => this.retrieveExchangeInfo(), 100);
-    }
-    getApiClient(account) {
-        if (!this.api) {
-            switch (this.name) {
-                case 'binance':
-                    break;
-                case 'kucoin':
-                    break;
-                case 'okx':
-                    break;
-            }
-        }
-        if (!!account) {
-            this.api.setCredentials(account.exchanges[this.name]);
-        }
-        return this.api;
+        this.retrieveExchangeInfo();
     }
     retrieveExchangeInfo() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(this.constructor.name + '.retrieveExchangeInfo()');
             const api = this.getApiClient();
             api.getExchangeInfo().then(response => {
-                if (response === null || response === void 0 ? void 0 : response.symbols) {
-                    this.processExchangeSymbols(response.symbols);
-                }
-                if (response === null || response === void 0 ? void 0 : response.limits) {
-                    this.processExchangeLimits(response.limits);
-                }
+                this.processExchangeLimits(response.limits);
+                this.isReady = true;
+                this.exchangeInfoUpdated.next();
             }).catch(error => {
                 console.error('getExchangeInfo error: ', error);
             });
         });
     }
-    processExchangeSymbols(exchangeSymbols) {
-        const firstTime = !this.symbols.length;
-        for (const marketSymbol of exchangeSymbols) {
-            const symbol = marketSymbol.symbol;
-            if (symbol) {
-                const found = this.findMarketSymbol(symbol);
-                if (found) {
-                    const changed = found.ready !== marketSymbol.ready;
-                    found.ready = marketSymbol.ready;
-                    if (changed) {
-                        this.marketSymbolStatusChanged.next(found);
-                    }
-                }
-                else {
-                    this.symbols.push(marketSymbol);
-                    this.marketSymbolStatusChanged.next(marketSymbol);
-                }
-            }
-        }
-        if (firstTime) {
-            this.symbolsInitialized.next(this.symbols.map(s => s.symbol));
-        }
-    }
     processExchangeLimits(rateLimits) {
+        const findLimit = (rateLimitType, limits) => {
+            return limits
+                .filter(l => l.type === rateLimitType && moment_1.default.duration(1, l.unitOfTime).asSeconds() <= 60)
+                .reduce((prev, cur) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev);
+        };
+        const limitChanged = (limitA, limitB) => !limitA || !limitB || limitA.maxQuantity !== limitB.maxQuantity || limitA.period !== limitB.period;
+        const requests = findLimit('request', rateLimits);
+        const orders = findLimit('trade', rateLimits);
+        if (requests && limitChanged(this.limitRequest, requests)) {
+            this.limitRequest = requests;
+            this.updateLimit(requests);
+        }
+        if (orders && limitChanged(this.limitOrders, orders)) {
+            this.limitOrders = orders;
+            this.ordersLimitsChanged.next(orders);
+        }
     }
     getMarketWebsocket(symbol) {
         if (this.marketWs) {
@@ -141,6 +119,10 @@ class Exchange extends task_executor_1.TaskExecutor {
         this.marketKlineSubjects[`${symbolKey}_${interval}`] = subject;
         ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
         return subject;
+    }
+    getMarketSymbol(symbol) {
+        const api = this.getApiClient();
+        return api.getMarketSymbol(symbol);
     }
     getAccountWebsocket(account) {
         const accountId = `${account.idreg}`;

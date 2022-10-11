@@ -1,6 +1,6 @@
 import { BehaviorSubject, Subject, timer } from "rxjs";
 
-import { Limit, TaskExecutor } from "./task-executor";
+import { Limit, LimitType, TaskExecutor } from "./task-executor";
 import { ExchangeAccount } from "./exchange-account";
 import { AccountEvent, AccountReadyStatus, Balance, SymbolType, CoinType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from "./types";
 import { Order, OrderBookPrice, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
@@ -9,9 +9,10 @@ import { ExchangeWebsocket } from "./exchange-websocket";
 import { ExchangeApi } from "./exchange-api";
 import { WsAccountUpdate } from "./exchange-websocket-types";
 import { ExchangeInfo, PostOrderRequest } from "./exchange-api-types";
+import moment from "moment";
 
 
-export class Exchange extends TaskExecutor {
+export abstract class Exchange extends TaskExecutor {
   /** Nombre del exchange */
   name: ExchangeType;
   /** Referència a la instància de l'API. */
@@ -27,9 +28,12 @@ export class Exchange extends TaskExecutor {
   /** Límite de órdenes del exchange. */
   limitOrders: Limit;
 
-  symbolsInitialized = new BehaviorSubject<SymbolType[]>(undefined);
+  /** Indica quan s'han carregat les dades de l'exchange per primera vegada. */
+  isReady = false;
+  /** Notifica una actualització de les dades de l'exchange pq els controladors facin les seves actualitzacions. */
+  exchangeInfoUpdated = new Subject<void>();
+  /** Notifiquem el nou límit d'ordres que correspon actualitzar a cada controlador. */
   ordersLimitsChanged = new BehaviorSubject<Limit>(undefined);
-  marketSymbolStatusChanged = new BehaviorSubject<MarketSymbol>(undefined);
   
   marketKlineSubjects: { [symbolKey_Interval: string]: Subject<MarketKline> } = {};
   marketPriceSubjects: { [symbolKey: string]: Subject<MarketPrice> } = {};
@@ -46,7 +50,8 @@ export class Exchange extends TaskExecutor {
     super({ run: 'async', maxQuantity: 5, period: 1 }); // spot request limit ratio 20/s
 
     // Donem temps pq el controlador es pugui instanciar i establir les subscripcions amb l'exchange.
-    setTimeout(() => this.retrieveExchangeInfo(), 100);
+    // setTimeout(() => this.retrieveExchangeInfo(), 100);
+    this.retrieveExchangeInfo();
   }
 
 
@@ -54,23 +59,7 @@ export class Exchange extends TaskExecutor {
   //  Api
   // ---------------------------------------------------------------------------------------------------
 
-  getApiClient(account?: ExchangeAccount): ExchangeApi {
-    if (!this.api) {
-      switch (this.name) {
-        case 'binance':
-          // this.api = new BinanceApi({ market: this.market });
-          break;
-        case 'kucoin':
-          // this.api = new KucoinApi({ market: this.market });
-          break;
-        case 'okx':
-          // this.api = new OkxApi({ market: this.market });
-          break;
-      }  
-    }
-    if (!!account) { this.api.setCredentials(account.exchanges[this.name]); }
-    return this.api;
-  }
+  abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
 
 
   // ---------------------------------------------------------------------------------------------------
@@ -81,53 +70,36 @@ export class Exchange extends TaskExecutor {
     console.log(this.constructor.name + '.retrieveExchangeInfo()');
     const api = this.getApiClient();
     api.getExchangeInfo().then(response => {
-      if (response?.symbols) { this.processExchangeSymbols(response.symbols); }
-      if (response?.limits) { this.processExchangeLimits(response.limits); }
+      this.processExchangeLimits(response.limits);
+      this.isReady = true;
+      this.exchangeInfoUpdated.next();
     }).catch(error => {
       console.error('getExchangeInfo error: ', error);
     });
   }
 
-  protected processExchangeSymbols(exchangeSymbols: MarketSymbol[]): void {
-    const firstTime = !this.symbols.length;
-    for (const marketSymbol of exchangeSymbols) {
-      const symbol = marketSymbol.symbol;
-      if (symbol) {
-        const found = this.findMarketSymbol(symbol);
-        if (found) {
-          const changed = found.ready !== marketSymbol.ready;
-          found.ready = marketSymbol.ready;
-          if (changed) { this.marketSymbolStatusChanged.next(found); }
-        } else {
-          this.symbols.push(marketSymbol);
-          this.marketSymbolStatusChanged.next(marketSymbol);
-        }
-      }
-    }
-    if (firstTime) { this.symbolsInitialized.next(this.symbols.map(s => s.symbol)); }
-  }
-
   protected processExchangeLimits(rateLimits: Limit[]): void {
-    // // Cerquem els límits amb la proporció més baixa.
-    // const findLimit = (rateLimitType: string, limits: BinanceRateLimiter[]): Limit => {
-    //   return limits.map(l => this.parseBinanceRateLimit(l))
-    //     .filter(l => l.type === rateLimitType && moment.duration(1, l.unitOfTime).asSeconds() <= 60)
-    //     .reduce((prev: Limit, cur: Limit) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev)
-    // };
-    // const requests = findLimit('REQUEST_WEIGHT', rateLimits);
-    // const orders = findLimit('ORDERS', rateLimits);
-    // // Comprovem si han canviat.
-    // const limitChanged = (limitA: Limit, limitB: Limit): boolean => !limitA || !limitB || limitA.maxQuantity !== limitB.maxQuantity || limitA.period !== limitB.period;
-    // if (requests && limitChanged(this.limitRequest, requests)) {
-    //   this.limitRequest = requests;
-    //   // Actualitzem el nou límit de requests que gestiona aquest executor.
-    //   this.updateLimit(requests);
-    // }
-    // if (orders && limitChanged(this.limitOrders, orders)) {
-    //   this.limitOrders = orders;
-    //   // Notifiquem el nou límit d'ordres que correspon actualitzar a cada controlador.
-    //   this.ordersLimitsChanged.next(orders);
-    // }
+    // Cerquem els límits amb la proporció més baixa.
+    const findLimit = (rateLimitType: LimitType, limits: Limit[]): Limit => {
+      return limits
+        .filter(l => l.type === rateLimitType && moment.duration(1, l.unitOfTime).asSeconds() <= 60)
+        .reduce((prev: Limit, cur: Limit) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev)
+    };
+    // Comprovem si han canviat.
+    const limitChanged = (limitA: Limit, limitB: Limit): boolean => !limitA || !limitB || limitA.maxQuantity !== limitB.maxQuantity || limitA.period !== limitB.period;
+    // Obtenim els límits d'exchange i de compte.
+    const requests = findLimit('request', rateLimits);
+    const orders = findLimit('trade', rateLimits);
+    if (requests && limitChanged(this.limitRequest, requests)) {
+      this.limitRequest = requests;
+      // Actualitzem el nou límit de requests que gestiona aquest executor.
+      this.updateLimit(requests);
+    }
+    if (orders && limitChanged(this.limitOrders, orders)) {
+      this.limitOrders = orders;
+      // Notifiquem el nou límit d'ordres que correspon actualitzar a cada controlador.
+      this.ordersLimitsChanged.next(orders);
+    }
   }
 
 
@@ -191,6 +163,11 @@ export class Exchange extends TaskExecutor {
     this.marketKlineSubjects[`${symbolKey}_${interval}`] = subject;
     ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
     return subject;
+  }
+
+  getMarketSymbol(symbol: SymbolType): Promise<MarketSymbol> {
+    const api = this.getApiClient();
+    return api.getMarketSymbol(symbol);
   }
 
 

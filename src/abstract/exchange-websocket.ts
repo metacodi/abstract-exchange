@@ -6,8 +6,8 @@ import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate, WsB
 
 
 export interface ExchangeWebsocket {
-  /** Estat de la connexió. */
-  status: WsConnectionState;
+  // /** Estat de la connexió. */
+  // status: WsConnectionState;
   // /** Opcions de configuració. */
   // options: WebsocketOptions;
   // /** Referència a la instància del websocket subjacent. */
@@ -84,12 +84,12 @@ export interface ExchangeWebsocket {
 
   accountUpdate(asset?: CoinType): Subject<WsAccountUpdate>;
   
-  balancePositionUpdate(): Subject<WsBalancePositionUpdate>;
+  // balancePositionpUdate(): Subject<WsBalancePositionUpdate>;
   
   // accountConfigUpdate(): Subject<WsAccountConfigUpdate>;
   
   orderUpdate(symbol?: SymbolType): Subject<Order>;
-  
+
   // marginCall(): Subject<WsMarginCall>;
 
 
