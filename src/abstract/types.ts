@@ -186,13 +186,11 @@ export interface Balance {
 
 export interface Position {
   symbol: SymbolType;
-  marginAsset?: CoinType; // (margin only)
+  marginAsset?: CoinType;
   positionAmount: number;
   entryPrice: number;
-  accumulatedRealisedPreFee: number;
   unrealisedPnl: number;
   marginType: MarginMode;
-  isolatedWalletAmount: number;
   positionSide: PositionSide;
 }
 

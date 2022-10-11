@@ -137,10 +137,8 @@ export interface Position {
     marginAsset?: CoinType;
     positionAmount: number;
     entryPrice: number;
-    accumulatedRealisedPreFee: number;
     unrealisedPnl: number;
     marginType: MarginMode;
-    isolatedWalletAmount: number;
     positionSide: PositionSide;
 }
 export interface AccountMarket {

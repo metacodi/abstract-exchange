@@ -55,7 +55,7 @@ export interface ExchangeApi {
 
   getLeverage(symbol: SymbolType, mode?: MarginMode): Promise<LeverageInfo>;
   
-  setLeverage(params: SetLeverage): void;
+  setLeverage(params: SetLeverage): Promise<void>;
 
 
   //  Account Orders

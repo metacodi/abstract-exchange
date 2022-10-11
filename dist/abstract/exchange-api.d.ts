@@ -20,7 +20,7 @@ export interface ExchangeApi {
     getKlines(params: KlinesRequest): Promise<MarketKline[]>;
     getAccountInfo(): Promise<AccountInfo>;
     getLeverage(symbol: SymbolType, mode?: MarginMode): Promise<LeverageInfo>;
-    setLeverage(params: SetLeverage): void;
+    setLeverage(params: SetLeverage): Promise<void>;
     getAllOrders(params: GetOrdersRequest): Promise<Order[]>;
     getOpenOrders(params: GetOpenOrdersRequest): Promise<Order[]>;
     getOrder(params: GetOrderRequest): Promise<Order>;
