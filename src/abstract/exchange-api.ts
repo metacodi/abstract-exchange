@@ -49,10 +49,6 @@ export interface ExchangeApi {
 
   getAccountInfo(): Promise<AccountInfo>;
 
-  // getBalances(params?: { [key: string]: any }): Promise<Balance[]>;
-
-  // getPositions(params?: { [key: string]: any }): Promise<Position[]>;
-
   getLeverage(symbol: SymbolType, mode?: MarginMode): Promise<LeverageInfo>;
   
   setLeverage(params: SetLeverage): Promise<void>;

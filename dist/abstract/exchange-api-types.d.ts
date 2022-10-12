@@ -1,5 +1,5 @@
 import { Limit } from "./task-executor";
-import { CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, SymbolType } from "./types";
+import { CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, SymbolType, TradeDirection } from "./types";
 export interface ApiCredentials {
     apiKey: string;
     apiSecret: string;
@@ -44,7 +44,7 @@ export interface SetLeverage {
     coin: CoinType;
     longLeverage: number;
     shortLeverage: number;
-    mode: MarginMode;
+    direction: TradeDirection;
 }
 export interface GetOrdersRequest {
     symbol: SymbolType;
