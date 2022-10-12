@@ -19,6 +19,7 @@ export interface ApiRequestOptions {
   params?: any;
   headers?: { [key: string]: string | number };
   isPublic?: boolean;
+  error?: { code?: number; message?: string; };
 }
 
 export interface ExchangeInfo {

@@ -15,6 +15,10 @@ export interface ApiRequestOptions {
         [key: string]: string | number;
     };
     isPublic?: boolean;
+    error?: {
+        code?: number;
+        message?: string;
+    };
 }
 export interface ExchangeInfo {
     limits: Limit[];
