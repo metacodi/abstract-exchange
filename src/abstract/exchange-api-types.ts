@@ -54,7 +54,7 @@ export interface SetLeverage {
   coin: CoinType;
   longLeverage: number;
   shortLeverage: number;
-  direction: TradeDirection;
+  mode: MarginMode;
 }
 
 export interface GetOrdersRequest {
