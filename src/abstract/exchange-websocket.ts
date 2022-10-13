@@ -21,6 +21,7 @@ export interface ExchangeWebsocket {
   // /** Emisors de missatges. */
   // emitters: { [WsStreamEmitterType: string]: Subject<any> };
 
+  initialize(): Promise<void>;
 
   // ---------------------------------------------------------------------------------------------------
   //  options
