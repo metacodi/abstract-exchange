@@ -1,7 +1,7 @@
 import { MarketType, MarketPrice, MarginMode, Balance, MarketKline, Order, SymbolType, MarketSymbol } from './types';
 
 import { AccountInfo, Position } from './types';
-import { ExchangeInfo, GetOrdersRequest, GetOpenOrdersRequest, GetOrderRequest, KlinesRequest, LeverageInfo, PostOrderRequest, CancelOrderRequest, ApiOptions, SetLeverage } from './exchange-api-types';
+import { ExchangeInfo, GetHistoryOrdersRequest, GetOrderRequest, KlinesRequest, LeverageInfo, PostOrderRequest, CancelOrderRequest, ApiOptions, SetLeverage } from './exchange-api-types';
 
 
 export interface ExchangeApi {
@@ -57,13 +57,13 @@ export interface ExchangeApi {
   //  Account Orders
   // ---------------------------------------------------------------------------------------------------
 
-  getAllOrders(params: GetOrdersRequest): Promise<Order[]>;
+  getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Order[]>;
 
-  getOpenOrders(params: GetOpenOrdersRequest): Promise<Order[]>;
+  getOpenOrders(symbol: SymbolType): Promise<Order[]>;
 
   getOrder(params: GetOrderRequest): Promise<Order>;
 
-  // getAccountTradeList(params: GetOrdersRequest): Promise<Order[]>;
+  // getAccountTradeList(params: GetHistoryOrdersRequest): Promise<Order[]>;
 
 
   //  Trade Orders

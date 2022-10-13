@@ -1,16 +1,15 @@
-import { AssetInfo, Position } from "./exchange-api-types";
-import { CoinType, MarginMode, MarketType, OrderSide, OrderStatus, OrderType, PositionSide, PreviousOrderStatus, ResultOrderStatus, SymbolType } from "./types";
+import { Balance, CoinType, MarginMode, MarketType, OrderSide, OrderStatus, OrderType, Position, PositionSide, PreviousOrderStatus, ResultOrderStatus, SymbolType } from "./types";
 
 
 export type WsConnectionState = 'initial' | 'connecting' | 'login' | 'connected' | 'reconnecting' | 'closing';
 
 export type WsStreamType = 'user' | 'market';
 
-export type WsUserStreamEmitterType = 'accountUpdate' | 'balancePositionUpdate' | 'marginCall' | 'accountConfigUpdate' | 'orderUpdate';
+// export type WsUserStreamEmitterType = 'accountUpdate' | 'balancePositionUpdate' | 'marginCall' | 'accountConfigUpdate' | 'orderUpdate';
 
-export type WsMarketStreamEmitterType = 'priceTicker' | 'klineTicker';
+// export type WsMarketStreamEmitterType = 'priceTicker' | 'klineTicker';
 
-export type WsStreamEmitterType = WsUserStreamEmitterType | WsMarketStreamEmitterType;
+// export type WsStreamEmitterType = WsUserStreamEmitterType | WsMarketStreamEmitterType;
 
 export interface WebsocketOptions {
   /** Market associat. */
@@ -34,29 +33,28 @@ export interface WebsocketOptions {
 }
 
 export interface WsAccountUpdate {
-  eventType: 'accountUpdate';
-  eventTime: string;
-  balances: AssetInfo[];
+  eventTime?: string;
+  balances?: Balance[];
   positions?: Position[];
 }
 
-export interface WsBalancePositionUpdate {
-  eventType: 'balancePositionUpdate';
-  eventTime: string;
-  balance?: {
-    asset: CoinType;
-    balanceAmount: number;
-    updateTime: string;
-  };
-  position?: {
-    symbol: SymbolType;
-    positionAmount: number;
-    entryPrice: number;
-    positionSide: PositionSide;
-    marginType: MarginMode;
-    updateTime: string;
-  };
-}
+// export interface WsBalancePositionUpdate {
+//   eventType: 'balancePositionUpdate';
+//   eventTime: string;
+//   balance?: {
+//     asset: CoinType;
+//     balanceAmount: number;
+//     updateTime: string;
+//   };
+//   position?: {
+//     symbol: SymbolType;
+//     positionAmount: number;
+//     entryPrice: number;
+//     positionSide: PositionSide;
+//     marginType: MarginMode;
+//     updateTime: string;
+//   };
+// }
 
 // export interface Position {
 //   symbol: SymbolType;

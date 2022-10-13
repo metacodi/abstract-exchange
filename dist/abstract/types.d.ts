@@ -126,7 +126,7 @@ export interface AccountInfo {
 }
 export interface Balance {
     asset: CoinType;
-    balance: number;
+    balance?: number;
     available?: number;
     locked?: number;
     remainder?: number;
@@ -198,6 +198,7 @@ export interface Order {
     quoteQuantity?: number;
     price?: number;
     stopPrice?: number;
+    rejectReason?: string;
     isOco?: boolean;
     created?: string;
     posted?: string;

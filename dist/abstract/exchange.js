@@ -23,6 +23,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         this.market = market;
         this.accountsWs = {};
         this.symbols = [];
+        this.balanceLocketIsMissing = true;
         this.isReady = false;
         this.exchangeInfoUpdated = new rxjs_1.Subject();
         this.ordersLimitsChanged = new rxjs_1.BehaviorSubject(undefined);
@@ -169,8 +170,7 @@ class Exchange extends task_executor_1.TaskExecutor {
             if (!canTrade) {
                 throw ({ message: `No es pot fer trading amb el compte '${account.idreg}' al mercat '${this.market}'.` });
             }
-            const coins = yield api.getBalances();
-            this.processInitialBalances(account, coins);
+            this.processInitialBalances(account, info.balances);
             const balances = account.markets[this.market].balances;
             const balanceReady = !!Object.keys(balances).length;
             if (!balanceReady) {
@@ -197,9 +197,16 @@ class Exchange extends task_executor_1.TaskExecutor {
         const balances = [];
         if (this.market === 'spot') {
             (_a = update.balances) === null || _a === void 0 ? void 0 : _a.map(balance => {
-                accountMarket.balances[balance.asset].balance = balance.free + balance.locked;
-                accountMarket.balances[balance.asset].available = balance.free;
-                accountMarket.balances[balance.asset].locked = balance.locked;
+                this.balanceLocketIsMissing = balance.locked === undefined;
+                if (balance.balance !== undefined) {
+                    accountMarket.balances[balance.asset].balance = balance.balance;
+                }
+                if (balance.available !== undefined) {
+                    accountMarket.balances[balance.asset].available = balance.available;
+                }
+                if (balance.locked !== undefined) {
+                    accountMarket.balances[balance.asset].locked = balance.locked;
+                }
                 balances.push(accountMarket.balances[balance.asset]);
             });
         }
@@ -209,7 +216,7 @@ class Exchange extends task_executor_1.TaskExecutor {
                 accountMarket.averagePrices[symbolKey] = position.entryPrice;
             });
             (_c = update.balances) === null || _c === void 0 ? void 0 : _c.map(balance => {
-                accountMarket.balances[balance.asset].balance = balance.free;
+                accountMarket.balances[balance.asset].balance = balance.balance;
                 balances.push(accountMarket.balances[balance.asset]);
             });
         }
@@ -240,7 +247,7 @@ class Exchange extends task_executor_1.TaskExecutor {
             const { account } = task.data;
             const api = this.getApiClient();
             const { symbol, id } = Object.assign({}, task.data.order);
-            api.getOrder({ symbol, origClientOrderId: id }).then(order => {
+            api.getOrder({ symbol, id }).then(order => {
                 const { accountId, strategyId } = (0, shared_1.splitOrderId)(order.id);
                 const controllerId = `${accountId}-${strategyId}`;
                 account.markets[this.market].orders.push(order);
@@ -313,6 +320,8 @@ class Exchange extends task_executor_1.TaskExecutor {
                         this.completePartialFilled(account, order);
                     }
                     this.ordersEventsSubjects[controllerId].next(order);
+                }
+                if (this.balanceLocketIsMissing) {
                 }
                 break;
             default:

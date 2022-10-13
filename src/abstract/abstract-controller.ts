@@ -458,7 +458,6 @@ export abstract class AbstractController {
 
   protected processOrdersEvents(eventOrder: Order): boolean {
     if (!eventOrder) { return false; }
-    const result = eventOrder;
     // console.log('Result', order);
     if (!this.ordersReady || !this.on) { console.log('processOrdersEvents', { ordersReady: this.ordersReady, status: this.status }); }
     // Si no estava en marxa, el posem en marxa ara.

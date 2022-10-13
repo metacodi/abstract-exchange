@@ -173,7 +173,7 @@ export interface AccountInfo {
 export interface Balance {
   asset: CoinType;
   /** Quantitat total = available + locked. */
-  balance: number;
+  balance?: number;
   /** Quantitat disponible. */
   available?: number;
   /** Destinat a les ordres de límit. */
@@ -257,6 +257,7 @@ export interface Order {
   quoteQuantity?: number;  // quantitat satifeta quoteAsset
   price?: number;
   stopPrice?: number;      // preu per les ordres de tipus stop-limit.
+  rejectReason?: string;
   isOco?: boolean;
   created?: string;       // timestamp: moment de creació per part de la nostra app.
   posted?: string;        // timestamp: moment de creació a l'exchange (Binance, Kucoin, ...)

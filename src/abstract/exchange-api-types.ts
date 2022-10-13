@@ -58,23 +58,19 @@ export interface SetLeverage {
   mode: MarginMode;
 }
 
-export interface GetOrdersRequest {
+export interface GetHistoryOrdersRequest {
   symbol: SymbolType;
-  orderId?: number;
   startTime?: number;
   endTime?: number;
-  /** Results per page. Default 500; max 1000. */
   limit?: number;
-}
-
-export interface GetOpenOrdersRequest {
-  symbol: SymbolType;
 }
 
 export interface GetOrderRequest {
   symbol: SymbolType;
-  orderId?: number;
-  origClientOrderId?: string;
+  /** orderId propi de l'exchange */
+  exchangeId?: number;
+  /** Identificador d'ordre intern (nostre). */
+  id?: string;
 }
 
 export interface PostOrderRequest {
@@ -85,14 +81,12 @@ export interface PostOrderRequest {
   quantity?: number;
   quoteOrderQty?: number;
   price?: number;
-  newClientOrderId?: string;
+  id?: string;
   stopPrice?: number;
   closePosition?: boolean;
 }
 
 export interface CancelOrderRequest {
   symbol: SymbolType;
-  orderId?: number;
-  origClientOrderId?: string;
-  newClientOrderId?: string;
+  exchangeId?: number;
 }

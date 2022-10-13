@@ -17,6 +17,7 @@ export declare abstract class Exchange extends TaskExecutor {
     symbols: MarketSymbol[];
     limitRequest: Limit;
     limitOrders: Limit;
+    balanceLocketIsMissing: boolean;
     isReady: boolean;
     exchangeInfoUpdated: Subject<void>;
     ordersLimitsChanged: BehaviorSubject<Limit>;

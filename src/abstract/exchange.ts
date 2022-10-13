@@ -27,6 +27,8 @@ export abstract class Exchange extends TaskExecutor {
   limitRequest: Limit;
   /** Límite de órdenes del exchange. */
   limitOrders: Limit;
+  /** Alguns exchanges com Bitget no informen del locked. Hem de saber-ho per calcular-lo en cada orderUpdate. */
+  balanceLocketIsMissing = true;
 
   /** Indica quan s'han carregat les dades de l'exchange per primera vegada. */
   isReady = false;
@@ -234,8 +236,7 @@ export abstract class Exchange extends TaskExecutor {
     // const canTrade = !!info?.canTrade && !!perms?.ipRestrict && (this.market === 'spot' ? !!perms?.enableSpotAndMarginTrading : !!perms?.enableFutures);
     const canTrade = !!info?.canTrade;
     if (!canTrade) { throw ({ message: `No es pot fer trading amb el compte '${account.idreg}' al mercat '${this.market}'.` }); }
-    const coins = await api.getBalances();
-    this.processInitialBalances(account, coins);
+    this.processInitialBalances(account, info.balances);
     const balances = account.markets[this.market].balances;
     const balanceReady = !!Object.keys(balances).length;
     if (!balanceReady) { throw new Error(`Error recuperant els balanços del compte '${account.idreg}' al mercat '${this.market}'.`); }
@@ -259,9 +260,11 @@ export abstract class Exchange extends TaskExecutor {
     // Actualitzem els balanços de cada asset.
     if (this.market === 'spot') {
       update.balances?.map(balance => {
-        accountMarket.balances[balance.asset].balance = balance.free + balance.locked;
-        accountMarket.balances[balance.asset].available = balance.free;
-        accountMarket.balances[balance.asset].locked = balance.locked;
+        // NOTA: Recordem si NO ens ha arribat la info del balance bloquejat per calcular-lo més tard al rebre l'ordre manualment.
+        this.balanceLocketIsMissing = balance.locked === undefined;
+        if (balance.balance !== undefined) { accountMarket.balances[balance.asset].balance = balance.balance; }
+        if (balance.available !== undefined) { accountMarket.balances[balance.asset].available = balance.available; }
+        if (balance.locked !== undefined) { accountMarket.balances[balance.asset].locked = balance.locked; }
         balances.push(accountMarket.balances[balance.asset]);
       });
     } else {
@@ -272,7 +275,7 @@ export abstract class Exchange extends TaskExecutor {
       });
       // Actualitzem els balanços de cada asset.
       update.balances?.map(balance => {
-        accountMarket.balances[balance.asset].balance = balance.free;
+        accountMarket.balances[balance.asset].balance = balance.balance;
         balances.push(accountMarket.balances[balance.asset]);
       });
     }
@@ -311,7 +314,7 @@ export abstract class Exchange extends TaskExecutor {
     const { account } = task.data as { account: ExchangeAccount; };
     const api = this.getApiClient();
     const { symbol, id } = Object.assign({}, task.data.order);    
-    api.getOrder({ symbol, origClientOrderId: id }).then(order => {
+    api.getOrder({ symbol, id }).then(order => {
       const { accountId, strategyId } = splitOrderId(order.id);
       const controllerId = `${accountId}-${strategyId}`;
       // Guardem l'ordre sol·licitada al mercat de l'exchange.
@@ -387,6 +390,11 @@ export abstract class Exchange extends TaskExecutor {
           if (eventOrder.status === 'filled') { this.completePartialFilled(account, order); }
           // TODO: eliminar les ordres executades del account market.
           this.ordersEventsSubjects[controllerId].next(order);
+        }
+        if (this.balanceLocketIsMissing) {
+          // TODO: Ara que ja s'han actualitzat l'estat de les ordres, calculem la quantitat bloquejada del balance del compte.
+          // Obtenim el locked.
+          // Calculem el balance = available + locked.
         }
         break;
       // case 'cancelling': case 'pending_cancel': // case 'trade':

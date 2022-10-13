@@ -50,20 +50,16 @@ export interface SetLeverage {
     shortLeverage: number;
     mode: MarginMode;
 }
-export interface GetOrdersRequest {
+export interface GetHistoryOrdersRequest {
     symbol: SymbolType;
-    orderId?: number;
     startTime?: number;
     endTime?: number;
     limit?: number;
 }
-export interface GetOpenOrdersRequest {
-    symbol: SymbolType;
-}
 export interface GetOrderRequest {
     symbol: SymbolType;
-    orderId?: number;
-    origClientOrderId?: string;
+    exchangeId?: number;
+    id?: string;
 }
 export interface PostOrderRequest {
     symbol: SymbolType;
@@ -73,14 +69,12 @@ export interface PostOrderRequest {
     quantity?: number;
     quoteOrderQty?: number;
     price?: number;
-    newClientOrderId?: string;
+    id?: string;
     stopPrice?: number;
     closePosition?: boolean;
 }
 export interface CancelOrderRequest {
     symbol: SymbolType;
-    orderId?: number;
-    origClientOrderId?: string;
-    newClientOrderId?: string;
+    exchangeId?: number;
 }
 //# sourceMappingURL=exchange-api-types.d.ts.map

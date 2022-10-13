@@ -314,7 +314,6 @@ class AbstractController {
         if (!eventOrder) {
             return false;
         }
-        const result = eventOrder;
         if (!this.ordersReady || !this.on) {
             console.log('processOrdersEvents', { ordersReady: this.ordersReady, status: this.status });
         }
