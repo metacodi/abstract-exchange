@@ -337,7 +337,7 @@ export abstract class Exchange extends TaskExecutor {
       // timeInForce: 'GTC',
       price: copy.price,
       quantity: copy.baseQuantity,
-      newClientOrderId: copy.id,
+      id: copy.id,
     };
     // if (copy.type === 'stop' || copy.type === 'stop_market') { order.stopPrice = copy.stopPrice; }
     if (market === 'futures' && copy.type === 'stop_market') { order.closePosition = true; }
@@ -351,8 +351,7 @@ export abstract class Exchange extends TaskExecutor {
     if (found) { found.status = 'cancel'; }
     return api.cancelOrder({
       symbol: order.symbol,
-      // orderId: order.exchangeId,
-      origClientOrderId: order.id,
+      exchangeId: order.exchangeId,
     });
   }
 

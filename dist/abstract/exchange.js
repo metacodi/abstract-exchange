@@ -267,7 +267,7 @@ class Exchange extends task_executor_1.TaskExecutor {
             type: copy.type,
             price: copy.price,
             quantity: copy.baseQuantity,
-            newClientOrderId: copy.id,
+            id: copy.id,
         };
         if (market === 'futures' && copy.type === 'stop_market') {
             order.closePosition = true;
@@ -283,7 +283,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         }
         return api.cancelOrder({
             symbol: order.symbol,
-            origClientOrderId: order.id,
+            exchangeId: order.exchangeId,
         });
     }
     getOrdersEventsSubject(account, controllerId) {
