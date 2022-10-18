@@ -83,7 +83,7 @@ export interface ExchangeWebsocket {
   //  Account STREAMS
   // ---------------------------------------------------------------------------------------------------
 
-  accountUpdate(asset?: CoinType): Subject<WsAccountUpdate>;
+  accountUpdate(symbol?: SymbolType): Subject<WsAccountUpdate>;
   
   // balancePositionpUdate(): Subject<WsBalancePositionUpdate>;
   
