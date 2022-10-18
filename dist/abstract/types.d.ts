@@ -15,7 +15,7 @@ export declare type PositionSide = 'both' | 'long' | 'short';
 export declare type AvailableOrderTypes = 'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco';
 export declare type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco', AvailableOrderTypes>;
 export declare type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
-export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'EUR' | 'USD';
+export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 export interface SymbolType {
     baseAsset: CoinType;
     quoteAsset: CoinType;

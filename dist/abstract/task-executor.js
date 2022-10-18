@@ -14,6 +14,7 @@ class TaskExecutor {
         this.options = options;
         this.queue = [];
         this.executingTask = false;
+        this.isSleeping = false;
         this.changeLimitsPending = false;
         this.countPeriod = 0;
         if (!options) {
@@ -61,7 +62,7 @@ class TaskExecutor {
                 }
             }
             else {
-                while (this.hasTasksToConsume) {
+                while (this.hasTasksToConsume && !this.isSleeping) {
                     const task = this.consumeTask();
                     if (!!this.period) {
                         this.countPeriod += 1;
@@ -96,6 +97,19 @@ class TaskExecutor {
         }
         this.intervalSubscription = undefined;
     }
+    sleepTasksInterval(period) {
+        if (!period) {
+            period = 10;
+        }
+        this.isSleeping = true;
+        this.stopTasksInterval();
+        this.countPeriod = 0;
+        this.executingTask = false;
+        setTimeout(() => {
+            this.isSleeping = false;
+            this.executeQueue();
+        }, period * 1000);
+    }
     processTasksInterval() {
         if (this.changeLimitsPending) {
             this.changeLimitsPending = false;
@@ -123,6 +137,7 @@ class TaskExecutor {
         this.queue.push(task);
     } }
     consumeTask() { return this.consume === 'shift' ? this.queue.shift() : this.queue.pop(); }
+    tryAgainTask() { return this.consume === 'shift' ? this.queue.unshift() : this.queue.push(); }
     get hasTasksToConsume() { return !!this.queue.length && (!this.maxQuantity || (this.countPeriod < this.maxQuantity)); }
     sortTasksByPriority() { this.queue.sort((taskA, taskB) => ((taskA === null || taskA === void 0 ? void 0 : taskA.priority) || 1) - ((taskB === null || taskB === void 0 ? void 0 : taskB.priority) || 1)); }
     get hasPriority() { return !!this.queue.length && typeof this.queue[0] === 'object' && this.queue[0].hasOwnProperty('priority'); }

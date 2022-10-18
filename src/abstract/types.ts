@@ -36,7 +36,7 @@ export type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' 
 
 export type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
 
-export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'EUR' | 'USD';
+export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 // export type CoinBaseType = Extract<CoinType, 'BNB' | 'BTC' | 'ETC'>;
 // export const acceptedCoins: CoinType[] = ['BNB', 'BTC', 'ETC', 'USDT', 'EUR'];
 

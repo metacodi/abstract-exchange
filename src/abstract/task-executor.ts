@@ -34,6 +34,7 @@ export abstract class TaskExecutor {
   queue: any[] = [];
   /** Indicador d'estat per l'accés a la cua. */
   executingTask = false;
+  isSleeping = false;
   /** Indica quan hi ha una operació d'actualització de límits a l'espera. */
   changeLimitsPending = false;
   /** Quantitat de consultes realitzades durant el periode actual. */
@@ -78,7 +79,7 @@ export abstract class TaskExecutor {
 
       } else {
         // async: paral·lel
-        while (this.hasTasksToConsume) {
+        while (this.hasTasksToConsume && !this.isSleeping) {
           // Executem la següent tasca de la cua.
           const task = this.consumeTask();
           if (!!this.period) { this.countPeriod += 1; }
@@ -127,6 +128,22 @@ export abstract class TaskExecutor {
     this.intervalSubscription = undefined;
   }
 
+  protected sleepTasksInterval(period?: number) {
+    if (!period) { period = 10; }
+    this.isSleeping = true;
+    // Aturem l'interval.
+    this.stopTasksInterval();
+    // Restablim el comptador de tasques de l'interval.
+    this.countPeriod = 0;
+    // Restablim l'indicador d'estat per desblocar la cua.
+    this.executingTask = false;
+    // Esperem un temps prudencial abans de tornar a executar la cua.
+    setTimeout(() => {
+      this.isSleeping = false;
+      this.executeQueue();
+    }, period * 1000);
+  }
+
   protected processTasksInterval() {
     // logTime('----------- interval');
     // Si hi ha una operació de canvi de límits pendent, ara és l'hora de fer el canvi.
@@ -161,6 +178,9 @@ export abstract class TaskExecutor {
 
   /** Executa la següent tasca de la cua pel principi o pel final. */
   protected consumeTask(): any { return this.consume === 'shift' ? this.queue.shift() : this.queue.pop(); }
+
+  /** Incorpora una tasca fallida a la cua perquè es torni a executar. */
+  protected tryAgainTask(): any { return this.consume === 'shift' ? this.queue.unshift() : this.queue.push(); }
 
   /** Comprova si encara hi ha tasques a la cua i no s'ha superat el límit màxim. */
   protected get hasTasksToConsume(): boolean { return !!this.queue.length && (!this.maxQuantity || (this.countPeriod < this.maxQuantity)); }

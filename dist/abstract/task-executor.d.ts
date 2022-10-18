@@ -23,6 +23,7 @@ export declare abstract class TaskExecutor {
     options?: TaskExecutorOptions;
     queue: any[];
     executingTask: boolean;
+    isSleeping: boolean;
     changeLimitsPending: boolean;
     countPeriod: number;
     intervalSubscription: Subscription;
@@ -33,11 +34,13 @@ export declare abstract class TaskExecutor {
     protected nextTask(): void;
     protected startTasksInterval(): void;
     protected stopTasksInterval(): void;
+    protected sleepTasksInterval(period?: number): void;
     protected processTasksInterval(): void;
     protected get isTaskIntervalOn(): boolean;
     updateLimit(limit: Limit): void;
     protected addTask(task: any): void;
     protected consumeTask(): any;
+    protected tryAgainTask(): any;
     protected get hasTasksToConsume(): boolean;
     protected sortTasksByPriority(): void;
     protected get hasPriority(): boolean;

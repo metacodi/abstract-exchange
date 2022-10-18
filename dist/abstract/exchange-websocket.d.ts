@@ -2,6 +2,7 @@ import { Subject } from "rxjs";
 import { CoinType, KlineIntervalType, MarketKline, MarketPrice, MarketType, Order, SymbolType } from "./types";
 import { WsStreamType, WsAccountUpdate } from "./exchange-websocket-types";
 export interface ExchangeWebsocket {
+    initialize(): Promise<void>;
     get market(): MarketType;
     get streamType(): WsStreamType;
     get isTest(): boolean;
