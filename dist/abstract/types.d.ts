@@ -6,6 +6,7 @@ export declare type ExchangeType = 'simulator' | 'binance' | 'kucoin' | 'okx' | 
 export declare type MarketType = 'spot' | 'futures' | 'margin';
 export declare type OrderSide = 'buy' | 'sell';
 export declare type TradeDirection = 'long' | 'short';
+export declare type TradeSide = 'open' | 'close';
 export declare type PreviousOrderStatus = 'post' | 'cancel';
 export declare type ResultOrderStatus = 'new' | 'filled' | 'canceled' | 'partial' | 'unsatisfied' | 'expired' | 'rejected';
 export declare type OrderStatus = PreviousOrderStatus | ResultOrderStatus;

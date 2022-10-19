@@ -15,6 +15,8 @@ export type OrderSide = 'buy' | 'sell';
 
 export type TradeDirection = 'long' | 'short';
 
+export type TradeSide = 'open' | 'close';
+
 export type PreviousOrderStatus = 'post' | 'cancel';
 // NOTA: Estats finals no han incloure els estats intermitjos com 'partial', 'cancelling'
 export type ResultOrderStatus = 'new' | 'filled' | 'canceled' | 'partial' | 'unsatisfied' | 'expired' | 'rejected';
