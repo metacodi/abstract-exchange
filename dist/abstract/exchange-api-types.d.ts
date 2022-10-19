@@ -62,14 +62,14 @@ export interface GetOrderRequest {
     id?: string;
 }
 export interface PostOrderRequest {
-    symbol: SymbolType;
+    id: string;
     side: OrderSide;
     type: OrderType;
+    symbol: SymbolType;
     mode?: MarginMode;
     quantity?: number;
     quoteOrderQty?: number;
     price?: number;
-    id?: string;
     stopPrice?: number;
     closePosition?: boolean;
 }
