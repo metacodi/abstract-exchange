@@ -1,5 +1,5 @@
 import { Limit } from "./task-executor";
-import { Balance, CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, PositionSide, SymbolType, TradeDirection } from "./types";
+import { Balance, CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, PositionSide, SymbolType, TradeSide } from "./types";
 
 
 export interface ApiCredentials {

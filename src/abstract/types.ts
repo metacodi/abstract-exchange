@@ -11,11 +11,10 @@ export type ExchangeType = 'simulator' | 'binance' | 'kucoin' | 'okx' | 'bitget'
 
 export type MarketType = 'spot' | 'futures' | 'margin';
 
+/** buy <=> open | sell <=> close */
 export type OrderSide = 'buy' | 'sell';
 
-export type TradeDirection = 'long' | 'short';
-
-export type TradeSide = 'open' | 'close';
+export type TradeSide = 'long' | 'short';
 
 export type PreviousOrderStatus = 'post' | 'cancel';
 // NOTA: Estats finals no han incloure els estats intermitjos com 'partial', 'cancelling'
