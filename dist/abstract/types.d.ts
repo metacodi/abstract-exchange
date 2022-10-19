@@ -192,6 +192,7 @@ export interface Order {
     exchangeId: number;
     side: OrderSide;
     type: OrderType;
+    trade?: TradeSide;
     status: OrderStatus;
     symbol?: SymbolType;
     baseQuantity?: number;

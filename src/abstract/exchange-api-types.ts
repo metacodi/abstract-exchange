@@ -77,6 +77,7 @@ export interface PostOrderRequest {
   id: string;
   side: OrderSide;
   type: OrderType;
+  trade?: TradeSide;
   symbol: SymbolType;
   mode?: MarginMode;
   quantity?: number;

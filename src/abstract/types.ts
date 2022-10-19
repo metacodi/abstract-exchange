@@ -252,6 +252,7 @@ export interface Order {
   exchangeId: number;     // orderId propi de l'exchange
   side: OrderSide;
   type: OrderType;
+  trade?: TradeSide;
   status: OrderStatus;
   symbol?: SymbolType;
   baseQuantity?: number;   // quantitat satifeta baseAsset
