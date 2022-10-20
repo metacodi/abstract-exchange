@@ -17,14 +17,14 @@ export interface ExchangeApi {
     getExchangeInfo(): Promise<ExchangeInfo>;
     getMarketSymbol(symbol: SymbolType): Promise<MarketSymbol>;
     getPriceTicker(symbol: SymbolType): Promise<MarketPrice>;
-    getKlines(params: KlinesRequest): Promise<MarketKline[]>;
+    getKlines(request: KlinesRequest): Promise<MarketKline[]>;
     getAccountInfo(): Promise<AccountInfo>;
     getLeverage(symbol: SymbolType, mode?: MarginMode): Promise<LeverageInfo>;
-    setLeverage(params: SetLeverage): Promise<void>;
-    getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Partial<Order>[]>;
+    setLeverage(request: SetLeverage): Promise<void>;
+    getHistoryOrders(request: GetHistoryOrdersRequest): Promise<Partial<Order>[]>;
     getOpenOrders(symbol: SymbolType): Promise<Partial<Order>[]>;
-    getOrder(params: GetOrderRequest): Promise<Partial<Order>>;
-    postOrder(params: PostOrderRequest): Promise<Order>;
-    cancelOrder(params: CancelOrderRequest): Promise<Order>;
+    getOrder(request: GetOrderRequest): Promise<Partial<Order>>;
+    postOrder(request: PostOrderRequest): Promise<Order>;
+    cancelOrder(request: CancelOrderRequest): Promise<Order>;
 }
 //# sourceMappingURL=exchange-api.d.ts.map

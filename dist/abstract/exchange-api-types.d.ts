@@ -58,6 +58,7 @@ export interface GetHistoryOrdersRequest {
 }
 export interface GetOrderRequest {
     symbol: SymbolType;
+    id: string;
     exchangeId: string;
     type: OrderType;
 }
@@ -76,6 +77,7 @@ export interface PostOrderRequest {
 }
 export interface CancelOrderRequest {
     symbol: SymbolType;
+    id: string;
     exchangeId: string;
     type: OrderType;
 }

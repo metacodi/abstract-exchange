@@ -38,9 +38,9 @@ export interface ExchangeApi {
   
   getPriceTicker(symbol: SymbolType): Promise<MarketPrice>;
   
-  getKlines(params: KlinesRequest): Promise<MarketKline[]>;
+  getKlines(request: KlinesRequest): Promise<MarketKline[]>;
   
-  // getOrderBookTicker(params: OrderBookTickerRequest): Promise<OrderBookTicker | OrderBookTicker[]>;
+  // getOrderBookTicker(request: OrderBookTickerRequest): Promise<OrderBookTicker | OrderBookTicker[]>;
   
   
   // ---------------------------------------------------------------------------------------------------
@@ -51,27 +51,27 @@ export interface ExchangeApi {
 
   getLeverage(symbol: SymbolType, mode?: MarginMode): Promise<LeverageInfo>;
   
-  setLeverage(params: SetLeverage): Promise<void>;
+  setLeverage(request: SetLeverage): Promise<void>;
 
 
   //  Account Orders
   // ---------------------------------------------------------------------------------------------------
 
-  getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Partial<Order>[]>;
+  getHistoryOrders(request: GetHistoryOrdersRequest): Promise<Partial<Order>[]>;
 
   getOpenOrders(symbol: SymbolType): Promise<Partial<Order>[]>;
 
-  getOrder(params: GetOrderRequest): Promise<Partial<Order>>;
+  getOrder(request: GetOrderRequest): Promise<Partial<Order>>;
 
-  // getAccountTradeList(params: GetHistoryOrdersRequest): Promise<Order[]>;
+  // getAccountTradeList(request: GetHistoryOrdersRequest): Promise<Order[]>;
 
 
   //  Trade Orders
   // ---------------------------------------------------------------------------------------------------
 
-  postOrder(params: PostOrderRequest): Promise<Order>;
+  postOrder(request: PostOrderRequest): Promise<Order>;
 
-  cancelOrder(params: CancelOrderRequest): Promise<Order>;
+  cancelOrder(request: CancelOrderRequest): Promise<Order>;
 
   // cancelAllSymbolOrders(symbol: SymbolType): Promise<Order>;
 
