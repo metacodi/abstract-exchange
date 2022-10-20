@@ -73,6 +73,6 @@ export interface ExchangeApi {
 
   cancelOrder(params: CancelOrderRequest): Promise<Order>;
 
-  cancelAllSymbolOrders(symbol: SymbolType): Promise<Order>;
+  // cancelAllSymbolOrders(symbol: SymbolType): Promise<Order>;
 
 }
