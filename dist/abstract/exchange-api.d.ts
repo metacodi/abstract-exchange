@@ -26,6 +26,6 @@ export interface ExchangeApi {
     getOrder(params: GetOrderRequest): Promise<Order>;
     postOrder(params: PostOrderRequest): Promise<Order>;
     cancelOrder(params: CancelOrderRequest): Promise<Order>;
-    cancelAllSymbolOrders(symbol: SymbolType): Promise<Order>;
+    cancelAllSymbolOrders(symbol: SymbolType): Promise<Order[]>;
 }
 //# sourceMappingURL=exchange-api.d.ts.map
