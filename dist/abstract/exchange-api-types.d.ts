@@ -77,5 +77,6 @@ export interface PostOrderRequest {
 export interface CancelOrderRequest {
     symbol: SymbolType;
     exchangeId?: number;
+    triggered?: boolean;
 }
 //# sourceMappingURL=exchange-api-types.d.ts.map
