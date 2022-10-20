@@ -58,7 +58,7 @@ export interface GetHistoryOrdersRequest {
 }
 export interface GetOrderRequest {
     symbol: SymbolType;
-    exchangeId?: number;
+    exchangeId?: string;
     id?: string;
 }
 export interface PostOrderRequest {

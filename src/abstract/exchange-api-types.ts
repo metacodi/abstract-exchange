@@ -68,7 +68,7 @@ export interface GetHistoryOrdersRequest {
 export interface GetOrderRequest {
   symbol: SymbolType;
   /** orderId propi de l'exchange */
-  exchangeId?: number;
+  exchangeId?: string;
   /** Identificador d'ordre intern (nostre). */
   id?: string;
 }

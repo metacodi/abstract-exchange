@@ -22,7 +22,7 @@ import { AccountMarket, MarketType, Order, OrderSide, OrderType, ResultOrderStat
 
 const partialOrder: Partial<Order> = {
   id: '12345',
-  exchangeId: 1,
+  exchangeId: '12345678',
   price: 1.1,
 };
 
@@ -40,7 +40,7 @@ function updateOrder(order: Order, fieldsToUpdate: Partial<Order>) {
 
 // const requiredType: Required<Order> = {
 //   id: '1',
-//   exchangeId: 1,
+//   exchangeId: '1',
 //   type: 'limit',
 //   side: 'buy',
 //   price: 0.0,
@@ -58,7 +58,7 @@ function updateOrder(order: Order, fieldsToUpdate: Partial<Order>) {
 
 // const readonlyType: Readonly<Order> = {
 //   id: '1',
-//   exchangeId: 1,
+//   exchangeId: '1',
 //   type: 'limit',
 //   side: 'buy',
 //   price: 0.0,
@@ -75,7 +75,7 @@ function updateOrder(order: Order, fieldsToUpdate: Partial<Order>) {
 
 // const pickType: Pick<Order, 'id' | 'price' | 'accumulateQuantity'> = {
 //   id: '1',
-//   // exchangeId: 1, // ara la propietat ja no forma part del tipus
+//   // exchangeId: '1', // ara la propietat ja no forma part del tipus
 //   price: 0.0,
 //   // accumulateQuantity: 0.0, // la propietat segueix sent opcional
 // };
@@ -87,7 +87,7 @@ function updateOrder(order: Order, fieldsToUpdate: Partial<Order>) {
 
 // const omitType: Omit<Order, 'id' | 'price'> = {
 //   // id: '1', // ara la propietat ja no forma part del tipus
-//   exchangeId: 1,
+//   exchangeId: '1',
 //   type: 'limit',
 //   side: 'buy',
 //   // price: 0.0, // ara la propietat ja no forma part del tipus

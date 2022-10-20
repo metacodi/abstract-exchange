@@ -22,7 +22,7 @@ export interface ExchangeApi {
     getLeverage(symbol: SymbolType, mode?: MarginMode): Promise<LeverageInfo>;
     setLeverage(params: SetLeverage): Promise<void>;
     getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Order[]>;
-    getOpenOrders(symbol: SymbolType): Promise<Order[]>;
+    getOpenOrders(symbol: SymbolType): Promise<Partial<Order>[]>;
     getOrder(params: GetOrderRequest): Promise<Order>;
     postOrder(params: PostOrderRequest): Promise<Order>;
     cancelOrder(params: CancelOrderRequest): Promise<Order>;

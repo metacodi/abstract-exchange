@@ -72,7 +72,7 @@ export interface WsAccountUpdate {
 //   eventType: 'orderUpdate';
 //   eventTime: string;
 //   id: string;
-//   exchangeId: number;     // orderId propi de l'exchange
+//   exchangeId: string;     // orderId propi de l'exchange
 //   side: OrderSide;
 //   type: OrderType;
 //   previousStatus: PreviousOrderStatus;

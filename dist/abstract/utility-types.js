@@ -13,7 +13,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const partialOrder = {
     id: '12345',
-    exchangeId: 1,
+    exchangeId: '12345678',
     price: 1.1,
 };
 function updateOrder(order, fieldsToUpdate) {

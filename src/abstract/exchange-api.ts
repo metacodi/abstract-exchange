@@ -59,7 +59,7 @@ export interface ExchangeApi {
 
   getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Order[]>;
 
-  getOpenOrders(symbol: SymbolType): Promise<Order[]>;
+  getOpenOrders(symbol: SymbolType): Promise<Partial<Order>[]>;
 
   getOrder(params: GetOrderRequest): Promise<Order>;
 
