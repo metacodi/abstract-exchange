@@ -58,8 +58,8 @@ export interface GetHistoryOrdersRequest {
 }
 export interface GetOrderRequest {
     symbol: SymbolType;
-    exchangeId?: string;
-    id?: string;
+    exchangeId: string;
+    type: OrderType;
 }
 export interface PostOrderRequest {
     id: string;
@@ -76,7 +76,7 @@ export interface PostOrderRequest {
 }
 export interface CancelOrderRequest {
     symbol: SymbolType;
-    exchangeId?: string;
-    triggered?: boolean;
+    exchangeId: string;
+    type: OrderType;
 }
 //# sourceMappingURL=exchange-api-types.d.ts.map
