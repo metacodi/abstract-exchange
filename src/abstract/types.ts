@@ -249,7 +249,7 @@ export interface OrderId {
 export interface Order {
   /** Binance clientOrderId pattern `^[\.A-Z\:/a-z0-9_-]{1,36}$` */
   id: string;
-  exchangeId: number;     // orderId propi de l'exchange
+  exchangeId: string;     // orderId propi de l'exchange
   side: OrderSide;
   type: OrderType;
   trade?: TradeSide;

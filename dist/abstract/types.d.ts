@@ -189,7 +189,7 @@ export interface OrderId {
 }
 export interface Order {
     id: string;
-    exchangeId: number;
+    exchangeId: string;
     side: OrderSide;
     type: OrderType;
     trade?: TradeSide;
