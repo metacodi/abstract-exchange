@@ -12,8 +12,8 @@ export declare type OrderStatus = PreviousOrderStatus | ResultOrderStatus;
 export declare type KlineIntervalType = '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M';
 export declare type MarginMode = 'cross' | 'isolated';
 export declare type PositionSide = 'both' | 'long' | 'short';
-export declare type AvailableOrderTypes = 'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco';
-export declare type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco', AvailableOrderTypes>;
+export declare type OrderType = 'market' | 'limit' | 'oco';
+export declare type StopType = 'none' | 'profit' | 'loss';
 export declare type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
 export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 export interface SymbolType {
@@ -192,6 +192,7 @@ export interface Order {
     exchangeId: string;
     side: OrderSide;
     type: OrderType;
+    stop?: StopType;
     trade?: TradeSide;
     status: OrderStatus;
     symbol?: SymbolType;

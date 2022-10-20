@@ -1,5 +1,5 @@
 import { Limit } from "./task-executor";
-import { Balance, CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, PositionSide, SymbolType, TradeSide } from "./types";
+import { Balance, CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, PositionSide, StopType, SymbolType, TradeSide } from "./types";
 
 
 export interface ApiCredentials {
@@ -76,6 +76,7 @@ export interface PostOrderRequest {
   id: string;
   side: OrderSide;
   type: OrderType;
+  stop?: StopType;
   trade?: TradeSide;
   symbol: SymbolType;
   mode?: MarginMode;

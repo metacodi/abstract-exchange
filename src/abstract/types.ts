@@ -32,8 +32,9 @@ export type PositionSide = 'both' | 'long' | 'short';
  * {@link https://binance-docs.github.io/apidocs/spot/en/#new-order-trade Spot}
  * {@link https://binance-docs.github.io/apidocs/futures/en/#new-order-trade Futures}
  */
-export type AvailableOrderTypes = 'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco';
-export type OrderType = Extract<'market' | 'limit' | 'stop' | 'stop_loss_limit' | 'limit_market' | 'stop_market' | 'oco', AvailableOrderTypes>;
+export type OrderType = 'market' | 'limit' | 'oco';
+
+export type StopType = 'none' | 'profit' | 'loss';
 
 export type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
 
@@ -252,6 +253,7 @@ export interface Order {
   exchangeId: string;     // orderId propi de l'exchange
   side: OrderSide;
   type: OrderType;
+  stop?: StopType;
   trade?: TradeSide;
   status: OrderStatus;
   symbol?: SymbolType;
