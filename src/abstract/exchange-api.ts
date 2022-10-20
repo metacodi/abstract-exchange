@@ -57,11 +57,11 @@ export interface ExchangeApi {
   //  Account Orders
   // ---------------------------------------------------------------------------------------------------
 
-  getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Order[]>;
+  getHistoryOrders(params: GetHistoryOrdersRequest): Promise<Partial<Order>[]>;
 
   getOpenOrders(symbol: SymbolType): Promise<Partial<Order>[]>;
 
-  getOrder(params: GetOrderRequest): Promise<Order>;
+  getOrder(params: GetOrderRequest): Promise<Partial<Order>>;
 
   // getAccountTradeList(params: GetHistoryOrdersRequest): Promise<Order[]>;
 
