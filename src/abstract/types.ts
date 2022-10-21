@@ -34,7 +34,7 @@ export type PositionSide = 'both' | 'long' | 'short';
  */
 export type OrderType = 'market' | 'limit' | 'oco';
 
-export type StopType = 'none' | 'profit' | 'loss';
+export type StopType = 'normal' | 'profit' | 'loss';
 
 export type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
 
