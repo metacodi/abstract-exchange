@@ -32,9 +32,9 @@ export type PositionSide = 'both' | 'long' | 'short';
  * {@link https://binance-docs.github.io/apidocs/spot/en/#new-order-trade Spot}
  * {@link https://binance-docs.github.io/apidocs/futures/en/#new-order-trade Futures}
  */
-export type OrderType = 'market' | 'limit' | 'oco';
+export type OrderType = 'market' | 'limit';
 
-export type StopType = 'none' | 'profit' | 'loss';
+export type StopType = 'normal' | 'profit' | 'loss';
 
 export type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
 
@@ -259,8 +259,8 @@ export interface Order {
   symbol?: SymbolType;
   baseQuantity?: number;   // quantitat satifeta baseAsset
   quoteQuantity?: number;  // quantitat satifeta quoteAsset
-  price?: number;
-  stopPrice?: number;      // preu per les ordres de tipus stop-limit.
+  price?: number;           // preu per les ordres de tipus limit, les market l'ignoren pq ja entren a mercat.
+  stopPrice?: number;       // preu per avtivar l'stop.
   rejectReason?: string;
   isOco?: boolean;
   created?: string;       // timestamp: moment de creació per part de la nostra app.
