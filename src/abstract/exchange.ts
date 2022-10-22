@@ -313,14 +313,14 @@ export abstract class Exchange extends TaskExecutor {
   protected async getOrderTask(task: OrderTask) {
     const { account } = task.data as { account: ExchangeAccount; };
     const api = this.getApiClient();
-    const { symbol, id } = Object.assign({}, task.data.order);    
-    api.getOrder({ symbol, id }).then(order => {
+    const { symbol, id, exchangeId, type } = Object.assign({}, task.data.order);    
+    api.getOrder({ symbol, id, exchangeId, type }).then(order => {
       const { accountId, strategyId } = splitOrderId(order.id);
       const controllerId = `${accountId}-${strategyId}`;
       // Guardem l'ordre sol·licitada al mercat de l'exchange.
-      account.markets[this.market].orders.push(order);
+      account.markets[this.market].orders.push(order as Order);
       // Notifiquem l'ordre obtinguda al controlador pq comprovi si pot iniciar l'activitat.
-      this.ordersEventsSubjects[controllerId].next(order);
+      this.ordersEventsSubjects[controllerId].next(order as Order);
     });
   }
 
@@ -339,8 +339,8 @@ export abstract class Exchange extends TaskExecutor {
       quantity: copy.baseQuantity,
       id: copy.id,
     };
-    // if (copy.type === 'stop' || copy.type === 'stop_market') { order.stopPrice = copy.stopPrice; }
-    if (market === 'futures' && copy.type === 'stop_market') { order.closePosition = true; }
+    // // if (copy.type === 'stop' || copy.type === 'stop_market') { order.stopPrice = copy.stopPrice; }
+    // if (market === 'futures' && copy.type === 'stop_market') { order.closePosition = true; }
     return api.postOrder(order as any);
   }
 
@@ -352,6 +352,8 @@ export abstract class Exchange extends TaskExecutor {
     return api.cancelOrder({
       symbol: order.symbol,
       exchangeId: order.exchangeId,
+      id: order.id,
+      type: order.type,
     });
   }
 

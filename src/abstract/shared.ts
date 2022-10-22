@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 
 import { Order, OrderId, KlineIntervalType } from './types';
 
+export const timestamp = (inp?: moment.MomentInput) => moment(inp).format('YYYY-MM-DD HH:mm:ss.SSS');
 
 export const splitOrderId = (id: string): OrderId => {
   const ids = id.split('-');

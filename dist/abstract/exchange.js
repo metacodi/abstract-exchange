@@ -246,8 +246,8 @@ class Exchange extends task_executor_1.TaskExecutor {
         return __awaiter(this, void 0, void 0, function* () {
             const { account } = task.data;
             const api = this.getApiClient();
-            const { symbol, id } = Object.assign({}, task.data.order);
-            api.getOrder({ symbol, id }).then(order => {
+            const { symbol, id, exchangeId, type } = Object.assign({}, task.data.order);
+            api.getOrder({ symbol, id, exchangeId, type }).then(order => {
                 const { accountId, strategyId } = (0, shared_1.splitOrderId)(order.id);
                 const controllerId = `${accountId}-${strategyId}`;
                 account.markets[this.market].orders.push(order);
@@ -269,9 +269,6 @@ class Exchange extends task_executor_1.TaskExecutor {
             quantity: copy.baseQuantity,
             id: copy.id,
         };
-        if (market === 'futures' && copy.type === 'stop_market') {
-            order.closePosition = true;
-        }
         return api.postOrder(order);
     }
     cancelOrderTask(task) {
@@ -284,6 +281,8 @@ class Exchange extends task_executor_1.TaskExecutor {
         return api.cancelOrder({
             symbol: order.symbol,
             exchangeId: order.exchangeId,
+            id: order.id,
+            type: order.type,
         });
     }
     getOrdersEventsSubject(account, controllerId) {

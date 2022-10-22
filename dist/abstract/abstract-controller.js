@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractController = void 0;
-const node_utils_1 = require("@metacodi/node-utils");
 const shared_1 = require("./shared");
 class AbstractController {
     constructor(account, strategy, exchange) {
@@ -96,8 +95,8 @@ class AbstractController {
     createInstance() {
         const instance = {
             id: ++this.lastInstanceId,
-            created: (0, node_utils_1.timestamp)(),
-            updated: (0, node_utils_1.timestamp)(),
+            created: (0, shared_1.timestamp)(),
+            updated: (0, shared_1.timestamp)(),
             lastOrderId: 0,
             orders: [],
             balances: this.createBalances(),
@@ -188,11 +187,6 @@ class AbstractController {
         const order = this.createOrder(instance, 'sell', 'market', baseQuantity, { price, idOrderBuyed });
         this.do({ type: 'postOrder', data: { account, controllerId, order } });
     }
-    createOrderSellStopMarket(instance, baseQuantity, price, idOrderBuyed) {
-        const { account, controllerId } = this;
-        const order = this.createOrder(instance, 'sell', 'stop_market', baseQuantity, { price, idOrderBuyed });
-        this.do({ type: 'postOrder', data: { account, controllerId, order } });
-    }
     createOrderBuyLimit(instance, baseQuantity, price) {
         const { account, controllerId } = this;
         const order = this.createOrder(instance, 'buy', 'limit', baseQuantity, { price });
@@ -202,17 +196,6 @@ class AbstractController {
         const { account, controllerId } = this;
         const order = this.createOrder(instance, 'sell', 'limit', baseQuantity, { price, idOrderBuyed });
         this.do({ type: 'postOrder', data: { account, controllerId, order } });
-    }
-    createOrderBuyOco(instance, baseQuantityA, baseQuantityB, priceA, priceB) {
-        const { account, controllerId } = this;
-        const orderA = this.createOrder(instance, 'buy', this.market === 'spot' ? 'stop_loss_limit' : 'stop_market', baseQuantityA, { price: priceA, stopPrice: priceA });
-        const orderB = this.createOrder(instance, 'buy', this.market === 'spot' ? 'limit' : 'stop_market', baseQuantityB, { price: priceB, stopPrice: priceB });
-        orderA.id = `${orderA.id}-A`;
-        orderB.id = `${orderB.id}-B`;
-        orderA.isOco = true;
-        orderB.isOco = true;
-        this.do({ type: 'postOrder', data: { account, controllerId, order: orderA } });
-        this.do({ type: 'postOrder', data: { account, controllerId, order: orderB } });
     }
     cancelOrder(instance, order) {
         const { account, controllerId } = this;
@@ -240,7 +223,7 @@ class AbstractController {
             baseQuantity,
             price,
             isOco: false,
-            created: (0, node_utils_1.timestamp)(),
+            created: (0, shared_1.timestamp)(),
         };
         if (idOrderBuyed !== undefined) {
             order.idOrderBuyed = idOrderBuyed;

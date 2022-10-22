@@ -1,9 +1,7 @@
 
-import { timestamp } from "@metacodi/node-utils";
-
 import { ExchangeAccount } from "./exchange-account";
 import { Exchange } from "./exchange";
-import { splitOrderId } from "./shared";
+import { splitOrderId, timestamp } from "./shared";
 import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, SymbolType, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy } from "./types";
 
 
@@ -330,11 +328,11 @@ export abstract class AbstractController {
     this.do({ type: 'postOrder', data: { account, controllerId, order } });
   }
 
-  protected createOrderSellStopMarket(instance: InstanceController, baseQuantity: number, price?: number, idOrderBuyed?: string) {
-    const { account, controllerId } = this;
-    const order: Order = this.createOrder(instance, 'sell', 'stop_market', baseQuantity, { price, idOrderBuyed });
-    this.do({ type: 'postOrder', data: { account, controllerId, order } });
-  }
+  // protected createOrderSellStopMarket(instance: InstanceController, baseQuantity: number, price?: number, idOrderBuyed?: string) {
+  //   const { account, controllerId } = this;
+  //   const order: Order = this.createOrder(instance, 'sell', 'stop_market', baseQuantity, { price, idOrderBuyed });
+  //   this.do({ type: 'postOrder', data: { account, controllerId, order } });
+  // }
 
   protected createOrderBuyLimit(instance: InstanceController, baseQuantity: number, price: number) {
     const { account, controllerId } = this;
@@ -348,17 +346,17 @@ export abstract class AbstractController {
     this.do({ type: 'postOrder', data: { account, controllerId, order } });
   }
 
-  protected createOrderBuyOco(instance: InstanceController, baseQuantityA: number, baseQuantityB: number, priceA: number, priceB: number) {
-    const { account, controllerId } = this;
-    const orderA: Order = this.createOrder(instance, 'buy', this.market === 'spot' ? 'stop_loss_limit' : 'stop_market', baseQuantityA, { price: priceA, stopPrice: priceA });
-    const orderB: Order = this.createOrder(instance, 'buy', this.market === 'spot' ? 'limit' : 'stop_market', baseQuantityB, { price: priceB, stopPrice: priceB });
-    orderA.id = `${orderA.id}-A`;
-    orderB.id = `${orderB.id}-B`;
-    orderA.isOco = true;
-    orderB.isOco = true;
-    this.do({ type: 'postOrder', data: { account, controllerId, order: orderA } });
-    this.do({ type: 'postOrder', data: { account, controllerId, order: orderB } });
-  }
+  // protected createOrderBuyOco(instance: InstanceController, baseQuantityA: number, baseQuantityB: number, priceA: number, priceB: number) {
+  //   const { account, controllerId } = this;
+  //   const orderA: Order = this.createOrder(instance, 'buy', this.market === 'spot' ? 'stop_loss_limit' : 'stop_market', baseQuantityA, { price: priceA, stopPrice: priceA });
+  //   const orderB: Order = this.createOrder(instance, 'buy', this.market === 'spot' ? 'limit' : 'stop_market', baseQuantityB, { price: priceB, stopPrice: priceB });
+  //   orderA.id = `${orderA.id}-A`;
+  //   orderB.id = `${orderB.id}-B`;
+  //   orderA.isOco = true;
+  //   orderB.isOco = true;
+  //   this.do({ type: 'postOrder', data: { account, controllerId, order: orderA } });
+  //   this.do({ type: 'postOrder', data: { account, controllerId, order: orderB } });
+  // }
 
   protected cancelOrder(instance: InstanceController, order: Order) {
     const { account, controllerId } = this;

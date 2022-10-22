@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { Subject } from 'rxjs';
 import { Order, OrderId, KlineIntervalType } from './types';
+export declare const timestamp: (inp?: moment.MomentInput) => string;
 export declare const splitOrderId: (id: string) => OrderId;
 export declare const normalizeId: (id: string) => string;
 export declare const findOtherOco: (orders: Order[], id: string) => Order;

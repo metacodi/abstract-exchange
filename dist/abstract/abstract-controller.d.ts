@@ -74,10 +74,8 @@ export declare abstract class AbstractController {
     protected getOrder(order: Order): void;
     protected createOrderBuyMarket(instance: InstanceController, baseQuantity: number, price?: number): void;
     protected createOrderSellMarket(instance: InstanceController, baseQuantity: number, price?: number, idOrderBuyed?: string): void;
-    protected createOrderSellStopMarket(instance: InstanceController, baseQuantity: number, price?: number, idOrderBuyed?: string): void;
     protected createOrderBuyLimit(instance: InstanceController, baseQuantity: number, price: number): void;
     protected createOrderSellLimit(instance: InstanceController, baseQuantity: number, price: number, idOrderBuyed?: string): void;
-    protected createOrderBuyOco(instance: InstanceController, baseQuantityA: number, baseQuantityB: number, priceA: number, priceB: number): void;
     protected cancelOrder(instance: InstanceController, order: Order): void;
     protected createOrder(instance: InstanceController, side: OrderSide, type: OrderType, baseQuantity: number, options: {
         price?: number;
