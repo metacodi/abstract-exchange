@@ -52,11 +52,11 @@ export interface ExchangeWebsocket {
 
   // get url(): string;
 
-  connect(): void;
+  connect(): Promise<void>;
   
-  reconnect(): void;
+  reconnect(): Promise<void>;
   
-  close(): void;
+  close(): Promise<void>;
   
   destroy(): void;
 

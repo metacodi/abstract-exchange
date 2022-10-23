@@ -6,9 +6,9 @@ export interface ExchangeWebsocket {
     get market(): MarketType;
     get streamType(): WsStreamType;
     get isTest(): boolean;
-    connect(): void;
-    reconnect(): void;
-    close(): void;
+    connect(): Promise<void>;
+    reconnect(): Promise<void>;
+    close(): Promise<void>;
     destroy(): void;
     priceTicker(symbol: SymbolType): Subject<MarketPrice>;
     klineTicker(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
