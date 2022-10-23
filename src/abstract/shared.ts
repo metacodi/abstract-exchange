@@ -1,9 +1,12 @@
 import moment, { unitOfTime } from 'moment';
 import { Subject } from 'rxjs';
 
-import { Order, OrderId, KlineIntervalType } from './types';
+import { Order, OrderId, KlineIntervalType, SymbolType } from './types';
 
-export const timestamp = (inp?: moment.MomentInput) => moment(inp).format('YYYY-MM-DD HH:mm:ss.SSS');
+
+export const isSameSymbol = (s1: SymbolType, s2: SymbolType): boolean => { return s1.baseAsset === s2.baseAsset && s2.quoteAsset === s2.quoteAsset; }
+
+export const timestamp = (inp?: moment.MomentInput): string => moment(inp).format('YYYY-MM-DD HH:mm:ss.SSS');
 
 export const splitOrderId = (id: string): OrderId => {
   const ids = id.split('-');

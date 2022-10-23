@@ -3,8 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isSubjectUnobserved = exports.matchChannelKey = exports.buildChannelKey = exports.calculateCloseTime = exports.findOtherOco = exports.normalizeId = exports.splitOrderId = exports.timestamp = void 0;
+exports.isSubjectUnobserved = exports.matchChannelKey = exports.buildChannelKey = exports.calculateCloseTime = exports.findOtherOco = exports.normalizeId = exports.splitOrderId = exports.timestamp = exports.isSameSymbol = void 0;
 const moment_1 = __importDefault(require("moment"));
+const isSameSymbol = (s1, s2) => { return s1.baseAsset === s2.baseAsset && s2.quoteAsset === s2.quoteAsset; };
+exports.isSameSymbol = isSameSymbol;
 const timestamp = (inp) => (0, moment_1.default)(inp).format('YYYY-MM-DD HH:mm:ss.SSS');
 exports.timestamp = timestamp;
 const splitOrderId = (id) => {

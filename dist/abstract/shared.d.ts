@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { Subject } from 'rxjs';
-import { Order, OrderId, KlineIntervalType } from './types';
+import { Order, OrderId, KlineIntervalType, SymbolType } from './types';
+export declare const isSameSymbol: (s1: SymbolType, s2: SymbolType) => boolean;
 export declare const timestamp: (inp?: moment.MomentInput) => string;
 export declare const splitOrderId: (id: string) => OrderId;
 export declare const normalizeId: (id: string) => string;
