@@ -1,7 +1,10 @@
 import { Subject } from "rxjs";
 import { KlineIntervalType, MarketKline, MarketPrice, MarketType, Order, SymbolType } from "./types";
-import { WsStreamType, WsAccountUpdate } from "./exchange-websocket-types";
+import { ExchangeApi } from "./exchange-api";
+import { WsConnectionState, WsStreamType, WsAccountUpdate } from "./exchange-websocket-types";
 export interface ExchangeWebsocket {
+    status: WsConnectionState;
+    api: ExchangeApi;
     initialize(): Promise<void>;
     get market(): MarketType;
     get streamType(): WsStreamType;

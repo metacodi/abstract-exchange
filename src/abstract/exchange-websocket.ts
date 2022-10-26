@@ -6,14 +6,14 @@ import { WebsocketOptions, WsConnectionState, WsStreamType, WsAccountUpdate } fr
 
 
 export interface ExchangeWebsocket {
-  // /** Estat de la connexió. */
-  // status: WsConnectionState;
+  /** Estat de la connexió. */
+  status: WsConnectionState;
+  /** Referència a la instància del client API. */
+  api: ExchangeApi;
   // /** Opcions de configuració. */
   // options: WebsocketOptions;
   // /** Referència a la instància del websocket subjacent. */
   // ws: WebSocket
-  // /** Referència a la instància del client API. */
-  // api: ExchangeApi;
   // /** Subscripció al interval que envia un ping al servidor per mantenir viva la connexió.  */
   // pingTimer?: Subscription;
   // /** Subscriptor al timer que controla la resposta del servidor. */
