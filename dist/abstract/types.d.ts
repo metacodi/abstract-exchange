@@ -212,6 +212,7 @@ export interface Order {
     profit?: number;
     commission?: number;
     commissionAsset?: CoinType;
+    fillPrice?: number;
 }
 export interface PartialOrder {
     subscription?: Subscription;
