@@ -42,10 +42,10 @@ export interface MarketSymbol {
     quantityPrecision?: number;
     pricePrecision?: number;
     sizeMultiplier?: number;
-    tradeCommission?: 'base' | 'quote';
+    tradeAmountAsset?: 'base' | 'quote';
     minTradeAmount?: number;
     maxTradeAmount?: number;
-    assetCommission?: 'base' | 'quote';
+    commissionAsset?: 'base' | 'quote';
     makerCommission?: number;
     takerCommission?: number;
     longLeverage?: number;
