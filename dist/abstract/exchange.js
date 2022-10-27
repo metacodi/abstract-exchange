@@ -338,6 +338,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         }
         partial.subscription = (0, rxjs_1.timer)(this.partialPeriod).subscribe(() => this.notifyUnsatisfiedPartialOrder(account, partial));
         partial.accumulated += order.baseQuantity;
+        partial.avgPrice = (partial.avgPrice * partial.accumulated + order.price * order.baseQuantity) / (partial.accumulated + order.baseQuantity);
         partial.count += 1;
     }
     completePartialFilled(account, order) {
@@ -358,6 +359,8 @@ class Exchange extends task_executor_1.TaskExecutor {
         const found = account.markets[this.market].orders.find(o => o.id === order.id);
         order.status = 'unsatisfied';
         order.baseQuantity = partial.accumulated;
+        order.quoteQuantity = this.fixQuote(partial.accumulated * partial.avgPrice, order.symbol);
+        order.price = partial.avgPrice;
         delete this.partials[order.id];
         this.ordersEventsSubjects[controllerId].next(order);
     }

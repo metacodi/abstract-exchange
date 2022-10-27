@@ -414,6 +414,7 @@ export abstract class Exchange extends TaskExecutor {
     if (partial.subscription) { partial.subscription.unsubscribe(); }
     partial.subscription = timer(this.partialPeriod).subscribe(() => this.notifyUnsatisfiedPartialOrder(account, partial));
     partial.accumulated += order.baseQuantity;
+    partial.avgPrice = (partial.avgPrice * partial.accumulated + order.price * order.baseQuantity) / (partial.accumulated + order.baseQuantity);
     partial.count += 1;
   }
 
@@ -437,6 +438,9 @@ export abstract class Exchange extends TaskExecutor {
     // Construim un resultat en estat 'unsatisfied'.
     order.status = 'unsatisfied';
     order.baseQuantity = partial.accumulated;
+    order.quoteQuantity = this.fixQuote(partial.accumulated * partial.avgPrice, order.symbol);
+    order.price = partial.avgPrice;
+
     // Eliminem la info de PartialOrder.
     delete this.partials[order.id];
     // Notifiquem el resultat.

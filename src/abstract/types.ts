@@ -276,10 +276,11 @@ export interface Order {
 }
 
 export interface PartialOrder {
-  subscription?: Subscription,
-  order: Order,
-  accumulated: number,
-  count: number,
+  subscription?: Subscription;
+  order: Order;
+  accumulated: number;
+  avgPrice: number;
+  count: number;
 }
 
 
