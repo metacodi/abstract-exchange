@@ -273,7 +273,6 @@ export interface Order {
   profit?: number;        // Futures only
   commission?: number;
   commissionAsset?: CoinType;
-  fillPrice?: number;
 }
 
 export interface PartialOrder {
