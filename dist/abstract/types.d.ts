@@ -118,9 +118,9 @@ export interface UserAccount {
     token?: string;
 }
 export interface AccountInfo {
-    canTrade: boolean;
-    canWithdraw: boolean;
-    canDeposit: boolean;
+    canTrade?: boolean;
+    canWithdraw?: boolean;
+    canDeposit?: boolean;
     balances: Balance[];
     positions?: Position[];
 }

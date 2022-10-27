@@ -162,9 +162,9 @@ export interface AccountInfo {
   // takerCommission: number;
   // buyerCommission: number;
   // sellerCommission: number;
-  canTrade: boolean;
-  canWithdraw: boolean;
-  canDeposit: boolean;
+  canTrade?: boolean;
+  canWithdraw?: boolean;
+  canDeposit?: boolean;
   // updateTime: number;
   // accountType: MarketType;
   balances: Balance[];
