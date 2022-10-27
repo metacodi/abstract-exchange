@@ -121,7 +121,7 @@ export interface AccountInfo {
     canTrade?: boolean;
     canWithdraw?: boolean;
     canDeposit?: boolean;
-    balances: Balance[];
+    balances?: Balance[];
     positions?: Position[];
 }
 export interface Balance {

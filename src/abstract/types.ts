@@ -167,7 +167,7 @@ export interface AccountInfo {
   canDeposit?: boolean;
   // updateTime: number;
   // accountType: MarketType;
-  balances: Balance[];
+  balances?: Balance[];
   positions?: Position[];
   // permissions: MarketType[];
 }
