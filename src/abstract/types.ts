@@ -189,6 +189,7 @@ export interface Balance {
 }
 
 export interface Position {
+  id: string;
   symbol: SymbolType;
   marginAsset?: CoinType;
   positionAmount: number;
@@ -196,6 +197,7 @@ export interface Position {
   unrealisedPnl: number;
   marginType: MarginMode;
   positionSide: PositionSide;
+  liquidationPrice: number;
 }
 
 export interface AccountMarket {
