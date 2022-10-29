@@ -55,13 +55,15 @@ export abstract class Exchange extends TaskExecutor {
     // setTimeout(() => this.retrieveExchangeInfo(), 100);
     this.retrieveExchangeInfo();
   }
-
+  
 
   // ---------------------------------------------------------------------------------------------------
   //  Api
   // ---------------------------------------------------------------------------------------------------
+  
+  protected abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
 
-  abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
+  abstract initialize(): Promise<void>;
 
 
   // ---------------------------------------------------------------------------------------------------
