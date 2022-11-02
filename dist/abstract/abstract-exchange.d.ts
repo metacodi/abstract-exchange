@@ -73,4 +73,4 @@ export declare abstract class Exchange extends TaskExecutor {
     fixBase(base: number, symbol: SymbolType): number;
     fixQuote(quote: number, symbol: SymbolType): number;
 }
-//# sourceMappingURL=abstarct-exchange.d.ts.map
+//# sourceMappingURL=abstract-exchange.d.ts.map

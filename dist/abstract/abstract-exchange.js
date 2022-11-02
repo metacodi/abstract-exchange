@@ -213,7 +213,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         else {
             (_b = update.positions) === null || _b === void 0 ? void 0 : _b.map(position => {
                 const symbolKey = `${position.symbol.baseAsset}_${position.symbol.quoteAsset}`;
-                accountMarket.averagePrices[symbolKey] = position.entryPrice;
+                accountMarket.averagePrices[symbolKey] = position.price;
             });
             (_c = update.balances) === null || _c === void 0 ? void 0 : _c.map(balance => {
                 accountMarket.balances[balance.asset].balance = balance.balance;
@@ -378,4 +378,4 @@ class Exchange extends task_executor_1.TaskExecutor {
     }
 }
 exports.Exchange = Exchange;
-//# sourceMappingURL=abstarct-exchange.js.map
+//# sourceMappingURL=abstract-exchange.js.map

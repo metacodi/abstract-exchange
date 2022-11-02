@@ -12,10 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractController = void 0;
 const shared_1 = require("./shared");
 class AbstractController {
-    constructor(account, strategy, exchange) {
+    constructor(account, strategy, exchange, options) {
         this.account = account;
         this.strategy = strategy;
         this.exchange = exchange;
+        this.options = options;
         this.instances = [];
         this.exchangeReady = false;
         this.accountReady = false;
@@ -25,7 +26,6 @@ class AbstractController {
         this.status = 'off';
         this.lastInstanceId = 0;
         this.simulation = [];
-        this.config = this.loadAppSettings();
         this.balances = this.createBalances();
         this.loadInstances();
         this.subscribeToExchangeEvents();

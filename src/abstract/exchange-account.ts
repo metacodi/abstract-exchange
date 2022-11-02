@@ -1,5 +1,5 @@
 import { AbstractController } from "./abstract-controller";
-import { Exchange } from "./abstarct-exchange";
+import { Exchange } from "./abstract-exchange";
 import { OrdersExecutor } from "./orders-executor";
 import { UserAccount, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
 

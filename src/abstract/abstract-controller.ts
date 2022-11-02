@@ -1,6 +1,6 @@
 
 import { ExchangeAccount } from "./exchange-account";
-import { Exchange } from "./abstarct-exchange";
+import { Exchange } from "./abstract-exchange";
 import { splitOrderId, timestamp } from "./shared";
 import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, SymbolType, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy } from "./types";
 
@@ -9,8 +9,6 @@ export type ControllerStatus = 'on' | 'paused' | 'off';
 
 export abstract class AbstractController {
 
-  /** Referencia al contingut de l'arxiu de configuració. */
-  protected config: { [key: string]: any };
   /** Referència a les instàncies de l'estragègia del controlador. */
   instances: InstanceController[] = [];
   /** Balanços globals del controlador */
@@ -41,9 +39,8 @@ export abstract class AbstractController {
     public account: ExchangeAccount,
     public strategy: Strategy,
     public exchange: Exchange,
+    public options: { [key: string]: any },
   ) {
-    // Carreguem l'arxiu de configuració per saber si estem en mode isolated.
-    this.config = this.loadAppSettings();
     // Creem uns balanços a zero per al controlador. Els inicialitzará la classe heredada.
     this.balances = this.createBalances();
     // Carreguem les instàncies.
@@ -57,8 +54,6 @@ export abstract class AbstractController {
     // // Instanciem un logger.
     // this.logger = new FileLogger(`data/${account.folder}/log/strategy-${strategy.idreg}`, 'daily');
   }
-
-  protected abstract loadAppSettings(): { [key: string]: any; };
   
 
   // ---------------------------------------------------------------------------------------------------

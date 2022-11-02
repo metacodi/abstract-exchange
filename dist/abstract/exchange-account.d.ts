@@ -1,5 +1,5 @@
 import { AbstractController } from "./abstract-controller";
-import { Exchange } from "./abstarct-exchange";
+import { Exchange } from "./abstract-exchange";
 import { UserAccount, AccountMarket, FundingWallet, Strategy } from "./types";
 export interface ExchangeAccount {
     exchanges: {

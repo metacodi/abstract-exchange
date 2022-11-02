@@ -273,7 +273,7 @@ export abstract class Exchange extends TaskExecutor {
       // Actualitzem el preu promig de cada posició/symbol.
       update.positions?.map(position => {
         const symbolKey = `${position.symbol.baseAsset}_${position.symbol.quoteAsset}`;
-        accountMarket.averagePrices[symbolKey] = position.entryPrice;
+        accountMarket.averagePrices[symbolKey] = position.price;
       });
       // Actualitzem els balanços de cada asset.
       update.balances?.map(balance => {
