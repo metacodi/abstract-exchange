@@ -38,7 +38,8 @@ export declare abstract class Exchange extends TaskExecutor {
         [orderId: string]: PartialOrder;
     };
     constructor(market: MarketType);
-    abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
+    protected abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
+    abstract initialize(): Promise<void>;
     retrieveExchangeInfo(): Promise<void>;
     protected processExchangeLimits(rateLimits: Limit[]): void;
     protected getMarketWebsocket(symbol?: SymbolType): ExchangeWebsocket;
@@ -72,4 +73,4 @@ export declare abstract class Exchange extends TaskExecutor {
     fixBase(base: number, symbol: SymbolType): number;
     fixQuote(quote: number, symbol: SymbolType): number;
 }
-//# sourceMappingURL=exchange.d.ts.map
+//# sourceMappingURL=abstarct-exchange.d.ts.map

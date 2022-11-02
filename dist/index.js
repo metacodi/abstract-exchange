@@ -20,7 +20,7 @@ __exportStar(require("./abstract/exchange-api-types"), exports);
 __exportStar(require("./abstract/exchange-api"), exports);
 __exportStar(require("./abstract/exchange-websocket-types"), exports);
 __exportStar(require("./abstract/exchange-websocket"), exports);
-__exportStar(require("./abstract/exchange"), exports);
+__exportStar(require("./abstract/abstarct-exchange"), exports);
 __exportStar(require("./abstract/orders-executor"), exports);
 __exportStar(require("./abstract/shared"), exports);
 __exportStar(require("./abstract/task-executor"), exports);

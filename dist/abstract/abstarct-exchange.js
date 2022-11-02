@@ -126,7 +126,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         return api.getMarketSymbol(symbol);
     }
     getAccountWebsocket(account) {
-        const accountId = `${account.idreg}`;
+        const accountId = `${account.idUser}`;
         const stored = this.accountsWs[accountId];
         if (stored) {
             return stored;
@@ -143,7 +143,7 @@ class Exchange extends task_executor_1.TaskExecutor {
         return created;
     }
     getAccountEventsSubject(account, symbol) {
-        const accountId = `${account.idreg}`;
+        const accountId = `${account.idUser}`;
         if (this.accountEventsSubjects[accountId]) {
             return this.accountEventsSubjects[accountId];
         }
@@ -154,7 +154,7 @@ class Exchange extends task_executor_1.TaskExecutor {
     createAccountEventsSubject(account, symbol) {
         const ws = this.getAccountWebsocket(account);
         const subject = new rxjs_1.Subject();
-        const accountId = `${account.idreg}`;
+        const accountId = `${account.idUser}`;
         this.accountEventsSubjects[accountId] = subject;
         this.retrieveAcountInfo(account).then(ready => subject.next({ type: 'accountReady', ready }));
         ws.accountUpdate().subscribe(balance => this.onAccountUpdate(account, balance));
@@ -168,13 +168,13 @@ class Exchange extends task_executor_1.TaskExecutor {
             const info = yield api.getAccountInfo();
             const canTrade = !!(info === null || info === void 0 ? void 0 : info.canTrade);
             if (!canTrade) {
-                throw ({ message: `No es pot fer trading amb el compte '${account.idreg}' al mercat '${this.market}'.` });
+                throw ({ message: `No es pot fer trading amb el compte '${account.idUser}' al mercat '${this.market}'.` });
             }
             this.processInitialBalances(account, info.balances);
             const balances = account.markets[this.market].balances;
             const balanceReady = !!Object.keys(balances).length;
             if (!balanceReady) {
-                throw new Error(`Error recuperant els balanços del compte '${account.idreg}' al mercat '${this.market}'.`);
+                throw new Error(`Error recuperant els balanços del compte '${account.idUser}' al mercat '${this.market}'.`);
             }
             return Promise.resolve(balanceReady && canTrade);
         });
@@ -192,7 +192,7 @@ class Exchange extends task_executor_1.TaskExecutor {
     onAccountUpdate(account, update) {
         var _a, _b, _c;
         const { market } = this;
-        const accountId = `${account.idreg}`;
+        const accountId = `${account.idUser}`;
         const accountMarket = account.markets[this.market];
         const balances = [];
         if (this.market === 'spot') {
@@ -378,4 +378,4 @@ class Exchange extends task_executor_1.TaskExecutor {
     }
 }
 exports.Exchange = Exchange;
-//# sourceMappingURL=exchange.js.map
+//# sourceMappingURL=abstarct-exchange.js.map

@@ -1,6 +1,6 @@
 
 import { ExchangeAccount } from "./exchange-account";
-import { Exchange } from "./exchange";
+import { Exchange } from "./abstarct-exchange";
 import { splitOrderId, timestamp } from "./shared";
 import { AccountEvent, AccountMarket, AccountReadyStatus, Balance, SymbolType, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderTask, OrderType, SimulationData, Strategy } from "./types";
 
@@ -154,11 +154,11 @@ export abstract class AbstractController {
   //  Ids
   // ---------------------------------------------------------------------------------------------------
 
-  get accountId(): string { return `${this.account?.idreg}` }
+  get accountId(): string { return `${this.account?.idUser}` }
 
   get strategyId(): string { return `${this.strategy?.idreg}` }
 
-  get controllerId(): string { return `${this.account.idreg}-${this.strategy.idreg}` }
+  get controllerId(): string { return `${this.account.idUser}-${this.strategy.idreg}` }
 
 
   // ---------------------------------------------------------------------------------------------------

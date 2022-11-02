@@ -75,9 +75,9 @@ class AbstractController {
     get quoteAsset() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol.quoteAsset; }
     get baseAsset() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.symbol.baseAsset; }
     get leverage() { var _a; return (_a = this.strategy) === null || _a === void 0 ? void 0 : _a.params.leverage; }
-    get accountId() { var _a; return `${(_a = this.account) === null || _a === void 0 ? void 0 : _a.idreg}`; }
+    get accountId() { var _a; return `${(_a = this.account) === null || _a === void 0 ? void 0 : _a.idUser}`; }
     get strategyId() { var _a; return `${(_a = this.strategy) === null || _a === void 0 ? void 0 : _a.idreg}`; }
-    get controllerId() { return `${this.account.idreg}-${this.strategy.idreg}`; }
+    get controllerId() { return `${this.account.idUser}-${this.strategy.idreg}`; }
     get accountMarket() { return this.account.markets[this.market]; }
     fixPrice(price) { return +price.toFixed(this.marketSymbol.pricePrecision || 3); }
     fixQuantity(quantity) { return +quantity.toFixed(this.marketSymbol.quantityPrecision || 2); }

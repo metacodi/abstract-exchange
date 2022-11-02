@@ -1,5 +1,5 @@
 import { ExchangeAccount } from "./exchange-account";
-import { Exchange } from "./exchange";
+import { Exchange } from "./abstarct-exchange";
 import { AccountEvent, AccountMarket, Balance, SymbolType, CoinType, InstanceController, MarketSymbol, MarketType, Order, OrderSide, OrderStatus, OrderType, SimulationData, Strategy } from "./types";
 export declare type ControllerStatus = 'on' | 'paused' | 'off';
 export declare abstract class AbstractController {

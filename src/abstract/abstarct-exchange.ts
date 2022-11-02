@@ -180,7 +180,7 @@ export abstract class Exchange extends TaskExecutor {
   // ---------------------------------------------------------------------------------------------------
 
   protected getAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket {
-    const accountId = `${account.idreg}`;
+    const accountId = `${account.idUser}`;
     const stored = this.accountsWs[accountId];
     if (stored) { return stored; }
     const { apiKey, apiSecret } = account.exchanges[this.name];
@@ -208,7 +208,7 @@ export abstract class Exchange extends TaskExecutor {
   }
 
   getAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent> {
-    const accountId = `${account.idreg}`;
+    const accountId = `${account.idUser}`;
     if (this.accountEventsSubjects[accountId]) {
       return this.accountEventsSubjects[accountId];
     } else {
@@ -219,7 +219,7 @@ export abstract class Exchange extends TaskExecutor {
   protected createAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent> {
     const ws = this.getAccountWebsocket(account);
     const subject = new Subject<AccountEvent>();
-    const accountId = `${account.idreg}`;
+    const accountId = `${account.idUser}`;
     this.accountEventsSubjects[accountId] = subject;
     // Recuperem la info del compte per veure si està disponible.
     this.retrieveAcountInfo(account).then(ready => subject.next({ type: 'accountReady', ready } as AccountReadyStatus));
@@ -237,11 +237,11 @@ export abstract class Exchange extends TaskExecutor {
     const info = await api.getAccountInfo(); // .catch(error => console.error(error));
     // const canTrade = !!info?.canTrade && !!perms?.ipRestrict && (this.market === 'spot' ? !!perms?.enableSpotAndMarginTrading : !!perms?.enableFutures);
     const canTrade = !!info?.canTrade;
-    if (!canTrade) { throw ({ message: `No es pot fer trading amb el compte '${account.idreg}' al mercat '${this.market}'.` }); }
+    if (!canTrade) { throw ({ message: `No es pot fer trading amb el compte '${account.idUser}' al mercat '${this.market}'.` }); }
     this.processInitialBalances(account, info.balances);
     const balances = account.markets[this.market].balances;
     const balanceReady = !!Object.keys(balances).length;
-    if (!balanceReady) { throw new Error(`Error recuperant els balanços del compte '${account.idreg}' al mercat '${this.market}'.`); }
+    if (!balanceReady) { throw new Error(`Error recuperant els balanços del compte '${account.idUser}' al mercat '${this.market}'.`); }
     return Promise.resolve(balanceReady && canTrade);
   }
 
@@ -256,7 +256,7 @@ export abstract class Exchange extends TaskExecutor {
 
   protected onAccountUpdate(account: ExchangeAccount, update: WsAccountUpdate) {
     const { market } = this;
-    const accountId = `${account.idreg}`;
+    const accountId = `${account.idUser}`;
     const accountMarket = account.markets[this.market];
     const balances: Balance[] = [];
     // Actualitzem els balanços de cada asset.

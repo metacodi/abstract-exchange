@@ -18,9 +18,9 @@ class OrdersExecutor extends task_executor_1.TaskExecutor {
         console.log('OrdersExecutor.updateOrdersLimit()', ordersLimit);
         this.updateLimit(ordersLimit);
     }
-    get accountId() { var _a; return `${(_a = this.account) === null || _a === void 0 ? void 0 : _a.idreg}`; }
+    get accountId() { var _a; return `${(_a = this.account) === null || _a === void 0 ? void 0 : _a.idUser}`; }
     get strategyId() { var _a; return `${(_a = this.strategy) === null || _a === void 0 ? void 0 : _a.idreg}`; }
-    get controllerId() { return `${this.account.idreg}-${this.strategy.idreg}`; }
+    get controllerId() { return `${this.account.idUser}-${this.strategy.idreg}`; }
     executeTask(task) {
         switch (task.type) {
             case 'getOrder':
