@@ -138,7 +138,7 @@ export interface Position {
     symbol: SymbolType;
     marginAsset?: CoinType;
     positionAmount: number;
-    entryPrice: number;
+    price: number;
     unrealisedPnl: number;
     marginType: MarginMode;
     positionSide: PositionSide;
@@ -213,6 +213,7 @@ export interface Order {
     profit?: number;
     commission?: number;
     commissionAsset?: CoinType;
+    leverage?: number;
 }
 export interface PartialOrder {
     subscription?: Subscription;
