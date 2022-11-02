@@ -1,6 +1,5 @@
-import { AbstractController } from "./abstract-controller";
 import { Exchange } from "./abstract-exchange";
-import { OrdersExecutor } from "./orders-executor";
+import { ExchangeController } from "./exchange-controller";
 import { UserAccount, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
 
 
@@ -10,7 +9,7 @@ export interface ExchangeAccount {
   // Estratègies del compte.
   strategies?: Strategy[];
   // Controladors de les estratègies.
-  controllers: AbstractController[];
+  controllers: ExchangeController[];
   // Mercats implicats en les estratègies.
   markets?: { [MarketType: string]: AccountMarket };
   // Fons del compte de l'usuari.
@@ -32,12 +31,12 @@ export interface ExchangeAccount {
   loadStrategies(): Promise<Strategy[]>;
 
   /** Arranca l'estratègia creant les instàncies corresponents. */
-  startStrategy(strategy: Strategy): Promise<{ controller: AbstractController, exchange: Exchange }>;
+  startStrategy(strategy: Strategy): Promise<{ controller: ExchangeController, exchange: Exchange }>;
 
   /** Instància del controlador que farà anar l'estratègia indicada. */
-  createController(executor: Exchange, account: ExchangeAccount, strategy: Strategy): AbstractController;
+  createController(executor: Exchange, account: ExchangeAccount, strategy: Strategy): ExchangeController;
 
   /** Atura l'estratègia. */
-  stopStrategy(controller: AbstractController): Promise<void>;
+  stopStrategy(controller: ExchangeController): Promise<void>;
 
 }

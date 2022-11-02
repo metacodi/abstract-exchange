@@ -1,5 +1,5 @@
-import { AbstractController } from "./abstract-controller";
 import { Exchange } from "./abstract-exchange";
+import { ExchangeController } from "./exchange-controller";
 import { UserAccount, AccountMarket, FundingWallet, Strategy } from "./types";
 export interface ExchangeAccount {
     exchanges: {
@@ -10,7 +10,7 @@ export interface ExchangeAccount {
         };
     };
     strategies?: Strategy[];
-    controllers: AbstractController[];
+    controllers: ExchangeController[];
     markets?: {
         [MarketType: string]: AccountMarket;
     };
@@ -26,10 +26,10 @@ export interface ExchangeAccount {
     initialize(): Promise<void>;
     loadStrategies(): Promise<Strategy[]>;
     startStrategy(strategy: Strategy): Promise<{
-        controller: AbstractController;
+        controller: ExchangeController;
         exchange: Exchange;
     }>;
-    createController(executor: Exchange, account: ExchangeAccount, strategy: Strategy): AbstractController;
-    stopStrategy(controller: AbstractController): Promise<void>;
+    createController(executor: Exchange, account: ExchangeAccount, strategy: Strategy): ExchangeController;
+    stopStrategy(controller: ExchangeController): Promise<void>;
 }
 //# sourceMappingURL=exchange-account.d.ts.map
