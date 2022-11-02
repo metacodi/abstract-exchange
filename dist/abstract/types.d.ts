@@ -129,6 +129,7 @@ export interface Position {
     marginAsset?: CoinType;
     positionAmount: number;
     price: number;
+    leverage: number;
     unrealisedPnl: number;
     marginType: MarginMode;
     positionSide: PositionSide;
