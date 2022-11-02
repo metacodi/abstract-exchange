@@ -109,16 +109,6 @@ export interface Strategy {
     params: BaseStrategyParams;
     differential?: number;
 }
-export interface UserAccount {
-    idreg: number;
-    nombre: string;
-    apellidos: string;
-    telefono: string;
-    email: string;
-    password: string;
-    folder: string;
-    token?: string;
-}
 export interface AccountInfo {
     canTrade?: boolean;
     canWithdraw?: boolean;
@@ -236,6 +226,57 @@ export interface InstanceController {
     orders: Order[];
     balances: {
         [key: string]: Balance;
+    };
+}
+export interface User {
+    idreg: number;
+    idRole: number;
+    idAbstractRole: number;
+    idLang: number;
+    nombre: string;
+    apellidos: string;
+    telefono: string;
+    telefono2: string;
+    email: string;
+    validated: boolean;
+    pin: any;
+    role: Role;
+    device: Device;
+}
+export interface Role {
+    idreg: number;
+    name: string;
+}
+export interface Device {
+    idreg: number;
+    idUser: number;
+    ip: string;
+    deviceToken: string;
+    apiToken: string;
+    uuid: string;
+    description: string;
+    info: string;
+    lastLogin: string;
+    lat: number;
+    lng: number;
+    security: {
+        idreg: number;
+        idUser: number;
+        idDevice: number;
+        allowStoreCredentials: boolean;
+        allowBiometricValidation: boolean;
+        sendEmailOnNewDevice: boolean;
+        sendPushOnNewDevice: boolean;
+        sendEmailOnChangeIp: boolean;
+        sendPushOnChangeIp: boolean;
+    };
+    notifications: {
+        idreg: number;
+        idUser: number;
+        idDevice: number;
+        allowPushNotifications: boolean;
+        allowSonidoPush: boolean;
+        sonidoPush: string;
     };
 }
 //# sourceMappingURL=types.d.ts.map

@@ -1,6 +1,6 @@
 import { Exchange } from "./abstract-exchange";
 import { ExchangeController } from "./exchange-controller";
-import { UserAccount, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
+import { User, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
 
 
 export interface ExchangeAccount {
@@ -15,7 +15,7 @@ export interface ExchangeAccount {
   // Fons del compte de l'usuari.
   fondosWallet?: { [CoinType: string]: FundingWallet; };
   /** Referència a les dades de l'usuari. */
-  user: UserAccount,
+  user: User,
   /** Identificador de l'usuari. */
   get idUser(): number;
   /** Paràmetres d'inicialització. */

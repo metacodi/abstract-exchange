@@ -1,6 +1,6 @@
 import { Exchange } from "./abstract-exchange";
 import { ExchangeController } from "./exchange-controller";
-import { UserAccount, AccountMarket, FundingWallet, Strategy } from "./types";
+import { User, AccountMarket, FundingWallet, Strategy } from "./types";
 export interface ExchangeAccount {
     exchanges: {
         [ExchangeType: string]: {
@@ -17,7 +17,7 @@ export interface ExchangeAccount {
     fondosWallet?: {
         [CoinType: string]: FundingWallet;
     };
-    user: UserAccount;
+    user: User;
     get idUser(): number;
     config: {
         [key: string]: any;
