@@ -19,7 +19,7 @@ export interface ExchangeAccount {
     };
     user: User;
     get idUser(): number;
-    config: {
+    options: {
         [key: string]: any;
     };
     exchangeProvider: (account: ExchangeAccount, strategy: Strategy) => Exchange;

@@ -19,7 +19,7 @@ export interface ExchangeAccount {
   /** Identificador de l'usuari. */
   get idUser(): number;
   /** Paràmetres d'inicialització. */
-  config: { [key: string]: any },
+  options: { [key: string]: any },
 
   /** Funció per proveïr dels exchanges per cada compte i estratègia. */
   exchangeProvider: (account: ExchangeAccount, strategy: Strategy) => Exchange,
