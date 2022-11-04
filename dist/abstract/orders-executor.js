@@ -33,7 +33,7 @@ class OrdersExecutor extends task_executor_1.TaskExecutor {
                 this.exchange.cancelOrder(task);
                 break;
             default:
-                throw new Error(`No s'ha implementat la tasca de tipus '${task.type}'.`);
+                throw { code: 500, message: `No s'ha implementat la tasca de tipus '${task.type}'.` };
         }
         return Promise.resolve();
     }

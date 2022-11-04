@@ -12,22 +12,22 @@ import { ExchangeInfo, PostOrderRequest } from "./exchange-api-types";
 import moment from "moment";
 
 
-export abstract class Exchange extends TaskExecutor {
+export abstract class AbstractExchange extends TaskExecutor {
   /** Nombre del exchange */
   name: ExchangeType;
   /** Referència a la instància de l'API. */
-  api: ExchangeApi;
+  abstract get marketApi(): ExchangeApi;
   /** Referència al websockets pel market stream. */
-  marketWs: ExchangeWebsocket;
+  abstract get marketWs(): ExchangeWebsocket;
   /** Referencies als websockets de cada compte. */
-  accountsWs: { [accounId: string]: ExchangeWebsocket } = {};
+  accountWs: { [accounId: string]: ExchangeWebsocket } = {};
   /** Colección de símbolos del exchange. */
   symbols: MarketSymbol[] = [];
   /** Límite de request del exchange. */
   limitRequest: Limit;
   /** Límite de órdenes del exchange. */
   limitOrders: Limit;
-  /** Alguns exchanges com Bitget no informen del locked. Hem de saber-ho per calcular-lo en cada orderUpdate. */
+  /** Alguns exchanges com Bitget no informen del locked. Donat el cas, haurem de calcular-lo en cada orderUpdate. */
   balanceLocketIsMissing = true;
 
   /** Indica quan s'han carregat les dades de l'exchange per primera vegada. */
@@ -57,12 +57,6 @@ export abstract class Exchange extends TaskExecutor {
   }
   
 
-  // ---------------------------------------------------------------------------------------------------
-  //  Api
-  // ---------------------------------------------------------------------------------------------------
-  
-  protected abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
-
   abstract initialize(): Promise<void>;
 
 
@@ -72,8 +66,7 @@ export abstract class Exchange extends TaskExecutor {
 
   async retrieveExchangeInfo() {
     console.log(this.constructor.name + '.retrieveExchangeInfo()');
-    const api = this.getApiClient();
-    api.getExchangeInfo().then(response => {
+    this.marketApi.getExchangeInfo().then(response => {
       this.processExchangeLimits(response.limits);
       this.isReady = true;
       this.exchangeInfoUpdated.next();
@@ -110,22 +103,6 @@ export abstract class Exchange extends TaskExecutor {
   // ---------------------------------------------------------------------------------------------------
   //  market
   // ---------------------------------------------------------------------------------------------------
-  
-  protected getMarketWebsocket(symbol?: SymbolType) {
-    if (this.marketWs) { return this.marketWs; }
-    switch (this.name) {
-      case 'binance':
-        // this.marketWs = new BinanceWebsocket({ streamType: 'market', market: this.market });
-        break;
-      case 'kucoin':
-        // this.marketWs = new KucoinWebsocket({ streamType: 'market', market: this.market });
-        break;
-      case 'okx':
-        // this.marketWs = new OkxWebsocket({ streamType: 'market', market: this.market });
-        break;
-    }
-    return this.marketWs;
-  }
 
   getMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice> {
     const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
@@ -137,18 +114,16 @@ export abstract class Exchange extends TaskExecutor {
   }
   
   protected createMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice> {
-    const ws = this.getMarketWebsocket(symbol);
     const subject = new Subject<MarketPrice>();
     const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
     this.marketPriceSubjects[symbolKey] = subject;
-    ws.priceTicker(symbol).subscribe(data => subject.next(data));
+    this.marketWs.priceTicker(symbol).subscribe(data => subject.next(data));
     return subject;
   }
 
   async getMarketPrice(symbol: SymbolType): Promise<MarketPrice> {
     this.countPeriod++;
-    const api = this.getApiClient();
-    return api.getPriceTicker(symbol);
+    return this.marketApi.getPriceTicker(symbol);
   }
 
   getMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline> {
@@ -161,17 +136,15 @@ export abstract class Exchange extends TaskExecutor {
   }
 
   protected createMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline> {
-    const ws = this.getMarketWebsocket(symbol);
     const subject = new Subject<MarketKline>();
     const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
     this.marketKlineSubjects[`${symbolKey}_${interval}`] = subject;
-    ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
+    this.marketWs.klineTicker(symbol, interval).subscribe(data => subject.next(data));
     return subject;
   }
 
   getMarketSymbol(symbol: SymbolType): Promise<MarketSymbol> {
-    const api = this.getApiClient();
-    return api.getMarketSymbol(symbol);
+    return this.marketApi.getMarketSymbol(symbol);
   }
 
 
@@ -179,31 +152,14 @@ export abstract class Exchange extends TaskExecutor {
   //  account
   // ---------------------------------------------------------------------------------------------------
 
+  protected abstract createAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket;
+
   protected getAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket {
     const accountId = `${account.idUser}`;
-    const stored = this.accountsWs[accountId];
+    const stored = this.accountWs[accountId];
     if (stored) { return stored; }
-    const { apiKey, apiSecret } = account.exchanges[this.name];
-    let created;
-    switch (this.name) {
-      case 'binance':
-        // created = new BinanceWebsocket({
-        //   streamType: 'user',
-        //   streamFormat: 'stream',
-        //   market: this.binanceMarket(this.market, symbol),
-        //   apiKey, apiSecret,
-        // });
-        break;
-      case 'kucoin':
-        // created = new KucoinWebsocket({
-        //   streamType: 'user',
-        //   streamFormat: 'stream',
-        //   market: this.binanceMarket(this.market, symbol),
-        //   apiKey, apiSecret,
-        // });
-        break;
-    }
-    this.accountsWs[accountId] = created;
+    const created = this.createAccountWebsocket(account);
+    this.accountWs[accountId] = created;
     return created;
   }
 
@@ -232,16 +188,14 @@ export abstract class Exchange extends TaskExecutor {
   
   async retrieveAcountInfo(account: ExchangeAccount): Promise<boolean> {
     console.log(this.constructor.name + '.retrieveAcountInfo()');
-    const api = this.getApiClient(account);
-    // const perms = await api.getApiKeyPermissions(); // .catch(error => console.error(error));
+    const { api } = this.getAccountWebsocket(account);
     const info = await api.getAccountInfo(); // .catch(error => console.error(error));
-    // const canTrade = !!info?.canTrade && !!perms?.ipRestrict && (this.market === 'spot' ? !!perms?.enableSpotAndMarginTrading : !!perms?.enableFutures);
     const canTrade = !!info?.canTrade;
-    if (!canTrade) { throw ({ message: `No es pot fer trading amb el compte '${account.idUser}' al mercat '${this.market}'.` }); }
+    if (!canTrade) { throw { message: `No es pot fer trading amb el compte '${account.idUser}' al mercat '${this.market}'.` }; }
     this.processInitialBalances(account, info.balances);
     const balances = account.markets[this.market].balances;
     const balanceReady = !!Object.keys(balances).length;
-    if (!balanceReady) { throw new Error(`Error recuperant els balanços del compte '${account.idUser}' al mercat '${this.market}'.`); }
+    if (!balanceReady) { throw { message: `Error recuperant els balanços del compte '${account.idUser}' al mercat '${this.market}'.` }; }
     return Promise.resolve(balanceReady && canTrade);
   }
 
@@ -305,7 +259,7 @@ export abstract class Exchange extends TaskExecutor {
       case 'postOrder': this.postOrderTask(task); break;
       case 'cancelOrder': this.cancelOrderTask(task); break;
       default:
-        throw new Error(`No s'ha implementat la tasca de tipus '${task.type}'.`);
+        throw { code: 500, message: `No s'ha implementat la tasca de tipus '${task.type}'.` };
     }
     // NOTA: La promise només és necessària per a una execució seqüencial (sync) i estem en un paradigma async.
     return Promise.resolve();
@@ -314,7 +268,7 @@ export abstract class Exchange extends TaskExecutor {
   
   protected async getOrderTask(task: OrderTask) {
     const { account } = task.data as { account: ExchangeAccount; };
-    const api = this.getApiClient();
+    const { api } = this.getAccountWebsocket(account);
     const { symbol, id, exchangeId, type } = Object.assign({}, task.data.order);    
     api.getOrder({ symbol, id, exchangeId, type }).then(order => {
       const { accountId, strategyId } = splitOrderId(order.id);
@@ -328,8 +282,7 @@ export abstract class Exchange extends TaskExecutor {
 
   protected postOrderTask(task: OrderTask) {
     const { account } = task.data;
-    const { market } = this;
-    const api = this.getApiClient();
+    const { api } = this.getAccountWebsocket(account);
     const copy: Order = Object.assign({}, task.data.order);
     account.markets[this.market].orders.push(copy);
     const order: PostOrderRequest = {
@@ -348,7 +301,7 @@ export abstract class Exchange extends TaskExecutor {
 
   protected cancelOrderTask(task: OrderTask) {
     const { account, order } = task.data as { account: ExchangeAccount; order: Order; };
-    const api = this.getApiClient();
+    const { api } = this.getAccountWebsocket(account);
     const found: Order = account.markets[this.market].orders.find(o => o.id === order.id);
     if (found) { found.status = 'cancel'; }
     return api.cancelOrder({
@@ -404,7 +357,7 @@ export abstract class Exchange extends TaskExecutor {
       //   break;
       default:
         const orderId = (order as any).originalClientOrderId || (order as any).clientOrderId;
-        throw ({ message: `No s'ha implementat l'estat '${order.status}' d'ordre ${orderId} de Binance` });
+        throw { message: `No s'ha implementat l'estat '${order.status}' d'ordre ${orderId} de Binance` };
     }
   }
 

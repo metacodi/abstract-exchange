@@ -6,12 +6,12 @@ import { Order, OrderTask, PartialOrder, ResultOrderStatus } from "./types";
 import { ExchangeWebsocket } from "./exchange-websocket";
 import { ExchangeApi } from "./exchange-api";
 import { WsAccountUpdate } from "./exchange-websocket-types";
-export declare abstract class Exchange extends TaskExecutor {
+export declare abstract class AbstractExchange extends TaskExecutor {
     market: MarketType;
     name: ExchangeType;
-    api: ExchangeApi;
-    marketWs: ExchangeWebsocket;
-    accountsWs: {
+    abstract get marketApi(): ExchangeApi;
+    abstract get marketWs(): ExchangeWebsocket;
+    accountWs: {
         [accounId: string]: ExchangeWebsocket;
     };
     symbols: MarketSymbol[];
@@ -38,17 +38,16 @@ export declare abstract class Exchange extends TaskExecutor {
         [orderId: string]: PartialOrder;
     };
     constructor(market: MarketType);
-    protected abstract getApiClient(account?: ExchangeAccount): ExchangeApi;
     abstract initialize(): Promise<void>;
     retrieveExchangeInfo(): Promise<void>;
     protected processExchangeLimits(rateLimits: Limit[]): void;
-    protected getMarketWebsocket(symbol?: SymbolType): ExchangeWebsocket;
     getMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice>;
     protected createMarketPriceSubject(symbol: SymbolType): Subject<MarketPrice>;
     getMarketPrice(symbol: SymbolType): Promise<MarketPrice>;
     getMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
     protected createMarketKlineSubject(symbol: SymbolType, interval: KlineIntervalType): Subject<MarketKline>;
     getMarketSymbol(symbol: SymbolType): Promise<MarketSymbol>;
+    protected abstract createAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket;
     protected getAccountWebsocket(account: ExchangeAccount): ExchangeWebsocket;
     getAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent>;
     protected createAccountEventsSubject(account: ExchangeAccount, symbol?: SymbolType): Subject<AccountEvent>;

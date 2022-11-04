@@ -126,25 +126,25 @@ export interface Strategy {
   idreg: number;
   controller: string;
   description: string;
-  exchange: ExchangeType;
-  simulatorDataSource?: {
-    /** El nom de l'arxiu (string) o directament un array amb els preus. */
-    source: string | (number | 'up' | 'down')[];
-    sourceType: 'price' | 'kline';
-    /** Format de l'arxiu. Genèric si és un array de preus, binance si és el resultat del miniTicker. */
-    format: 'generic' | 'binance';
-    mode: SimulatorMode;
-    /** Only for `interval` mode. */
-    period?: number;
-    baseQuantity?: number; // BNB
-    quoteQuantity: number; // USDT
-    commissionAsset?: CoinType;
-  };
-  market: MarketType;
-  symbol: SymbolType;
-  autoStart: boolean;
-  params: BaseStrategyParams;
-  differential?: number;
+  // exchange: ExchangeType;
+  // simulatorDataSource?: {
+  //   /** El nom de l'arxiu (string) o directament un array amb els preus. */
+  //   source: string | (number | 'up' | 'down')[];
+  //   sourceType: 'price' | 'kline';
+  //   /** Format de l'arxiu. Genèric si és un array de preus, binance si és el resultat del miniTicker. */
+  //   format: 'generic' | 'binance';
+  //   mode: SimulatorMode;
+  //   /** Only for `interval` mode. */
+  //   period?: number;
+  //   baseQuantity?: number; // BNB
+  //   quoteQuantity: number; // USDT
+  //   commissionAsset?: CoinType;
+  // };
+  // market: MarketType;
+  // symbol: SymbolType;
+  // autoStart: boolean;
+  // params: BaseStrategyParams;
+  // differential?: number;
 }
 
 export interface AccountInfo {
@@ -349,3 +349,75 @@ export interface Device {
 }
 
 
+
+export interface Bot {
+  idreg: number;
+  url: string;
+  port: number;
+  ip: string;
+  accounts?: {
+    idUser: number;
+    userOperations: Partial<UserOperation>[];
+    error?: { [type: string]: { code?: number; message: string } };
+  }[];
+  exchanges?: BotExchange[];
+};
+
+export interface BotExchange {
+  exchanges: ExchangeType;
+  maxAccounts: number;
+}
+
+
+export interface Operation {
+  idreg: 'new' | number;
+  idStrategy: number;
+  idCreador: number;
+  params: { [key: string]: any };
+  exchange: ExchangeType;
+  market: MarketType;
+  quoteAsset: CoinType;
+  baseAsset: CoinType;
+  accounts?: UserOperation[];
+  users?: User[];
+  strategy?: Strategy;
+};
+
+export interface UserOperation {
+  idreg: 'new' | number;
+  idUser: number;
+  idOperation: 'new' | number;
+  idBot: number;
+  results: UserOperationResult;
+  autoStart: boolean;
+  started?: string;
+  finished?: string;
+  user?: User;
+  bot?: Bot;
+  operation?: Operation;
+  info?: AccountInfo;
+  error?: { [type: string]: { code?: number; message: string } };
+  ui?: {
+    quoteBalance?: number;
+    quoteInvestment?: number;
+    baseInvestment?: number;
+    icon?: string;
+    iconColor?: string;
+  };
+};
+
+export type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
+
+export interface UserOperationResult {
+  status: UserOperationStatus;
+  entryPrice?: number;
+  pnl?: number;
+}
+
+export const userOperationStringify = (row: UserOperation): any => {
+  const results: (keyof UserOperationResult)[] = [ 'status', 'entryPrice', 'pnl' ];
+  const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
+  row.results = JSON.stringify(resultsObj) as any;
+  results.map(prop => delete (row as any)[prop]);
+  return row;
+};

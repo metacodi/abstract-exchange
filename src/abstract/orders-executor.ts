@@ -3,7 +3,7 @@ import { BehaviorSubject } from "rxjs";
 import { Order, Strategy, Task, CoinType, OrderTask } from './types';
 import { ExchangeAccount } from "./exchange-account";
 import { Limit, TaskExecutor, TaskExecutorOptions } from "./task-executor";
-import { Exchange } from "./abstract-exchange";
+import { AbstractExchange } from "./abstract-exchange";
 
 
 export class OrdersExecutor extends TaskExecutor {
@@ -15,7 +15,7 @@ export class OrdersExecutor extends TaskExecutor {
   constructor(
     public account: ExchangeAccount,
     public strategy: Strategy,
-    public exchange: Exchange,
+    public exchange: AbstractExchange,
     public options?: TaskExecutorOptions,
   ) {
     super(options); // spot orders limit ratio => 5/s
@@ -58,7 +58,7 @@ export class OrdersExecutor extends TaskExecutor {
       case 'postOrder': this.exchange.postOrder(task); break;
       case 'cancelOrder': this.exchange.cancelOrder(task); break;
       default:
-        throw new Error(`No s'ha implementat la tasca de tipus '${task.type}'.`);
+        throw { code: 500, message: `No s'ha implementat la tasca de tipus '${task.type}'.` };
     }
     // NOTA: La promise només és necessària per a una execució seqüencial (sync) i estem en un paradigma async.
     return Promise.resolve();

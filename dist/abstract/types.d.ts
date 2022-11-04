@@ -92,22 +92,6 @@ export interface Strategy {
     idreg: number;
     controller: string;
     description: string;
-    exchange: ExchangeType;
-    simulatorDataSource?: {
-        source: string | (number | 'up' | 'down')[];
-        sourceType: 'price' | 'kline';
-        format: 'generic' | 'binance';
-        mode: SimulatorMode;
-        period?: number;
-        baseQuantity?: number;
-        quoteQuantity: number;
-        commissionAsset?: CoinType;
-    };
-    market: MarketType;
-    symbol: SymbolType;
-    autoStart: boolean;
-    params: BaseStrategyParams;
-    differential?: number;
 }
 export interface AccountInfo {
     canTrade?: boolean;
@@ -280,4 +264,74 @@ export interface Device {
         sonidoPush: string;
     };
 }
+export interface Bot {
+    idreg: number;
+    url: string;
+    port: number;
+    ip: string;
+    accounts?: {
+        idUser: number;
+        userOperations: Partial<UserOperation>[];
+        error?: {
+            [type: string]: {
+                code?: number;
+                message: string;
+            };
+        };
+    }[];
+    exchanges?: BotExchange[];
+}
+export interface BotExchange {
+    exchanges: ExchangeType;
+    maxAccounts: number;
+}
+export interface Operation {
+    idreg: 'new' | number;
+    idStrategy: number;
+    idCreador: number;
+    params: {
+        [key: string]: any;
+    };
+    exchange: ExchangeType;
+    market: MarketType;
+    quoteAsset: CoinType;
+    baseAsset: CoinType;
+    accounts?: UserOperation[];
+    users?: User[];
+    strategy?: Strategy;
+}
+export interface UserOperation {
+    idreg: 'new' | number;
+    idUser: number;
+    idOperation: 'new' | number;
+    idBot: number;
+    results: UserOperationResult;
+    autoStart: boolean;
+    started?: string;
+    finished?: string;
+    user?: User;
+    bot?: Bot;
+    operation?: Operation;
+    info?: AccountInfo;
+    error?: {
+        [type: string]: {
+            code?: number;
+            message: string;
+        };
+    };
+    ui?: {
+        quoteBalance?: number;
+        quoteInvestment?: number;
+        baseInvestment?: number;
+        icon?: string;
+        iconColor?: string;
+    };
+}
+export declare type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
+export interface UserOperationResult {
+    status: UserOperationStatus;
+    entryPrice?: number;
+    pnl?: number;
+}
+export declare const userOperationStringify: (row: UserOperation) => any;
 //# sourceMappingURL=types.d.ts.map

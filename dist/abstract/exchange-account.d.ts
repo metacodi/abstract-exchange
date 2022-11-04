@@ -1,15 +1,10 @@
-import { Exchange } from "./abstract-exchange";
+import { ApiCredentials } from "./exchange-api-types";
 import { ExchangeController } from "./exchange-controller";
-import { User, AccountMarket, FundingWallet, Strategy } from "./types";
+import { User, AccountMarket, FundingWallet } from "./types";
 export interface ExchangeAccount {
-    exchanges: {
-        [ExchangeType: string]: {
-            apiKey: string;
-            apiSecret: string;
-            apiPassphrase?: string;
-        };
+    credentials: {
+        [ExchangeType: string]: ApiCredentials;
     };
-    strategies?: Strategy[];
     controllers: ExchangeController[];
     markets?: {
         [MarketType: string]: AccountMarket;
@@ -22,14 +17,5 @@ export interface ExchangeAccount {
     options: {
         [key: string]: any;
     };
-    exchangeProvider: (account: ExchangeAccount, strategy: Strategy) => Exchange;
-    initialize(): Promise<void>;
-    loadStrategies(): Promise<Strategy[]>;
-    startStrategy(strategy: Strategy): Promise<{
-        controller: ExchangeController;
-        exchange: Exchange;
-    }>;
-    createController(executor: Exchange, account: ExchangeAccount, strategy: Strategy): ExchangeController;
-    stopStrategy(controller: ExchangeController): Promise<void>;
 }
 //# sourceMappingURL=exchange-account.d.ts.map

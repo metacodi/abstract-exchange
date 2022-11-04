@@ -12,16 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Exchange = void 0;
+exports.AbstractExchange = void 0;
 const rxjs_1 = require("rxjs");
 const task_executor_1 = require("./task-executor");
 const shared_1 = require("./shared");
 const moment_1 = __importDefault(require("moment"));
-class Exchange extends task_executor_1.TaskExecutor {
+class AbstractExchange extends task_executor_1.TaskExecutor {
     constructor(market) {
         super({ run: 'async', maxQuantity: 5, period: 1 });
         this.market = market;
-        this.accountsWs = {};
+        this.accountWs = {};
         this.symbols = [];
         this.balanceLocketIsMissing = true;
         this.isReady = false;
@@ -38,8 +38,7 @@ class Exchange extends task_executor_1.TaskExecutor {
     retrieveExchangeInfo() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(this.constructor.name + '.retrieveExchangeInfo()');
-            const api = this.getApiClient();
-            api.getExchangeInfo().then(response => {
+            this.marketApi.getExchangeInfo().then(response => {
                 this.processExchangeLimits(response.limits);
                 this.isReady = true;
                 this.exchangeInfoUpdated.next();
@@ -66,20 +65,6 @@ class Exchange extends task_executor_1.TaskExecutor {
             this.ordersLimitsChanged.next(orders);
         }
     }
-    getMarketWebsocket(symbol) {
-        if (this.marketWs) {
-            return this.marketWs;
-        }
-        switch (this.name) {
-            case 'binance':
-                break;
-            case 'kucoin':
-                break;
-            case 'okx':
-                break;
-        }
-        return this.marketWs;
-    }
     getMarketPriceSubject(symbol) {
         const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
         if (this.marketPriceSubjects[symbolKey]) {
@@ -90,18 +75,16 @@ class Exchange extends task_executor_1.TaskExecutor {
         }
     }
     createMarketPriceSubject(symbol) {
-        const ws = this.getMarketWebsocket(symbol);
         const subject = new rxjs_1.Subject();
         const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
         this.marketPriceSubjects[symbolKey] = subject;
-        ws.priceTicker(symbol).subscribe(data => subject.next(data));
+        this.marketWs.priceTicker(symbol).subscribe(data => subject.next(data));
         return subject;
     }
     getMarketPrice(symbol) {
         return __awaiter(this, void 0, void 0, function* () {
             this.countPeriod++;
-            const api = this.getApiClient();
-            return api.getPriceTicker(symbol);
+            return this.marketApi.getPriceTicker(symbol);
         });
     }
     getMarketKlineSubject(symbol, interval) {
@@ -114,32 +97,23 @@ class Exchange extends task_executor_1.TaskExecutor {
         }
     }
     createMarketKlineSubject(symbol, interval) {
-        const ws = this.getMarketWebsocket(symbol);
         const subject = new rxjs_1.Subject();
         const symbolKey = `${symbol.baseAsset}_${symbol.quoteAsset}`;
         this.marketKlineSubjects[`${symbolKey}_${interval}`] = subject;
-        ws.klineTicker(symbol, interval).subscribe(data => subject.next(data));
+        this.marketWs.klineTicker(symbol, interval).subscribe(data => subject.next(data));
         return subject;
     }
     getMarketSymbol(symbol) {
-        const api = this.getApiClient();
-        return api.getMarketSymbol(symbol);
+        return this.marketApi.getMarketSymbol(symbol);
     }
     getAccountWebsocket(account) {
         const accountId = `${account.idUser}`;
-        const stored = this.accountsWs[accountId];
+        const stored = this.accountWs[accountId];
         if (stored) {
             return stored;
         }
-        const { apiKey, apiSecret } = account.exchanges[this.name];
-        let created;
-        switch (this.name) {
-            case 'binance':
-                break;
-            case 'kucoin':
-                break;
-        }
-        this.accountsWs[accountId] = created;
+        const created = this.createAccountWebsocket(account);
+        this.accountWs[accountId] = created;
         return created;
     }
     getAccountEventsSubject(account, symbol) {
@@ -164,17 +138,17 @@ class Exchange extends task_executor_1.TaskExecutor {
     retrieveAcountInfo(account) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(this.constructor.name + '.retrieveAcountInfo()');
-            const api = this.getApiClient(account);
+            const { api } = this.getAccountWebsocket(account);
             const info = yield api.getAccountInfo();
             const canTrade = !!(info === null || info === void 0 ? void 0 : info.canTrade);
             if (!canTrade) {
-                throw ({ message: `No es pot fer trading amb el compte '${account.idUser}' al mercat '${this.market}'.` });
+                throw { message: `No es pot fer trading amb el compte '${account.idUser}' al mercat '${this.market}'.` };
             }
             this.processInitialBalances(account, info.balances);
             const balances = account.markets[this.market].balances;
             const balanceReady = !!Object.keys(balances).length;
             if (!balanceReady) {
-                throw new Error(`Error recuperant els balanços del compte '${account.idUser}' al mercat '${this.market}'.`);
+                throw { message: `Error recuperant els balanços del compte '${account.idUser}' al mercat '${this.market}'.` };
             }
             return Promise.resolve(balanceReady && canTrade);
         });
@@ -238,14 +212,14 @@ class Exchange extends task_executor_1.TaskExecutor {
                 this.cancelOrderTask(task);
                 break;
             default:
-                throw new Error(`No s'ha implementat la tasca de tipus '${task.type}'.`);
+                throw { code: 500, message: `No s'ha implementat la tasca de tipus '${task.type}'.` };
         }
         return Promise.resolve();
     }
     getOrderTask(task) {
         return __awaiter(this, void 0, void 0, function* () {
             const { account } = task.data;
-            const api = this.getApiClient();
+            const { api } = this.getAccountWebsocket(account);
             const { symbol, id, exchangeId, type } = Object.assign({}, task.data.order);
             api.getOrder({ symbol, id, exchangeId, type }).then(order => {
                 const { accountId, strategyId } = (0, shared_1.splitOrderId)(order.id);
@@ -257,8 +231,7 @@ class Exchange extends task_executor_1.TaskExecutor {
     }
     postOrderTask(task) {
         const { account } = task.data;
-        const { market } = this;
-        const api = this.getApiClient();
+        const { api } = this.getAccountWebsocket(account);
         const copy = Object.assign({}, task.data.order);
         account.markets[this.market].orders.push(copy);
         const order = {
@@ -273,7 +246,7 @@ class Exchange extends task_executor_1.TaskExecutor {
     }
     cancelOrderTask(task) {
         const { account, order } = task.data;
-        const api = this.getApiClient();
+        const { api } = this.getAccountWebsocket(account);
         const found = account.markets[this.market].orders.find(o => o.id === order.id);
         if (found) {
             found.status = 'cancel';
@@ -325,7 +298,7 @@ class Exchange extends task_executor_1.TaskExecutor {
                 break;
             default:
                 const orderId = order.originalClientOrderId || order.clientOrderId;
-                throw ({ message: `No s'ha implementat l'estat '${order.status}' d'ordre ${orderId} de Binance` });
+                throw { message: `No s'ha implementat l'estat '${order.status}' d'ordre ${orderId} de Binance` };
         }
     }
     processPartialFilled(account, order) {
@@ -377,5 +350,5 @@ class Exchange extends task_executor_1.TaskExecutor {
         return +quote.toFixed(found.quotePrecision);
     }
 }
-exports.Exchange = Exchange;
+exports.AbstractExchange = AbstractExchange;
 //# sourceMappingURL=abstract-exchange.js.map
