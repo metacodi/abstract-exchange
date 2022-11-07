@@ -333,5 +333,6 @@ export interface UserOperationResult {
     entryPrice?: number;
     pnl?: number;
 }
-export declare const userOperationStringify: (row: UserOperation) => any;
+export declare const userOperationStringify: (row: UserOperation) => UserOperation;
+export declare const userOperationParse: (row: UserOperation) => UserOperation;
 //# sourceMappingURL=types.d.ts.map

@@ -414,10 +414,16 @@ export interface UserOperationResult {
   pnl?: number;
 }
 
-export const userOperationStringify = (row: UserOperation): any => {
+export const userOperationStringify = (row: UserOperation): UserOperation => {
   const results: (keyof UserOperationResult)[] = [ 'status', 'entryPrice', 'pnl' ];
   const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
   row.results = JSON.stringify(resultsObj) as any;
-  results.map(prop => delete (row as any)[prop]);
+  return row;
+};
+
+export const userOperationParse = (row: UserOperation): UserOperation => {
+  if (typeof row.results === 'string') {
+    row.results = JSON.parse(row.results) as UserOperationResult;
+  }
   return row;
 };
