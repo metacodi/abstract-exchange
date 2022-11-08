@@ -388,6 +388,7 @@ export interface UserOperation {
   idUser: number;
   idOperation: 'new' | number;
   idBot: number;
+  instances: { [key: string]: any }[];
   results: UserOperationResult;
   autoStart: boolean;
   started?: string;
@@ -414,16 +415,21 @@ export interface UserOperationResult {
   pnl?: number;
 }
 
-export const userOperationStringify = (row: UserOperation): UserOperation => {
-  const results: (keyof UserOperationResult)[] = [ 'status', 'entryPrice', 'pnl' ];
-  const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
-  row.results = JSON.stringify(resultsObj) as any;
-  return row;
-};
-
 export const userOperationParse = (row: UserOperation): UserOperation => {
+  if (typeof row.instances === 'string') {
+    row.instances = JSON.parse(row.instances) as { [key: string]: any }[];
+  }
   if (typeof row.results === 'string') {
     row.results = JSON.parse(row.results) as UserOperationResult;
   }
+  return row;
+};
+
+export const userOperationStringify = (row: UserOperation): UserOperation => {
+  row.instances = JSON.stringify(row.instances) as any;
+  row.results = JSON.stringify(row.results) as any;
+  // const results: (keyof UserOperationResult)[] = [ 'status', 'entryPrice', 'pnl' ];
+  // const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
+  // row.results = JSON.stringify(resultsObj) as any;
   return row;
 };

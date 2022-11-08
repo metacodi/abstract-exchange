@@ -305,6 +305,9 @@ export interface UserOperation {
     idUser: number;
     idOperation: 'new' | number;
     idBot: number;
+    instances: {
+        [key: string]: any;
+    }[];
     results: UserOperationResult;
     autoStart: boolean;
     started?: string;
@@ -333,6 +336,6 @@ export interface UserOperationResult {
     entryPrice?: number;
     pnl?: number;
 }
-export declare const userOperationStringify: (row: UserOperation) => UserOperation;
 export declare const userOperationParse: (row: UserOperation) => UserOperation;
+export declare const userOperationStringify: (row: UserOperation) => UserOperation;
 //# sourceMappingURL=types.d.ts.map
