@@ -33,7 +33,6 @@ class AbstractExchange extends task_executor_1.TaskExecutor {
         this.ordersEventsSubjects = {};
         this.partialPeriod = 1000 * 10;
         this.partials = {};
-        this.retrieveExchangeInfo();
     }
     retrieveExchangeInfo() {
         return __awaiter(this, void 0, void 0, function* () {

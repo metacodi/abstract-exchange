@@ -53,7 +53,6 @@ export abstract class AbstractExchange extends TaskExecutor {
 
     // Donem temps pq el controlador es pugui instanciar i establir les subscripcions amb l'exchange.
     // setTimeout(() => this.retrieveExchangeInfo(), 100);
-    this.retrieveExchangeInfo();
   }
   
 
