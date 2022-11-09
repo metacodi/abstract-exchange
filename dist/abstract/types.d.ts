@@ -333,8 +333,12 @@ export interface UserOperation {
 export declare type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
 export interface UserOperationResult {
     status: UserOperationStatus;
-    entryPrice?: number;
+    openPrice?: number;
+    closePrice?: number;
     pnl?: number;
+    openCommission?: number;
+    closeCommission?: number;
+    profit?: number;
 }
 export declare const userOperationParse: (row: UserOperation) => UserOperation;
 export declare const userOperationStringify: (row: UserOperation) => UserOperation;

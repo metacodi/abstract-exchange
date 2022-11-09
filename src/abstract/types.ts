@@ -411,8 +411,12 @@ export type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
 
 export interface UserOperationResult {
   status: UserOperationStatus;
-  entryPrice?: number;
+  openPrice?: number;
+  closePrice?: number;
   pnl?: number;
+  openCommission?: number;
+  closeCommission?: number;
+  profit?: number;
 }
 
 export const userOperationParse = (row: UserOperation): UserOperation => {
@@ -428,7 +432,7 @@ export const userOperationParse = (row: UserOperation): UserOperation => {
 export const userOperationStringify = (row: UserOperation): UserOperation => {
   row.instances = JSON.stringify(row.instances) as any;
   row.results = JSON.stringify(row.results) as any;
-  // const results: (keyof UserOperationResult)[] = [ 'status', 'entryPrice', 'pnl' ];
+  // const results: (keyof UserOperationResult)[] = [ 'status', 'openPrice', 'pnl' ];
   // const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
   // row.results = JSON.stringify(resultsObj) as any;
   return row;
