@@ -37,7 +37,7 @@ class AbstractExchange extends task_executor_1.TaskExecutor {
     retrieveExchangeInfo() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(this.constructor.name + '.retrieveExchangeInfo()');
-            this.marketApi.getExchangeInfo().then(response => {
+            return this.marketApi.getExchangeInfo().then(response => {
                 this.processExchangeLimits(response.limits);
                 this.isReady = true;
                 this.exchangeInfoUpdated.next();

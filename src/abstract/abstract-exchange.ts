@@ -50,12 +50,9 @@ export abstract class AbstractExchange extends TaskExecutor {
     public market: MarketType,
   ) {
     super({ run: 'async', maxQuantity: 5, period: 1 }); // spot request limit ratio 20/s
-
-    // Donem temps pq el controlador es pugui instanciar i establir les subscripcions amb l'exchange.
-    // setTimeout(() => this.retrieveExchangeInfo(), 100);
   }
   
-
+  /** És necessari executar `retrieveExchangeInfo()` des de la classe heredada. */
   abstract initialize(): Promise<void>;
 
 
@@ -65,7 +62,7 @@ export abstract class AbstractExchange extends TaskExecutor {
 
   async retrieveExchangeInfo() {
     console.log(this.constructor.name + '.retrieveExchangeInfo()');
-    this.marketApi.getExchangeInfo().then(response => {
+    return this.marketApi.getExchangeInfo().then(response => {
       this.processExchangeLimits(response.limits);
       this.isReady = true;
       this.exchangeInfoUpdated.next();
