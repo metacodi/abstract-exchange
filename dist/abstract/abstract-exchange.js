@@ -36,21 +36,25 @@ class AbstractExchange extends task_executor_1.TaskExecutor {
     }
     retrieveExchangeInfo() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(this.constructor.name + '.retrieveExchangeInfo()');
-            return this.marketApi.getExchangeInfo().then(response => {
-                this.processExchangeLimits(response.limits);
-                this.isReady = true;
-                this.exchangeInfoUpdated.next();
-            }).catch(error => {
-                console.error('getExchangeInfo error: ', error);
-            });
+            try {
+                return this.marketApi.getExchangeInfo().then(response => {
+                    this.processExchangeLimits(response.limits);
+                    this.isReady = true;
+                    this.exchangeInfoUpdated.next();
+                }).catch(error => {
+                    console.error('getExchangeInfo error: ', error);
+                });
+            }
+            catch (error) {
+                throw error;
+            }
         });
     }
     processExchangeLimits(rateLimits) {
         const findLimit = (rateLimitType, limits) => {
             return limits
                 .filter(l => l.type === rateLimitType && moment_1.default.duration(1, l.unitOfTime).asSeconds() <= 60)
-                .reduce((prev, cur) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev);
+                .reduce((prev, cur) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev, []);
         };
         const limitChanged = (limitA, limitB) => !limitA || !limitB || limitA.maxQuantity !== limitB.maxQuantity || limitA.period !== limitB.period;
         const requests = findLimit('request', rateLimits);

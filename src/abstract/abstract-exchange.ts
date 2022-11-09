@@ -61,14 +61,18 @@ export abstract class AbstractExchange extends TaskExecutor {
   // ---------------------------------------------------------------------------------------------------
 
   async retrieveExchangeInfo() {
-    console.log(this.constructor.name + '.retrieveExchangeInfo()');
-    return this.marketApi.getExchangeInfo().then(response => {
-      this.processExchangeLimits(response.limits);
-      this.isReady = true;
-      this.exchangeInfoUpdated.next();
-    }).catch(error => {
-      console.error('getExchangeInfo error: ', error);
-    });
+    try {
+      return this.marketApi.getExchangeInfo().then(response => {
+        this.processExchangeLimits(response.limits);
+        this.isReady = true;
+        this.exchangeInfoUpdated.next();
+      }).catch(error => {
+        console.error('getExchangeInfo error: ', error);
+      });
+
+    } catch (error: any) {
+      throw error;
+    }
   }
 
   protected processExchangeLimits(rateLimits: Limit[]): void {
@@ -76,7 +80,7 @@ export abstract class AbstractExchange extends TaskExecutor {
     const findLimit = (rateLimitType: LimitType, limits: Limit[]): Limit => {
       return limits
         .filter(l => l.type === rateLimitType && moment.duration(1, l.unitOfTime).asSeconds() <= 60)
-        .reduce((prev: Limit, cur: Limit) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev)
+        .reduce((prev: Limit, cur: Limit) => (!prev || (cur.maxQuantity / cur.period < prev.maxQuantity / prev.period)) ? cur : prev, [])
     };
     // Comprovem si han canviat.
     const limitChanged = (limitA: Limit, limitB: Limit): boolean => !limitA || !limitB || limitA.maxQuantity !== limitB.maxQuantity || limitA.period !== limitB.period;
