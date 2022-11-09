@@ -1,6 +1,6 @@
-import { ApiCredentials } from "./exchange-api-types";
-import { ExchangeController } from "./exchange-controller";
-import { User, AccountMarket, FundingWallet } from "./types";
+import { ApiCredentials } from './exchange-api-types';
+import { ExchangeController } from './exchange-controller';
+import { User, AccountMarket, FundingWallet } from './types';
 export interface ExchangeAccount {
     credentials: {
         [ExchangeType: string]: ApiCredentials;

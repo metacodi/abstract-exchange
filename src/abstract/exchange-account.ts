@@ -1,9 +1,6 @@
-import { AbstractExchange } from "./abstract-exchange";
-import { ExchangeApi } from "./exchange-api";
-import { ApiCredentials } from "./exchange-api-types";
-import { ExchangeController } from "./exchange-controller";
-import { ExchangeWebsocket } from "./exchange-websocket";
-import { User, AccountMarket, CoinType, FundingWallet, Strategy } from "./types";
+import { ApiCredentials } from './exchange-api-types';
+import { ExchangeController } from './exchange-controller';
+import { User, AccountMarket, FundingWallet } from './types';
 
 
 export interface ExchangeAccount {
