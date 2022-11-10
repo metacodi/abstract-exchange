@@ -361,6 +361,8 @@ export interface Bot {
     error?: { [type: string]: { code?: number; message: string } };
   }[];
   exchanges?: BotExchange[];
+  // Propietats que no formen part de la fila de la base de dades.
+  connected?: boolean;
 };
 
 export interface BotExchange {

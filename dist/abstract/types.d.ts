@@ -280,6 +280,7 @@ export interface Bot {
         };
     }[];
     exchanges?: BotExchange[];
+    connected?: boolean;
 }
 export interface BotExchange {
     exchanges: ExchangeType;
