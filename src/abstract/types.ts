@@ -426,12 +426,18 @@ export const userOperationParse = (row: UserOperation): UserOperation => {
   if (typeof row.results === 'string') {
     row.results = JSON.parse(row.results) as UserOperationResult;
   }
+  if (row.operation && typeof row.operation.params === 'string') {
+    row.operation.params = JSON.parse(row.operation.params);
+  }
   return row;
 };
 
 export const userOperationStringify = (row: UserOperation): UserOperation => {
   row.instances = JSON.stringify(row.instances) as any;
   row.results = JSON.stringify(row.results) as any;
+  if (row.operation && typeof row.operation.params === 'object') {
+    row.operation.params = JSON.stringify(row.operation.params) as any;
+  }
   // const results: (keyof UserOperationResult)[] = [ 'status', 'openPrice', 'pnl' ];
   // const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
   // row.results = JSON.stringify(resultsObj) as any;
