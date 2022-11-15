@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { Limit, TaskExecutor } from './task-executor';
+import { Limit, TaskExecutor } from '../utils/task-executor';
 import { MarketType } from './types';
 import { OrderTask } from './types';
 export declare abstract class AbstractExchange extends TaskExecutor {

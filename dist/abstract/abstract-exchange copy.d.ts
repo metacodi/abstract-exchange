@@ -1,5 +1,5 @@
 import { BehaviorSubject, Subject } from 'rxjs';
-import { Limit, TaskExecutor } from './task-executor';
+import { Limit, TaskExecutor } from '../utils/task-executor';
 import { ExchangeAccount } from './exchange-account';
 import { AccountEvent, Balance, SymbolType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from './types';
 import { Order, OrderTask, PartialOrder, ResultOrderStatus } from './types';

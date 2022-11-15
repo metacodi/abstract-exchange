@@ -1,4 +1,4 @@
-import { Limit } from "./task-executor";
+import { Limit } from "../utils/task-executor";
 import { Balance, CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, PositionSide, StopType, SymbolType, TradeSide } from "./types";
 
 

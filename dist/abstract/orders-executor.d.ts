@@ -1,6 +1,6 @@
 import { Strategy, OrderTask } from './types';
 import { ExchangeAccount } from "./exchange-account";
-import { Limit, TaskExecutor, TaskExecutorOptions } from "./task-executor";
+import { Limit, TaskExecutor, TaskExecutorOptions } from "../utils/task-executor";
 import { AbstractExchange } from "./abstract-exchange";
 export declare class OrdersExecutor extends TaskExecutor {
     account: ExchangeAccount;

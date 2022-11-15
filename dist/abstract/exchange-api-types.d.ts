@@ -1,4 +1,4 @@
-import { Limit } from "./task-executor";
+import { Limit } from "../utils/task-executor";
 import { CoinType, KlineIntervalType, MarginMode, MarketType, OrderSide, OrderType, StopType, SymbolType, TradeSide } from "./types";
 export interface ApiCredentials {
     apiKey: string;

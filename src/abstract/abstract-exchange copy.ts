@@ -1,6 +1,6 @@
 import { BehaviorSubject, Subject, timer } from 'rxjs';
 
-import { Limit, LimitType, TaskExecutor } from './task-executor';
+import { Limit, LimitType, TaskExecutor } from '../utils/task-executor';
 import { ExchangeAccount } from './exchange-account';
 import { AccountEvent, AccountReadyStatus, Balance, SymbolType, CoinType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from './types';
 import { Order, OrderBookPrice, OrderTask, PartialOrder, ResultOrderStatus } from './types';

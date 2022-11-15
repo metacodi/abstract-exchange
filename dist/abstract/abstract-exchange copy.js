@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractExchangeCopy = void 0;
 const rxjs_1 = require("rxjs");
-const task_executor_1 = require("./task-executor");
+const task_executor_1 = require("../utils/task-executor");
 const shared_1 = require("./shared");
 const moment_1 = __importDefault(require("moment"));
 class AbstractExchangeCopy extends task_executor_1.TaskExecutor {
