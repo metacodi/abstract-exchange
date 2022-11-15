@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskExecutor = void 0;
 const moment_1 = __importDefault(require("moment"));
-const rxjs_1 = require("rxjs");
 const timestamp = (inp) => (0, moment_1.default)(inp).format('YYYY-MM-DD HH:mm:ss.SSS');
 const logTime = (message, ...optionalParams) => console.log(`${timestamp()} -> ${message}`, ...optionalParams);
 ;
@@ -17,6 +16,7 @@ class TaskExecutor {
         this.isSleeping = false;
         this.changeLimitsPending = false;
         this.countPeriod = 0;
+        this.intervalSubscription = undefined;
         if (!options) {
             options = {};
         }
@@ -86,14 +86,14 @@ class TaskExecutor {
     startTasksInterval() {
         const { period } = this;
         if (this.intervalSubscription !== undefined) {
-            this.intervalSubscription.unsubscribe();
+            clearInterval(this.intervalSubscription);
         }
         this.countPeriod = 0;
-        this.intervalSubscription = (0, rxjs_1.interval)(period * 1000).subscribe(() => this.processTasksInterval());
+        this.intervalSubscription = setInterval(() => this.processTasksInterval(), period * 1000);
     }
     stopTasksInterval() {
         if (this.intervalSubscription !== undefined) {
-            this.intervalSubscription.unsubscribe();
+            clearInterval(this.intervalSubscription);
         }
         this.intervalSubscription = undefined;
     }

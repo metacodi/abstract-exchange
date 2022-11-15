@@ -10,6 +10,5 @@ export * from './abstract/orders-executor';
 export * from './abstract/shared';
 export * from './abstract/types';
 
-export * from './utils/errors';
 export * from './utils/file-logger';
 export * from './utils/task-executor';

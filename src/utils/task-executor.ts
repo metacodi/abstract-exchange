@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { interval, Subscription } from 'rxjs';
 
 
 const timestamp = (inp?: moment.MomentInput) => moment(inp).format('YYYY-MM-DD HH:mm:ss.SSS');
@@ -40,7 +39,7 @@ export abstract class TaskExecutor {
   /** Quantitat de consultes realitzades durant el periode actual. */
   countPeriod = 0;
   /** @hidden */
-  intervalSubscription: Subscription;
+  intervalSubscription: NodeJS.Timer = undefined;
 
   constructor(
     public options?: TaskExecutorOptions,
@@ -117,14 +116,17 @@ export abstract class TaskExecutor {
   protected startTasksInterval() {
     const { period } = this; // [s]
     // logTime('----------- START interval', period);
-    if (this.intervalSubscription !== undefined) { this.intervalSubscription.unsubscribe(); }
+    // if (this.intervalSubscription !== undefined) { this.intervalSubscription.unsubscribe(); }
+    if (this.intervalSubscription !== undefined) { clearInterval(this.intervalSubscription); }
     this.countPeriod = 0;
-    this.intervalSubscription = interval(period * 1000).subscribe(() => this.processTasksInterval());
+    // this.intervalSubscription = interval(period * 1000).subscribe(() => this.processTasksInterval());
+    this.intervalSubscription = setInterval(() => this.processTasksInterval(), period * 1000);
   }
 
   protected stopTasksInterval() {
     // logTime('STOP interval\n');
-    if (this.intervalSubscription !== undefined) { this.intervalSubscription.unsubscribe(); }
+    // if (this.intervalSubscription !== undefined) { this.intervalSubscription.unsubscribe(); }
+    if (this.intervalSubscription !== undefined) { clearInterval(this.intervalSubscription); }
     this.intervalSubscription = undefined;
   }
 

@@ -1,5 +1,5 @@
+/// <reference types="node" />
 import moment from 'moment';
-import { Subscription } from 'rxjs';
 export declare type LimitType = 'request' | 'trade';
 export interface Limit {
     type: LimitType;
@@ -26,7 +26,7 @@ export declare abstract class TaskExecutor {
     isSleeping: boolean;
     changeLimitsPending: boolean;
     countPeriod: number;
-    intervalSubscription: Subscription;
+    intervalSubscription: NodeJS.Timer;
     constructor(options?: TaskExecutorOptions);
     do(task: any): void;
     protected executeQueue(): void;
