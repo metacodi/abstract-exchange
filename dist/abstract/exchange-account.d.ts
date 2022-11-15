@@ -1,6 +1,6 @@
 import { ApiCredentials } from './exchange-api-types';
 import { ExchangeController } from './exchange-controller';
-import { User, AccountMarket, FundingWallet } from './types';
+import { User, AccountMarket, FundingWallet, AccountInfo } from './types';
 export interface ExchangeAccount {
     credentials: {
         [ExchangeType: string]: ApiCredentials;
@@ -18,4 +18,5 @@ export interface ExchangeAccount {
         [key: string]: any;
     };
 }
+export declare const mergeAccountInfo: (target: AccountInfo, info: AccountInfo) => AccountInfo;
 //# sourceMappingURL=exchange-account.d.ts.map

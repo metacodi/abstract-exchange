@@ -1,6 +1,6 @@
 import { ApiCredentials } from './exchange-api-types';
 import { ExchangeController } from './exchange-controller';
-import { User, AccountMarket, FundingWallet } from './types';
+import { User, AccountMarket, FundingWallet, AccountInfo } from './types';
 
 
 export interface ExchangeAccount {
@@ -38,3 +38,24 @@ export interface ExchangeAccount {
   // stopStrategy(controller: ExchangeController): Promise<void>;
 
 }
+
+
+export const mergeAccountInfo = (target: AccountInfo, info: AccountInfo) => {
+  if (!target) { target = {}; }
+  if (!target.balances) { target.balances = []; }
+  if (!target.positions) { target.positions = []; }
+  const { balances, positions } = target;
+  if (info?.balances?.length) {
+    info.balances.map(updated => {
+      const found = balances.find(b => b.asset === updated.asset);
+      if (found) { Object.assign(found, updated); } else { balances.push(updated); }
+    });
+  }
+  if (info?.positions?.length) {
+    info.positions.map(updated => {
+      const found = positions.find(p => p.marginAsset === updated.marginAsset);
+      if (found) { Object.assign(found, updated); } else { positions.push(updated); }
+    });
+  }
+  return target;
+};
