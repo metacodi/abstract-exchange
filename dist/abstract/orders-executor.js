@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrdersExecutor = void 0;
-const task_executor_1 = require("../utils/task-executor");
+const task_executor_1 = require("./task-executor");
 class OrdersExecutor extends task_executor_1.TaskExecutor {
     constructor(account, strategy, exchange, options) {
         super(options);

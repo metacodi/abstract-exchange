@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractExchange = void 0;
 const rxjs_1 = require("rxjs");
-const task_executor_1 = require("../utils/task-executor");
+const task_executor_1 = require("./task-executor");
 class AbstractExchange extends task_executor_1.TaskExecutor {
     constructor(market) {
         super({ run: 'async', maxQuantity: 5, period: 1 });

@@ -23,7 +23,6 @@ __exportStar(require("./abstract/exchange-websocket-types"), exports);
 __exportStar(require("./abstract/exchange-websocket"), exports);
 __exportStar(require("./abstract/orders-executor"), exports);
 __exportStar(require("./abstract/shared"), exports);
+__exportStar(require("./abstract/task-executor"), exports);
 __exportStar(require("./abstract/types"), exports);
-__exportStar(require("./utils/file-logger"), exports);
-__exportStar(require("./utils/task-executor"), exports);
 //# sourceMappingURL=index.js.map
