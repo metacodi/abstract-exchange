@@ -1,4 +1,4 @@
-import { TaskExecutor } from 'src/utils/task-executor';
+import { TaskExecutor } from './task-executor';
 export interface Logger extends TaskExecutor {
     log(text: string): void;
 }

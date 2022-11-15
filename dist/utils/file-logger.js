@@ -30,7 +30,7 @@ exports.FileLogger = void 0;
 const fs = __importStar(require("fs"));
 const moment_1 = __importDefault(require("moment"));
 const node_utils_1 = require("@metacodi/node-utils");
-const task_executor_1 = require("src/utils/task-executor");
+const task_executor_1 = require("./task-executor");
 class FileLogger extends task_executor_1.TaskExecutor {
     constructor(folder, logPeriod, fileExtension = 'log') {
         super({ run: 'sync', add: 'push', consume: 'shift', delay: 0 });
