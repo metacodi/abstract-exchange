@@ -276,6 +276,7 @@ export interface Bot {
             [type: string]: {
                 code?: number;
                 message: string;
+                data?: any;
             };
         };
     }[];
@@ -321,6 +322,7 @@ export interface UserOperation {
         [type: string]: {
             code?: number;
             message: string;
+            data?: any;
         };
     };
     ui?: {
