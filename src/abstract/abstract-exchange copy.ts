@@ -2,7 +2,7 @@ import { BehaviorSubject, Subject, timer } from 'rxjs';
 
 import { Limit, LimitType, TaskExecutor } from './task-executor';
 import { ExchangeAccount } from './exchange-account';
-import { AccountEvent, AccountReadyStatus, Balance, SymbolType, CoinType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from './types';
+import { AccountEvent, AccountReadyStatus, Balance, SymbolType, CoinType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType, GetOrderTask, PostOrderTask, CancelOrderTask } from './types';
 import { Order, OrderBookPrice, OrderTask, PartialOrder, ResultOrderStatus } from './types';
 import { splitOrderId } from './shared';
 import { ExchangeWebsocket } from './exchange-websocket';
@@ -268,11 +268,11 @@ export abstract class AbstractExchangeCopy extends TaskExecutor {
   }
 
   
-  protected async getOrderTask(task: OrderTask) {
-    const { account } = task.data as { account: ExchangeAccount; };
-    const { api } = this.getAccountWebsocket(account);
-    const { symbol, id, exchangeId, type } = Object.assign({}, task.data.order);    
-    api.getOrder({ symbol, id, exchangeId, type }).then(order => {
+  protected async getOrderTask(task: GetOrderTask) {
+    const { account, request } = task.data;
+    const ws = await this.getAccountWebsocket(account);
+    const { api } = ws;
+    api.getOrder(request).then(order => {
       const { accountId, strategyId } = splitOrderId(order.id);
       const controllerId = `${accountId}-${strategyId}`;
       // Guardem l'ordre sol·licitada al mercat de l'exchange.
@@ -282,36 +282,23 @@ export abstract class AbstractExchangeCopy extends TaskExecutor {
     });
   }
 
-  protected postOrderTask(task: OrderTask) {
-    const { account } = task.data;
-    const { api } = this.getAccountWebsocket(account);
-    const copy: Order = Object.assign({}, task.data.order);
-    account.markets[this.market].orders.push(copy);
-    const order: PostOrderRequest = {
-      side: copy.side,
-      symbol: copy.symbol,
-      type: copy.type,
-      // timeInForce: 'GTC',
-      price: copy.price,
-      baseQuantity: copy.baseQuantity,
-      id: copy.id,
-    };
-    // // if (copy.type === 'stop' || copy.type === 'stop_market') { order.stopPrice = copy.stopPrice; }
-    // if (market === 'futures' && copy.type === 'stop_market') { order.closePosition = true; }
-    return api.postOrder(order as any);
+  protected async postOrderTask(task: PostOrderTask) {
+    const { account, request } = task.data;
+    const ws = await this.getAccountWebsocket(account);
+    const { api } = ws;
+    return api.postOrder(request).then(order => {
+      // Coloquem l'ordre creada a la llista d'ordres del compte.
+      account.markets[this.market].orders.push(Object.assign({}, order));
+    });
   }
 
-  protected cancelOrderTask(task: OrderTask) {
-    const { account, order } = task.data as { account: ExchangeAccount; order: Order; };
-    const { api } = this.getAccountWebsocket(account);
-    const found: Order = account.markets[this.market].orders.find(o => o.id === order.id);
+  protected async cancelOrderTask(task: CancelOrderTask) {
+    const { account, request } = task.data;
+    const ws = await this.getAccountWebsocket(account);
+    const { api } = ws;
+    const found: Order = account.markets[this.market].orders.find(o => o.id === request.id);
     if (found) { found.status = 'cancel'; }
-    return api.cancelOrder({
-      symbol: order.symbol,
-      exchangeId: order.exchangeId,
-      id: order.id,
-      type: order.type,
-    });
+    return api.cancelOrder(request);
   }
 
 

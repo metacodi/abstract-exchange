@@ -1,6 +1,7 @@
 import { Subscription } from 'rxjs';
 import { OrdersExecutor } from './orders-executor';
 import { ExchangeAccount } from './exchange-account';
+import { GetOpenOrdersRequest, CancelOrderRequest, GetHistoryOrdersRequest, GetOrderRequest, PostOrderRequest } from './exchange-api-types';
 export declare type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export declare type ExchangeType = 'simulator' | 'binance' | 'kucoin' | 'okx' | 'bitget' | 'gate-io' | 'xt-com';
 export declare type MarketType = 'spot' | 'futures' | 'margin';
@@ -14,7 +15,7 @@ export declare type MarginMode = 'cross' | 'isolated';
 export declare type PositionSide = 'both' | 'long' | 'short';
 export declare type OrderType = 'market' | 'limit';
 export declare type StopType = 'normal' | 'profit' | 'loss';
-export declare type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
+export declare type TaskType = 'getHistoryOrders' | 'getOpenOrders' | 'getOrder' | 'postOrder' | 'cancelOrder';
 export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 export interface SymbolType {
     baseAsset: CoinType;
@@ -26,12 +27,45 @@ export interface Task {
         [key: string]: any;
     };
 }
-export interface OrderTask extends Task {
-    type: TaskType;
+export declare type OrderTask = GetHistoryOrdersTask | GetOpenOrdersTask | GetOrderTask | PostOrderTask | CancelOrderTask;
+export interface GetHistoryOrdersTask extends Task {
+    type: 'getHistoryOrders';
     data: {
         account: ExchangeAccount;
         controllerId: string;
-        order: Order;
+        request: GetHistoryOrdersRequest;
+    };
+}
+export interface GetOpenOrdersTask extends Task {
+    type: 'getOpenOrders';
+    data: {
+        account: ExchangeAccount;
+        controllerId: string;
+        request: GetOpenOrdersRequest;
+    };
+}
+export interface GetOrderTask extends Task {
+    type: 'getOrder';
+    data: {
+        account: ExchangeAccount;
+        controllerId: string;
+        request: GetOrderRequest;
+    };
+}
+export interface PostOrderTask extends Task {
+    type: 'postOrder';
+    data: {
+        account: ExchangeAccount;
+        controllerId: string;
+        request: PostOrderRequest;
+    };
+}
+export interface CancelOrderTask extends Task {
+    type: 'cancelOrder';
+    data: {
+        account: ExchangeAccount;
+        controllerId: string;
+        request: CancelOrderRequest;
     };
 }
 export interface MarketSymbol {

@@ -1,7 +1,7 @@
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Limit, TaskExecutor } from './task-executor';
 import { ExchangeAccount } from './exchange-account';
-import { AccountEvent, Balance, SymbolType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType } from './types';
+import { AccountEvent, Balance, SymbolType, ExchangeType, KlineIntervalType, MarketKline, MarketPrice, MarketSymbol, MarketType, GetOrderTask, PostOrderTask, CancelOrderTask } from './types';
 import { Order, OrderTask, PartialOrder, ResultOrderStatus } from './types';
 import { ExchangeWebsocket } from './exchange-websocket';
 import { ExchangeApi } from './exchange-api';
@@ -59,9 +59,9 @@ export declare abstract class AbstractExchangeCopy extends TaskExecutor {
     postOrder(task: OrderTask): void;
     cancelOrder(task: OrderTask): void;
     protected executeTask(task: OrderTask): Promise<any>;
-    protected getOrderTask(task: OrderTask): Promise<void>;
-    protected postOrderTask(task: OrderTask): Promise<Order>;
-    protected cancelOrderTask(task: OrderTask): Promise<Order>;
+    protected getOrderTask(task: GetOrderTask): Promise<void>;
+    protected postOrderTask(task: PostOrderTask): Promise<void>;
+    protected cancelOrderTask(task: CancelOrderTask): Promise<Order>;
     getOrdersEventsSubject(account: ExchangeAccount, controllerId: string): Subject<Order>;
     protected onOrderUpdate(account: ExchangeAccount, eventOrder: Order): void;
     protected processPartialFilled(account: ExchangeAccount, order: Order): void;

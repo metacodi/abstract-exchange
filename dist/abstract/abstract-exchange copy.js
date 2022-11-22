@@ -224,10 +224,10 @@ class AbstractExchangeCopy extends task_executor_1.TaskExecutor {
     }
     getOrderTask(task) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { account } = task.data;
-            const { api } = this.getAccountWebsocket(account);
-            const { symbol, id, exchangeId, type } = Object.assign({}, task.data.order);
-            api.getOrder({ symbol, id, exchangeId, type }).then(order => {
+            const { account, request } = task.data;
+            const ws = yield this.getAccountWebsocket(account);
+            const { api } = ws;
+            api.getOrder(request).then(order => {
                 const { accountId, strategyId } = (0, shared_1.splitOrderId)(order.id);
                 const controllerId = `${accountId}-${strategyId}`;
                 account.markets[this.market].orders.push(order);
@@ -236,32 +236,25 @@ class AbstractExchangeCopy extends task_executor_1.TaskExecutor {
         });
     }
     postOrderTask(task) {
-        const { account } = task.data;
-        const { api } = this.getAccountWebsocket(account);
-        const copy = Object.assign({}, task.data.order);
-        account.markets[this.market].orders.push(copy);
-        const order = {
-            side: copy.side,
-            symbol: copy.symbol,
-            type: copy.type,
-            price: copy.price,
-            baseQuantity: copy.baseQuantity,
-            id: copy.id,
-        };
-        return api.postOrder(order);
+        return __awaiter(this, void 0, void 0, function* () {
+            const { account, request } = task.data;
+            const ws = yield this.getAccountWebsocket(account);
+            const { api } = ws;
+            return api.postOrder(request).then(order => {
+                account.markets[this.market].orders.push(Object.assign({}, order));
+            });
+        });
     }
     cancelOrderTask(task) {
-        const { account, order } = task.data;
-        const { api } = this.getAccountWebsocket(account);
-        const found = account.markets[this.market].orders.find(o => o.id === order.id);
-        if (found) {
-            found.status = 'cancel';
-        }
-        return api.cancelOrder({
-            symbol: order.symbol,
-            exchangeId: order.exchangeId,
-            id: order.id,
-            type: order.type,
+        return __awaiter(this, void 0, void 0, function* () {
+            const { account, request } = task.data;
+            const ws = yield this.getAccountWebsocket(account);
+            const { api } = ws;
+            const found = account.markets[this.market].orders.find(o => o.id === request.id);
+            if (found) {
+                found.status = 'cancel';
+            }
+            return api.cancelOrder(request);
         });
     }
     getOrdersEventsSubject(account, controllerId) {

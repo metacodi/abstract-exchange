@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 
 import { OrdersExecutor } from './orders-executor';
 import { ExchangeAccount } from './exchange-account';
+import { GetOpenOrdersRequest, CancelOrderRequest, GetHistoryOrdersRequest, GetOrderRequest, PostOrderRequest } from './exchange-api-types';
 
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -36,7 +37,7 @@ export type OrderType = 'market' | 'limit';
 
 export type StopType = 'normal' | 'profit' | 'loss';
 
-export type TaskType = 'getOrder' | 'postOrder' | 'cancelOrder';
+export type TaskType = 'getHistoryOrders' | 'getOpenOrders' | 'getOrder' | 'postOrder' | 'cancelOrder';
 
 export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 // export type CoinBaseType = Extract<CoinType, 'BNB' | 'BTC' | 'ETC'>;
@@ -55,9 +56,51 @@ export interface Task {
   data: { [key: string]: any };
 }
 
-export interface OrderTask extends Task {
-  type: TaskType;
-  data: { account: ExchangeAccount; controllerId: string; order: Order; };
+export type OrderTask = GetHistoryOrdersTask | GetOpenOrdersTask | GetOrderTask | PostOrderTask | CancelOrderTask;
+
+export interface GetHistoryOrdersTask extends Task {
+  type: 'getHistoryOrders';
+  data: {
+    account: ExchangeAccount;
+    controllerId: string;
+    request: GetHistoryOrdersRequest;
+  };
+}
+
+export interface GetOpenOrdersTask extends Task {
+  type: 'getOpenOrders';
+  data: {
+    account: ExchangeAccount;
+    controllerId: string;
+    request: GetOpenOrdersRequest;
+  };
+}
+
+export interface GetOrderTask extends Task {
+  type: 'getOrder';
+  data: {
+    account: ExchangeAccount;
+    controllerId: string;
+    request: GetOrderRequest;
+  };
+}
+
+export interface PostOrderTask extends Task {
+  type: 'postOrder';
+  data: {
+    account: ExchangeAccount;
+    controllerId: string;
+    request: PostOrderRequest;
+  };
+}
+
+export interface CancelOrderTask extends Task {
+  type: 'cancelOrder';
+  data: {
+    account: ExchangeAccount;
+    controllerId: string;
+    request: CancelOrderRequest;
+  };
 }
 
 export interface MarketSymbol {
