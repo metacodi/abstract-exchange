@@ -110,11 +110,11 @@ export interface ExchangeController {
   //  lifecycle
   // ---------------------------------------------------------------------------------------------------
 
-  start(): boolean;
+  start(): Promise<boolean>;
 
   pause(): void;
 
-  resume(): boolean;
+  resume(): Promise<boolean>;
 
   stop(): void;
 

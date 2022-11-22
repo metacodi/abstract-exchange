@@ -35,9 +35,9 @@ export interface ExchangeController {
     fixQuote(quote: number): number;
     floorQuantity(quantity: number): number;
     get simulated(): boolean;
-    start(): boolean;
+    start(): Promise<boolean>;
     pause(): void;
-    resume(): boolean;
+    resume(): Promise<boolean>;
     stop(): void;
     abort(): void;
 }
