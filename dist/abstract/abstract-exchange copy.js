@@ -245,7 +245,7 @@ class AbstractExchangeCopy extends task_executor_1.TaskExecutor {
             symbol: copy.symbol,
             type: copy.type,
             price: copy.price,
-            quantity: copy.baseQuantity,
+            baseQuantity: copy.baseQuantity,
             id: copy.id,
         };
         return api.postOrder(order);

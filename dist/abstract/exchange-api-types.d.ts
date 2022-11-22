@@ -69,11 +69,11 @@ export interface PostOrderRequest {
     stop?: StopType;
     trade?: TradeSide;
     symbol: SymbolType;
-    mode?: MarginMode;
-    quantity?: number;
-    quoteOrderQty?: number;
+    baseQuantity?: number;
+    quoteQuantity?: number;
     price?: number;
     stopPrice?: number;
+    mode?: MarginMode;
     closePosition?: boolean;
 }
 export interface CancelOrderRequest {

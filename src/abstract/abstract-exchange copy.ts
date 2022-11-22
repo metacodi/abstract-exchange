@@ -293,7 +293,7 @@ export abstract class AbstractExchangeCopy extends TaskExecutor {
       type: copy.type,
       // timeInForce: 'GTC',
       price: copy.price,
-      quantity: copy.baseQuantity,
+      baseQuantity: copy.baseQuantity,
       id: copy.id,
     };
     // // if (copy.type === 'stop' || copy.type === 'stop_market') { order.stopPrice = copy.stopPrice; }
