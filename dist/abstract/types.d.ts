@@ -14,7 +14,7 @@ export declare type KlineIntervalType = '1m' | '3m' | '5m' | '15m' | '30m' | '1h
 export declare type MarginMode = 'cross' | 'isolated';
 export declare type PositionSide = 'both' | 'long' | 'short';
 export declare type OrderType = 'market' | 'limit';
-export declare type StopType = 'normal' | 'profit' | 'loss';
+export declare type StopType = 'normal' | 'profit' | 'loss' | 'profit_position' | 'loss_position';
 export declare type TaskType = 'getHistoryOrders' | 'getOpenOrders' | 'getOrder' | 'postOrder' | 'cancelOrder';
 export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 export interface SymbolType {
