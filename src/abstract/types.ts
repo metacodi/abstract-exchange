@@ -433,11 +433,11 @@ export interface UserOperation {
   idUser: number;
   idOperation: 'new' | number;
   idBot: number;
-  instances: { [key: string]: any }[];
-  results: UserOperationResult;
   autoStart: boolean;
-  started?: string;
-  finished?: string;
+  started: string;
+  finished: string;
+  instances: InstanceController[];
+  results: UserOperationResult;
   user?: User;
   bot?: Bot;
   operation?: Operation;
@@ -466,7 +466,7 @@ export interface UserOperationResult {
 
 export const userOperationParse = (row: UserOperation): UserOperation => {
   if (typeof row.instances === 'string') {
-    row.instances = JSON.parse(row.instances) as { [key: string]: any }[];
+    row.instances = JSON.parse(row.instances) as InstanceController[];
   }
   if (typeof row.results === 'string') {
     row.results = JSON.parse(row.results) as UserOperationResult;

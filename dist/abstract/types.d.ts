@@ -341,13 +341,11 @@ export interface UserOperation {
     idUser: number;
     idOperation: 'new' | number;
     idBot: number;
-    instances: {
-        [key: string]: any;
-    }[];
-    results: UserOperationResult;
     autoStart: boolean;
-    started?: string;
-    finished?: string;
+    started: string;
+    finished: string;
+    instances: InstanceController[];
+    results: UserOperationResult;
     user?: User;
     bot?: Bot;
     operation?: Operation;
