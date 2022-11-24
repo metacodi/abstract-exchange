@@ -26,6 +26,7 @@ export interface Task {
     data: {
         [key: string]: any;
     };
+    callback?: (success: any, failed?: any) => void;
 }
 export declare type OrderTask = GetHistoryOrdersTask | GetOpenOrdersTask | GetOrderTask | PostOrderTask | CancelOrderTask;
 export interface GetHistoryOrdersTask extends Task {
@@ -33,6 +34,7 @@ export interface GetHistoryOrdersTask extends Task {
     data: {
         account: ExchangeAccount;
         controllerId: string;
+        isTest: boolean;
         request: GetHistoryOrdersRequest;
     };
 }
@@ -41,6 +43,7 @@ export interface GetOpenOrdersTask extends Task {
     data: {
         account: ExchangeAccount;
         controllerId: string;
+        isTest: boolean;
         request: GetOpenOrdersRequest;
     };
 }
@@ -49,6 +52,7 @@ export interface GetOrderTask extends Task {
     data: {
         account: ExchangeAccount;
         controllerId: string;
+        isTest: boolean;
         request: GetOrderRequest;
     };
 }
@@ -57,6 +61,7 @@ export interface PostOrderTask extends Task {
     data: {
         account: ExchangeAccount;
         controllerId: string;
+        isTest: boolean;
         request: PostOrderRequest;
     };
 }
@@ -65,6 +70,7 @@ export interface CancelOrderTask extends Task {
     data: {
         account: ExchangeAccount;
         controllerId: string;
+        isTest: boolean;
         request: CancelOrderRequest;
     };
 }
@@ -329,6 +335,7 @@ export interface Operation {
     params: {
         [key: string]: any;
     };
+    isTest: boolean;
     exchange: ExchangeType;
     market: MarketType;
     quoteAsset: CoinType;

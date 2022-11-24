@@ -26,7 +26,7 @@ export declare abstract class TaskExecutor {
     isSleeping: boolean;
     changeLimitsPending: boolean;
     countPeriod: number;
-    intervalSubscription: NodeJS.Timer;
+    intervalSubscription: number | NodeJS.Timer;
     constructor(options?: TaskExecutorOptions);
     do(task: any): void;
     protected executeQueue(): void;

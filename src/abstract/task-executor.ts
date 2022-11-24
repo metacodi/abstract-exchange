@@ -39,7 +39,7 @@ export abstract class TaskExecutor {
   /** Quantitat de consultes realitzades durant el periode actual. */
   countPeriod = 0;
   /** @hidden */
-  intervalSubscription: NodeJS.Timer = undefined;
+  intervalSubscription: number | NodeJS.Timer = undefined;
 
   constructor(
     public options?: TaskExecutorOptions,
