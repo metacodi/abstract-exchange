@@ -457,6 +457,7 @@ export type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
 export interface UserOperationResult {
   status: UserOperationStatus;
   openPrice?: number;
+  openQuantity?: number;
   closePrice?: number;
   pnl?: number;
   openCommission?: number;
