@@ -4,6 +4,7 @@ exports.userOperationStringify = exports.userOperationParse = void 0;
 ;
 ;
 ;
+;
 const userOperationParse = (row) => {
     if (typeof row.instances === 'string') {
         row.instances = JSON.parse(row.instances);

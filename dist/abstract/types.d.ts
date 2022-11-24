@@ -298,6 +298,11 @@ export interface Device {
         sonidoPush: string;
     };
 }
+export interface ErrorObject {
+    code?: number;
+    message: string;
+    data?: any;
+}
 export interface Bot {
     idreg: number;
     url: string;
@@ -307,11 +312,7 @@ export interface Bot {
         idUser: number;
         userOperations: Partial<UserOperation>[];
         error?: {
-            [type: string]: {
-                code?: number;
-                message: string;
-                data?: any;
-            };
+            [type: string]: ErrorObject;
         };
     }[];
     exchanges?: BotExchange[];
@@ -351,16 +352,14 @@ export interface UserOperation {
     operation?: Operation;
     info?: AccountInfo;
     error?: {
-        [type: string]: {
-            code?: number;
-            message: string;
-            data?: any;
-        };
+        [type: string]: ErrorObject;
     };
     ui?: {
         quoteBalance?: number;
         quoteInvestment?: number;
         baseInvestment?: number;
+        profitAmount?: number;
+        profitPercent?: number;
         icon?: string;
         iconColor?: string;
     };

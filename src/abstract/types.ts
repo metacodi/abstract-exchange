@@ -392,6 +392,12 @@ export interface Device {
 }
 
 
+export interface ErrorObject {
+  code?: number;
+  message: string,
+  data?: any;
+};
+
 
 export interface Bot {
   idreg: number;
@@ -401,7 +407,7 @@ export interface Bot {
   accounts?: {
     idUser: number;
     userOperations: Partial<UserOperation>[];
-    error?: { [type: string]: { code?: number; message: string, data?: any } };
+    error?: { [type: string]: ErrorObject };
   }[];
   exchanges?: BotExchange[];
   // Propietats que no formen part de la fila de la base de dades.
@@ -442,11 +448,13 @@ export interface UserOperation {
   bot?: Bot;
   operation?: Operation;
   info?: AccountInfo;
-  error?: { [type: string]: { code?: number; message: string; data?: any } };
+  error?: { [type: string]: ErrorObject };
   ui?: {
     quoteBalance?: number;
     quoteInvestment?: number;
     baseInvestment?: number;
+    profitAmount?: number;
+    profitPercent?: number;
     icon?: string;
     iconColor?: string;
   };
