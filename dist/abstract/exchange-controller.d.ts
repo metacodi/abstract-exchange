@@ -1,11 +1,11 @@
 import { AbstractExchange } from "./abstract-exchange";
 import { ExchangeAccount } from "./exchange-account";
-import { AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Strategy, SymbolType, UserOperation } from "./types";
+import { AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, Strategy, SymbolType, Trading } from "./types";
 export declare type ExchangeControllerStatus = 'on' | 'paused' | 'off';
 export interface ExchangeController {
     exchange: AbstractExchange;
     account: ExchangeAccount;
-    userOperation: UserOperation;
+    trading: Trading;
     strategy: Strategy;
     instances: InstanceController[];
     balances: {

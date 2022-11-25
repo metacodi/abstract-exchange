@@ -1,6 +1,6 @@
 import { AbstractExchange } from "./abstract-exchange";
 import { ExchangeAccount } from "./exchange-account";
-import { AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, SimulationData, Strategy, SymbolType, UserOperation } from "./types";
+import { AccountMarket, Balance, CoinType, InstanceController, MarketSymbol, MarketType, SimulationData, Strategy, SymbolType, Trading } from "./types";
 
 
 export type ExchangeControllerStatus = 'on' | 'paused' | 'off';
@@ -11,7 +11,7 @@ export interface ExchangeController {
   /** Referència al controlador del compte d'usuari. */
   account: ExchangeAccount;
   /** Referència a l'operació asignada al controlador. */
-  userOperation: UserOperation;
+  trading: Trading;
   /** Estratègia de l'operació. */
   strategy: Strategy;
   /** Referència a les instàncies de l'estragègia del controlador. */

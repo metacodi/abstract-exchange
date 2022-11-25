@@ -412,7 +412,7 @@ export interface Bot {
   ip: string;
   accounts?: {
     idUser: number;
-    userOperations: Partial<UserOperation>[];
+    tradings: Partial<Trading>[];
     error?: { [type: string]: ErrorObject };
   }[];
   exchanges?: BotExchange[];
@@ -436,12 +436,12 @@ export interface Operation {
   market: MarketType;
   quoteAsset: CoinType;
   baseAsset: CoinType;
-  accounts?: UserOperation[];
+  tradings?: Trading[];
   users?: User[];
   strategy?: Strategy;
 };
 
-export interface UserOperation {
+export interface Trading {
   idreg: 'new' | number;
   idUser: number;
   idOperation: 'new' | number;
@@ -450,7 +450,7 @@ export interface UserOperation {
   started: string;
   finished: string;
   instances: InstanceController[];
-  results: UserOperationResult;
+  results: TradingResult;
   user?: User;
   bot?: Bot;
   operation?: Operation;
@@ -467,10 +467,10 @@ export interface UserOperation {
   };
 };
 
-export type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
+export type TradingStatus = 'initial' | 'market' | 'activated' | 'closed';
 
-export interface UserOperationResult {
-  status: UserOperationStatus;
+export interface TradingResult {
+  status: TradingStatus;
   openPrice?: number;
   openQuantity?: number;
   closePrice?: number;
@@ -480,12 +480,12 @@ export interface UserOperationResult {
   profit?: number;
 }
 
-export const userOperationParse = (row: UserOperation): UserOperation => {
+export const tradingParse = (row: Trading): Trading => {
   if (typeof row.instances === 'string') {
     row.instances = JSON.parse(row.instances) as InstanceController[];
   }
   if (typeof row.results === 'string') {
-    row.results = JSON.parse(row.results) as UserOperationResult;
+    row.results = JSON.parse(row.results) as TradingResult;
   }
   if (row.operation && typeof row.operation.params === 'string') {
     row.operation.params = JSON.parse(row.operation.params);
@@ -493,14 +493,14 @@ export const userOperationParse = (row: UserOperation): UserOperation => {
   return row;
 };
 
-export const userOperationStringify = (row: UserOperation): UserOperation => {
+export const tradingStringify = (row: Trading): Trading => {
   row.instances = JSON.stringify(row.instances) as any;
   row.results = JSON.stringify(row.results) as any;
   if (row.operation && typeof row.operation.params === 'object') {
     row.operation.params = JSON.stringify(row.operation.params) as any;
   }
-  // const results: (keyof UserOperationResult)[] = [ 'status', 'openPrice', 'pnl' ];
-  // const resultsObj = results.reduce((res: any, prop: keyof UserOperationResult) => ({ ...res, [prop]: row.results[prop] }), {});
+  // const results: (keyof TradingResult)[] = [ 'status', 'openPrice', 'pnl' ];
+  // const resultsObj = results.reduce((res: any, prop: keyof TradingResult) => ({ ...res, [prop]: row.results[prop] }), {});
   // row.results = JSON.stringify(resultsObj) as any;
   return row;
 };

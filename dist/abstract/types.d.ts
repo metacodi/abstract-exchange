@@ -316,7 +316,7 @@ export interface Bot {
     ip: string;
     accounts?: {
         idUser: number;
-        userOperations: Partial<UserOperation>[];
+        tradings: Partial<Trading>[];
         error?: {
             [type: string]: ErrorObject;
         };
@@ -340,11 +340,11 @@ export interface Operation {
     market: MarketType;
     quoteAsset: CoinType;
     baseAsset: CoinType;
-    accounts?: UserOperation[];
+    tradings?: Trading[];
     users?: User[];
     strategy?: Strategy;
 }
-export interface UserOperation {
+export interface Trading {
     idreg: 'new' | number;
     idUser: number;
     idOperation: 'new' | number;
@@ -353,7 +353,7 @@ export interface UserOperation {
     started: string;
     finished: string;
     instances: InstanceController[];
-    results: UserOperationResult;
+    results: TradingResult;
     user?: User;
     bot?: Bot;
     operation?: Operation;
@@ -371,9 +371,9 @@ export interface UserOperation {
         iconColor?: string;
     };
 }
-export declare type UserOperationStatus = 'initial' | 'market' | 'activated' | 'closed';
-export interface UserOperationResult {
-    status: UserOperationStatus;
+export declare type TradingStatus = 'initial' | 'market' | 'activated' | 'closed';
+export interface TradingResult {
+    status: TradingStatus;
     openPrice?: number;
     openQuantity?: number;
     closePrice?: number;
@@ -382,6 +382,6 @@ export interface UserOperationResult {
     closeCommission?: number;
     profit?: number;
 }
-export declare const userOperationParse: (row: UserOperation) => UserOperation;
-export declare const userOperationStringify: (row: UserOperation) => UserOperation;
+export declare const tradingParse: (row: Trading) => Trading;
+export declare const tradingStringify: (row: Trading) => Trading;
 //# sourceMappingURL=types.d.ts.map
