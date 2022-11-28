@@ -26,5 +26,9 @@ export interface ExchangeApi {
     getOrder(request: GetOrderRequest): Promise<Partial<Order>>;
     postOrder(request: PostOrderRequest): Promise<Order>;
     cancelOrder(request: CancelOrderRequest): Promise<Order>;
+    fixPrice(price: number): number;
+    fixQuantity(quantity: number): number;
+    fixBase(base: number): number;
+    fixQuote(quote: number): number;
 }
 //# sourceMappingURL=exchange-api.d.ts.map

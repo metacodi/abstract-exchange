@@ -75,4 +75,20 @@ export interface ExchangeApi {
 
   // cancelAllSymbolOrders(symbol: SymbolType): Promise<Order>;
 
+
+  //  helpers
+  // ---------------------------------------------------------------------------------------------------
+
+  /** Arrodoneix la quantitat de quote asset per posar les ordres. */
+  fixPrice(price: number): number;
+
+  /** Arrodoneix la quantitat de base asset per posar les ordres. */
+  fixQuantity(quantity: number): number;
+  
+  /** Arrodoneix la quantitat de quote asset per gestionar els balanços. */
+  fixBase(base: number): number;
+  
+  /** Arrodoneix la quantitat de base asset per gestionar els balanços. */
+  fixQuote(quote: number): number;
+  
 }
