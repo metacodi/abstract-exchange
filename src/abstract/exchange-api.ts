@@ -9,6 +9,8 @@ export interface ExchangeApi {
   market: MarketType;
 
   options: ApiOptions;
+
+  symbols: MarketSymbol[];
   
  
   // ---------------------------------------------------------------------------------------------------

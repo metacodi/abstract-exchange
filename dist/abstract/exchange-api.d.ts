@@ -4,6 +4,7 @@ import { ExchangeInfo, GetHistoryOrdersRequest, GetOrderRequest, KlinesRequest, 
 export interface ExchangeApi {
     market: MarketType;
     options: ApiOptions;
+    symbols: MarketSymbol[];
     get apiKey(): string;
     get apiSecret(): string;
     get apiPassphrase(): string;
