@@ -80,15 +80,15 @@ export interface ExchangeApi {
   // ---------------------------------------------------------------------------------------------------
 
   /** Arrodoneix la quantitat de quote asset per posar les ordres. */
-  fixPrice(price: number): number;
+  fixPrice(price: number, marketSymbol: MarketSymbol): number;
 
   /** Arrodoneix la quantitat de base asset per posar les ordres. */
-  fixQuantity(quantity: number): number;
+  fixQuantity(quantity: number, marketSymbol: MarketSymbol): number;
   
   /** Arrodoneix la quantitat de quote asset per gestionar els balanços. */
-  fixBase(base: number): number;
+  fixBase(base: number, marketSymbol: MarketSymbol): number;
   
   /** Arrodoneix la quantitat de base asset per gestionar els balanços. */
-  fixQuote(quote: number): number;
+  fixQuote(quote: number, marketSymbol: MarketSymbol): number;
   
 }
