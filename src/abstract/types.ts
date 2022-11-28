@@ -325,9 +325,15 @@ export interface PartialOrder {
 
 
 export interface BaseStrategyParams {
-  isPercentInvestment?: boolean;
-  investment?: number;
   market?: MarketType;
+  /** Indica el preu quan `useMarginPercent` es `false`. */
+  marginAsset: 'quote' | 'base';
+  /** S'utilitza quan `useMarginPercent` es `false`. */
+  marginAmount: number;
+  /** S'utilitza quan `useMarginPercent` es `true`. */
+  marginPercent: number;
+  /** Indica si es farà servir el preu o un percentatge dels fons del compte de l'usuari. */
+  useMarginPercent: boolean;
   /** Apalancament a futurs. */
   leverage?: number;
 }
@@ -458,8 +464,8 @@ export interface Trading {
   error?: { [type: string]: ErrorObject };
   ui?: {
     quoteBalance?: number;
-    quoteInvestment?: number;
-    baseInvestment?: number;
+    quoteMargin?: number;
+    baseMargin?: number;
     profitAmount?: number;
     profitPercent?: number;
     icon?: string;

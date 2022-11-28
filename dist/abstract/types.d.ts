@@ -238,9 +238,11 @@ export interface PartialOrder {
     count: number;
 }
 export interface BaseStrategyParams {
-    isPercentInvestment?: boolean;
-    investment?: number;
     market?: MarketType;
+    marginAsset: 'quote' | 'base';
+    marginAmount: number;
+    marginPercent: number;
+    useMarginPercent: boolean;
     leverage?: number;
 }
 export interface InstanceController {
@@ -363,8 +365,8 @@ export interface Trading {
     };
     ui?: {
         quoteBalance?: number;
-        quoteInvestment?: number;
-        baseInvestment?: number;
+        quoteMargin?: number;
+        baseMargin?: number;
         profitAmount?: number;
         profitPercent?: number;
         icon?: string;
