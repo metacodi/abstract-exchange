@@ -45,8 +45,11 @@ export interface OrderBookTickerRequest {
 
 export interface LeverageInfo {
   symbol: SymbolType;
+  /** Leverage for 'long' trades, when margin mode is 'isolated'. */
   longLeverage?: number;
+  /** Leverage for 'short' trades, when margin mode is 'isolated'. */
   shortLeverage?: number;
+  /** Leverage for 'long' and 'short' trades, when margin mode is 'cross'. */
   leverage?: number;
 }
 
@@ -54,6 +57,7 @@ export interface SetLeverage {
   symbol: SymbolType;
   coin: CoinType;
   longLeverage: number;
+  /** Si MarginMode === `cross`, aquesta propietat s'ignora i només es té en compte el valor de `longLeverage`. */
   shortLeverage: number;
   mode: MarginMode;
 }

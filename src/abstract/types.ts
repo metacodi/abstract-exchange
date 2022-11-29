@@ -116,6 +116,8 @@ export interface MarketSymbol {
   basePrecision?: number;
   quantityPrecision?: number;
   pricePrecision?: number;
+  /** Indica l'arrodoniment de la darrera xifra. Ex: múltiples de 5: només accepta acabats en 0 o 5. */
+  priceEndStep?: number;
   /** La quantitat ha de ser d'aquest múltiple. */
   sizeMultiplier?: number;
   tradeAmountAsset?: 'base' | 'quote';

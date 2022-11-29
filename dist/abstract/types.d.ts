@@ -81,6 +81,7 @@ export interface MarketSymbol {
     basePrecision?: number;
     quantityPrecision?: number;
     pricePrecision?: number;
+    priceEndStep?: number;
     sizeMultiplier?: number;
     tradeAmountAsset?: 'base' | 'quote';
     minTradeAmount?: number;
