@@ -423,15 +423,13 @@ export interface Bot {
     tradings: Partial<Trading>[];
     error?: { [type: string]: ErrorObject };
   }[];
-  exchanges?: BotExchange[];
+  exchanges?: {
+    exchange: ExchangeType;
+    maxAccounts: number;
+  }[];
   // Propietats que no formen part de la fila de la base de dades.
   connected?: boolean;
 };
-
-export interface BotExchange {
-  exchanges: ExchangeType;
-  maxAccounts: number;
-}
 
 
 export interface Operation {

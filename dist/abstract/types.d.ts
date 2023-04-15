@@ -324,12 +324,11 @@ export interface Bot {
             [type: string]: ErrorObject;
         };
     }[];
-    exchanges?: BotExchange[];
+    exchanges?: {
+        exchange: ExchangeType;
+        maxAccounts: number;
+    }[];
     connected?: boolean;
-}
-export interface BotExchange {
-    exchanges: ExchangeType;
-    maxAccounts: number;
 }
 export interface Operation {
     idreg: 'new' | number;
