@@ -402,6 +402,7 @@ export interface Device {
     allowPushNotifications: boolean;
     allowSonidoPush: boolean;
     sonidoPush: string;
+    alertStatus: number;
   };
 }
 

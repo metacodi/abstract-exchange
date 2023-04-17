@@ -1,6 +1,6 @@
 {
   "name": "@metacodi/abstract-exchange",
-  "version": "1.0.102",
+  "version": "1.0.103",
   "description": "Abstract Exchange",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -38,7 +38,7 @@
     "rxjs": "~7.5.0"
   },
   "devDependencies": {
-    "@metacodi/node-utils": "^1.0.27",
+    "@metacodi/node-utils": "^1.0.28",
     "@types/ftp": "^0.3.33",
     "@types/node": "^18.11.19",
     "@typescript-eslint/eslint-plugin": "^5.38.1",

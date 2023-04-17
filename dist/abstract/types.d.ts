@@ -305,6 +305,7 @@ export interface Device {
         allowPushNotifications: boolean;
         allowSonidoPush: boolean;
         sonidoPush: string;
+        alertStatus: number;
     };
 }
 export interface ErrorObject {
