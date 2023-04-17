@@ -382,8 +382,7 @@ export interface Device {
   description: string;
   info: string;
   lastLogin: string;
-  lat: number;
-  lng: number;
+  alertStatus: number;
   security: {
     idreg: number;
     idUser: number;
@@ -402,7 +401,6 @@ export interface Device {
     allowPushNotifications: boolean;
     allowSonidoPush: boolean;
     sonidoPush: string;
-    alertStatus: number;
   };
 }
 

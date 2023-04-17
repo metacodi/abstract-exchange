@@ -1,6 +1,6 @@
 {
   "name": "@metacodi/abstract-exchange",
-  "version": "1.0.103",
+  "version": "1.0.104",
   "description": "Abstract Exchange",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,11 +34,12 @@
   "homepage": "https://github.com/metacodi/abstract-exchange#readme",
   "license": "ISC",
   "peerDependencies": {
+    "@metacodi/node-utils": "^1.0.28",
     "moment": "^2.29.4",
     "rxjs": "~7.5.0"
   },
   "devDependencies": {
-    "@metacodi/node-utils": "^1.0.28",
+    "@metacodi/node-utils": "*",
     "@types/ftp": "^0.3.33",
     "@types/node": "^18.11.19",
     "@typescript-eslint/eslint-plugin": "^5.38.1",
