@@ -54,6 +54,9 @@ export interface GetHistoryOrdersRequest {
     symbol: SymbolType;
     startTime?: number;
     endTime?: number;
+    afterExchangeId?: string;
+    beforeExchangeId?: string;
+    id?: string;
     limit?: number;
 }
 export interface GetOpenOrdersRequest {

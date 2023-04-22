@@ -66,6 +66,10 @@ export interface GetHistoryOrdersRequest {
   symbol: SymbolType;
   startTime?: number;
   endTime?: number;
+  afterExchangeId?: string;
+  beforeExchangeId?: string;
+  /** match exactly with the given client id, rather than internal exchange id. */
+  id?: string;
   limit?: number;
 }
 
