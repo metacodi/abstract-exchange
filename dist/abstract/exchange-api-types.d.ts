@@ -65,9 +65,9 @@ export interface GetOpenOrdersRequest {
 }
 export interface GetOrderRequest {
     symbol: SymbolType;
-    id: string;
-    exchangeId: string;
-    type: OrderType;
+    id?: string;
+    exchangeId?: string;
+    type?: OrderType;
 }
 export interface PostOrderRequest {
     id: string;
