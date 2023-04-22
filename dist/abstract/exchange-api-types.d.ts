@@ -58,6 +58,7 @@ export interface GetHistoryOrdersRequest {
     beforeExchangeId?: string;
     id?: string;
     limit?: number;
+    pageSize?: number;
 }
 export interface GetOpenOrdersRequest {
     symbol: SymbolType;

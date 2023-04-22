@@ -71,6 +71,7 @@ export interface GetHistoryOrdersRequest {
   /** match exactly with the given client id, rather than internal exchange id. */
   id?: string;
   limit?: number;
+  pageSize?: number;
 }
 
 export interface GetOpenOrdersRequest {

@@ -43,4 +43,6 @@ if (Prompt.verbose) { console.log('Arguments: ', Prompt.opts()); }
   Terminal.log(`npm publish`);
   await Terminal.run(`npm publish`);
 
+  Terminal.log(chalk.green(`\nnpm i @metacodi/abstract-exchange`));
+
 })();
