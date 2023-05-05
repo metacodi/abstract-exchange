@@ -26,7 +26,10 @@ export interface Task {
     data: {
         [key: string]: any;
     };
-    callback?: (success: any, failed?: any) => void;
+    callback?: (response: {
+        success?: any;
+        failed?: any;
+    }) => void;
 }
 export declare type OrderTask = GetHistoryOrdersTask | GetOpenOrdersTask | GetOrderTask | PostOrderTask | CancelOrderTask;
 export interface GetHistoryOrdersTask extends Task {
@@ -211,14 +214,12 @@ export interface Order {
     exchangeId: string;
     side: OrderSide;
     type: OrderType;
-    stop?: StopType;
     trade?: TradeSide;
     status: OrderStatus;
     symbol?: SymbolType;
     baseQuantity?: number;
     quoteQuantity?: number;
     price?: number;
-    stopPrice?: number;
     rejectReason?: string;
     isOco?: boolean;
     created?: string;
@@ -227,8 +228,11 @@ export interface Order {
     syncronized?: boolean;
     idOrderBuyed?: string;
     profit?: number;
+    profitAsset?: CoinType;
     commission?: number;
     commissionAsset?: CoinType;
+    stop?: StopType;
+    stopPrice?: number;
     leverage?: number;
 }
 export interface PartialOrder {

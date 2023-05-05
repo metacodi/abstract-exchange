@@ -54,7 +54,7 @@ export interface SymbolType {
 export interface Task {
   type: TaskType;
   data: { [key: string]: any };
-  callback?: (success: any, failed?: any) => void;
+  callback?: (response: { success?: any, failed?: any }) => void;
 }
 
 export type OrderTask = GetHistoryOrdersTask | GetOpenOrdersTask | GetOrderTask | PostOrderTask | CancelOrderTask;
@@ -296,14 +296,12 @@ export interface Order {
   exchangeId: string;     // orderId propi de l'exchange
   side: OrderSide;
   type: OrderType;
-  stop?: StopType;
   trade?: TradeSide;
   status: OrderStatus;
   symbol?: SymbolType;
   baseQuantity?: number;   // quantitat satifeta baseAsset
   quoteQuantity?: number;  // quantitat satifeta quoteAsset
   price?: number;           // preu per les ordres de tipus limit, les market l'ignoren pq ja entren a mercat.
-  stopPrice?: number;       // preu per avtivar l'stop.
   rejectReason?: string;
   isOco?: boolean;
   created?: string;       // timestamp: moment de creació per part de la nostra app.
@@ -312,8 +310,13 @@ export interface Order {
   syncronized?: boolean;
   idOrderBuyed?: string;
   profit?: number;        // Futures only
+  profitAsset?: CoinType;
   commission?: number;
   commissionAsset?: CoinType;
+  stop?: StopType;
+  stopPrice?: number;       // Ordre d'stop: preu per activar l'stop.
+  // stopLoss?: number;    // Preu per activar
+  // takeProfit?: number;    // Preu per activar
   leverage?: number;
 }
 
