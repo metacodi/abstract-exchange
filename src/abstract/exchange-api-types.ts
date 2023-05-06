@@ -75,7 +75,8 @@ export interface GetHistoryOrdersRequest {
 }
 
 export interface GetOpenOrdersRequest {
-  symbol: SymbolType;
+  /** És opcional per spot. */
+  symbol?: SymbolType;
 }
 
 export interface GetOrderRequest {

@@ -61,7 +61,7 @@ export interface GetHistoryOrdersRequest {
     pageSize?: number;
 }
 export interface GetOpenOrdersRequest {
-    symbol: SymbolType;
+    symbol?: SymbolType;
 }
 export interface GetOrderRequest {
     symbol: SymbolType;
