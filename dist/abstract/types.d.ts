@@ -20,6 +20,7 @@ export declare type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' |
 export interface SymbolType {
     baseAsset: CoinType;
     quoteAsset: CoinType;
+    productType?: string;
 }
 export interface Task {
     type: TaskType;

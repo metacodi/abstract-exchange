@@ -49,6 +49,8 @@ export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 export interface SymbolType {
   baseAsset: CoinType;
   quoteAsset: CoinType;
+  /** Only futures. Permet diferenciar productes que treballen amb la mateixa parella de monedes. */
+  productType?: string;
 }
 
 export interface Task {
