@@ -5,6 +5,8 @@ exports.tradingStringify = exports.tradingParse = void 0;
 ;
 ;
 ;
+;
+;
 const tradingParse = (row) => {
     if (typeof row.instances === 'string') {
         row.instances = JSON.parse(row.instances);

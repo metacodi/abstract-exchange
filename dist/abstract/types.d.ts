@@ -311,6 +311,35 @@ export interface Device {
         sonidoPush: string;
     };
 }
+export interface Empresa {
+    idreg: number;
+    tipo: number;
+    entidad: number;
+    codigo: string;
+    nif: string;
+    razonSocial: string;
+    direccionFiscal: string;
+    registroMercantil: string;
+    telefono: string;
+    telefono2: string;
+    email: string;
+    tipoIva: number;
+    retenerIva: boolean;
+    tipoIrpf: number;
+    descuento: number;
+    comision: number;
+    diaPago: number;
+    diasGiro: number;
+    idPayment: number;
+    idCuentaBancaria: number;
+    cuentaBancariaEmpresa: string;
+    cuentaContable: string;
+    observaciones: string;
+    validated: boolean;
+    created: string;
+    updated: string;
+    deleted: string;
+}
 export interface ErrorObject {
     code?: number;
     message: string;
@@ -347,7 +376,7 @@ export interface Operation {
     quoteAsset: CoinType;
     baseAsset: CoinType;
     tradings?: Trading[];
-    users?: User[];
+    accounts?: Account[];
     strategy?: Strategy;
 }
 export interface Trading {
@@ -360,7 +389,7 @@ export interface Trading {
     finished: string;
     instances: InstanceController[];
     results: TradingResult;
-    user?: User;
+    account?: Account;
     bot?: Bot;
     operation?: Operation;
     info?: AccountInfo;
@@ -376,6 +405,18 @@ export interface Trading {
         icon?: string;
         iconColor?: string;
     };
+}
+export interface Account {
+    idreg: number;
+    idEmpresa: number;
+    alias: string;
+    exchange: string;
+    apiKey: string;
+    apiSecret: string;
+    apiPassphrase: string;
+    created: string;
+    updated: string;
+    empresa?: Empresa;
 }
 export declare type TradingStatus = 'initial' | 'market' | 'activated' | 'closed';
 export interface TradingResult {
