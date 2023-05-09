@@ -423,7 +423,7 @@ export interface Bot {
   port: number;
   ip: string;
   accounts?: {
-    idUser: number;
+    idAccount: number;
     tradings: Partial<Trading>[];
     error?: { [type: string]: ErrorObject };
   }[];
@@ -453,7 +453,7 @@ export interface Operation {
 
 export interface Trading {
   idreg: 'new' | number;
-  idUser: number;
+  idAccount: number;
   idOperation: 'new' | number;
   idBot: number;
   autoStart: boolean;

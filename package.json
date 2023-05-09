@@ -1,6 +1,6 @@
 {
   "name": "@metacodi/abstract-exchange",
-  "version": "1.0.110",
+  "version": "1.0.111",
   "description": "Abstract Exchange",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
