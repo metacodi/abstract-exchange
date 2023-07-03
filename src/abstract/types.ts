@@ -39,7 +39,10 @@ export type StopType = 'normal' | 'profit' | 'loss' | 'profit-position' | 'loss-
 
 export type TaskType = 'getHistoryOrders' | 'getOpenOrders' | 'getOrder' | 'postOrder' | 'cancelOrder';
 
-export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
+export type CoinType = 'ARB' | 'BNB' | 'BTC' | 'DOT' |
+  'ETC' | 'ETH' | 'EUR' | 'LTC' | 'MATIC' |
+  'SOL' | 'USDT' | 'USDC' | 'USD'
+;
 // export type CoinBaseType = Extract<CoinType, 'BNB' | 'BTC' | 'ETC'>;
 // export const acceptedCoins: CoinType[] = ['BNB', 'BTC', 'ETC', 'USDT', 'EUR'];
 
@@ -49,7 +52,7 @@ export type CoinType = 'BNB' | 'BTC' | 'ETC' | 'USDT' | 'USDC' | 'USD' | 'EUR';
 export interface SymbolType {
   baseAsset: CoinType;
   quoteAsset: CoinType;
-  /** Only futures. Permet diferenciar productes que treballen amb la mateixa parella de monedes. */
+  /** Quan `market` és `futures`, permet discernir entre els diferents productes de derivats que oferix l'exchange. */
   productType?: string;
 }
 
@@ -262,6 +265,8 @@ export interface AccountReadyStatus {
 export interface AccountUpdate {
   type: 'accountUpdate';
   market: MarketType;
+  /** Quan `market` és `futures`, permet discernir entre els diferents productes de derivats que oferix l'exchange. */
+  productType?: string;
   balances: Balance[];
 }
 
@@ -270,6 +275,8 @@ export type BalanceUpdateType = 'deposit' | 'withdraw' | 'order';
 export interface BalanceUpdateResult {
   update: BalanceUpdateType;
   market: MarketType;
+  /** Quan `market` és `futures`, permet discernir entre els diferents productes de derivats que oferix l'exchange. */
+  productType?: string;
   timestamp?: string;
   balance: Balance[];
 }
@@ -333,6 +340,8 @@ export interface PartialOrder {
 
 export interface BaseStrategyParams {
   market?: MarketType;
+  /** Quan `market` és `futures`, permet discernir entre els diferents productes de derivats que oferix l'exchange. */
+  productType?: string;
   /** Indica el preu quan `useMarginPercent` es `false`. */
   marginAsset: 'quote' | 'base';
   /** S'utilitza quan `useMarginPercent` es `false`. */
@@ -474,6 +483,8 @@ export interface Operation {
   isTest: boolean;
   exchange: ExchangeType;
   market: MarketType;
+  /** Quan `market` és `futures`, permet discernir entre els diferents productes de derivats que oferix l'exchange. */
+  productType?: string;
   quoteAsset: CoinType;
   baseAsset: CoinType;
   tradings?: Trading[];
@@ -519,6 +530,53 @@ export interface Account {
   updated: string;
   empresa?: Empresa;
 };
+
+export interface AccountBill {
+  idreg: number;
+  exchangeId: string;
+  coinId?: number;
+  symbol?: SymbolType;
+  kind: AccountBillType;
+  asset: CoinType;
+  amount: number;
+  balance?: number;
+  commission?: number;
+  commissionAsset?: CoinType;
+  created: string;
+}
+
+export type AccountBillType = 'deposit' | 'transfer-in' | 'transfer-out' | 'transaction-sell' | 'transaction-buy';
+
+/*
+export interface Order {
+  id: string;
+  exchangeId: string;     // orderId propi de l'exchange
+  side: OrderSide;
+  type: OrderType;
+  trade?: TradeSide;
+  status: OrderStatus;
+  symbol?: SymbolType;
+  baseQuantity?: number;   // quantitat satifeta baseAsset
+  quoteQuantity?: number;  // quantitat satifeta quoteAsset
+  price?: number;           // preu per les ordres de tipus limit, les market l'ignoren pq ja entren a mercat.
+  rejectReason?: string;
+  isOco?: boolean;
+  created?: string;       // timestamp: moment de creació per part de la nostra app.
+  posted?: string;        // timestamp: moment de creació a l'exchange (Binance, Kucoin, ...)
+  executed?: string;      // timestamp: moment en que s'ha filled o canceled.
+  syncronized?: boolean;
+  idOrderBuyed?: string;
+  profit?: number;        // Futures only
+  profitAsset?: CoinType;
+  commission?: number;
+  commissionAsset?: CoinType;
+  stop?: StopType;
+  stopPrice?: number;       // Ordre d'stop: preu per activar l'stop.
+  // stopLoss?: number;    // Preu per activar
+  // takeProfit?: number;    // Preu per activar
+  leverage?: number;
+}
+*/
 
 export type TradingStatus = 'initial' | 'market' | 'activated' | 'closed';
 
